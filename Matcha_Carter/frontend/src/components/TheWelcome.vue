@@ -5,6 +5,18 @@ import ToolingIcon from './icons/IconTooling.vue'
 import EcosystemIcon from './icons/IconEcosystem.vue'
 import CommunityIcon from './icons/IconCommunity.vue'
 import SupportIcon from './icons/IconSupport.vue'
+import axios from 'axios'
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  axios.get('/')
+    .then((res : string) => {
+      if (res){
+        console.log('res = ' + res)
+      }
+    })
+})
+
 </script>
 
 <template>
