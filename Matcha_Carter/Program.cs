@@ -1,19 +1,40 @@
-namespace CarterAndMVC
+using System.IO;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using CarterAndMVC.Database;
+using Carter;
+using Microsoft.Extensions.Hosting;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseContentRoot(Directory.GetCurrentDirectory());
+
+builder.Services.AddCarter();
+builder.Services.AddControllers();
+builder.Services.AddSingleton<SQLiteDbService>(
+    new SQLiteDbService(
+        $"Data Source={Path.Combine(Directory.GetCurrentDirectory(), "../Matcha_Data/Matcha_db.sqlite")};Version=3;"));
+
+var app = builder.Build();
+
+app.UseDefaultFiles();
+app.UseRouting();
+
+app.MapControllers();
+app.MapCarter();
+
+app.MapGet("/api/data", async context =>
 {
-    using System.IO;
-    using Microsoft.AspNetCore.Hosting;
+    var data = new { message = "Hello, Vue.js!" };
+    await context.Response.WriteAsJsonAsync(data);
+});
 
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var host = new WebHostBuilder()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseKestrel()
-                .UseStartup<Startup>()
-                .Build();
+app.MapGet("/api/getdata", async context =>
+{
+    var dbService = context.RequestServices.GetRequiredService<SQLiteDbService>();
+    var data = dbService.GetData("SELECT * FROM User");
+    await context.Response.WriteAsJsonAsync(data);
+});
 
-            host.Run();
-        }
-    }
-}
+app.Run();
