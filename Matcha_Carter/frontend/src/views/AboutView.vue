@@ -5,7 +5,7 @@ import { onMounted, ref } from 'vue';
 const response = ref<Object>()
 
 onMounted(async() => {
-  await axios('/api/getdata')
+  await axios.get('/api/getdata')
   .then((res) => {
     response.value = res
   })

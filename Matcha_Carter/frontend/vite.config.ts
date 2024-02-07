@@ -2,12 +2,18 @@ import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import fs from 'fs'
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
     host: process.env.HOST_FRONT,
-    port:8080
+    port:8080,
+    https: {
+      key: fs.readFileSync('./certs/dev.local+4-key.pem'),
+      cert: fs.readFileSync('./certs/dev.local+4.pem'),
+    }
   },
   plugins: [
     vue(),
