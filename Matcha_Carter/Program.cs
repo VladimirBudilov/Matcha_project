@@ -23,7 +23,7 @@ builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
-        builder => builder.WithOrigins(frontUrl).AllowAnyHeader().AllowAnyMethod());
+        builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 });
 builder.Services.AddSingleton<SQLiteDbService>(
     new SQLiteDbService(
