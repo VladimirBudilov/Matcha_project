@@ -32,7 +32,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.ConfigureHttpsDefaults(co =>
     {
         co.ClientCertificateMode = ClientCertificateMode.NoCertificate;
-        co.ServerCertificate = new X509Certificate2(Path.Combine(Directory.GetCurrentDirectory(), "cert/aspnetapp.pfx"), "crypticpassword");
+        co.ServerCertificate = new X509Certificate2(Path.Combine(Directory.GetCurrentDirectory(), "cert/aspn.pfx"), "crypticpassword");
     });
 });
 

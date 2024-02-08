@@ -10,11 +10,7 @@ import SignUp from './components/SignUp.vue'
         <!--<RouterLink to="/home">Home</RouterLink>-->
       </nav>
     </div>
-    <div class="SignUp">
-      <SignUp/>
-    </div>
   </header>
-
   <RouterView />
 </template>
 

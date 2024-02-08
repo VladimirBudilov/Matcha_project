@@ -1,4 +1,5 @@
-﻿using Carter;
+﻿using System;
+using Carter;
 using CarterAndMVC.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -22,6 +23,12 @@ public class UserModule : ICarterModule
             var dbService = context.RequestServices.GetRequiredService<SQLiteDbService>();
             var data = dbService.GetData("SELECT * FROM User");
             await context.Response.WriteAsJsonAsync(data);
+        });
+        
+        app.MapPost("/api/signup", async context =>
+        {
+            var email = context.Request.Body;
+            Console.WriteLine(email);
         });
     }
 

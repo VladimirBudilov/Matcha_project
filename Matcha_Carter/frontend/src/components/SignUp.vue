@@ -12,10 +12,19 @@ const open = () => {
     inputErrorMessage: 'Invalid Email',
   })
     .then(({ value }) => {
-      ElMessage({
-        type: 'success',
-        message: `Your email is:${value}`,
-      })
+      axios.post('/api/signup', { email: value })
+        .then(response => {
+          ElMessage({
+            type: 'success',
+            message: `Your email is:${value}`,
+          })
+        })
+        .catch(error => {
+          ElMessage({
+            type: 'error',
+            message: 'Failed to send email',
+          })
+        })
     })
     .catch(() => {
       ElMessage({
@@ -24,6 +33,9 @@ const open = () => {
       })
     })
 }
+
+//send email to backend by clicking OK
+const response = ref<Object>()
 
 </script>
 
