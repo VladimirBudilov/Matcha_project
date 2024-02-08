@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
+
 
 namespace CarterAndMVC.Database
 {
@@ -13,27 +14,22 @@ namespace CarterAndMVC.Database
         public List<Dictionary<string, object>> GetData(string query)
         {
             OpenConnection();
-            using (var command = new SQLiteCommand(query, (SQLiteConnection)_connection))
+            using (var command = new SqliteCommand(query, (SqliteConnection)_connection))
             {
-                using (var adapter = new SQLiteDataAdapter(command))
+                using (var reader = command.ExecuteReader())
                 {
-                    var dataTable = new DataTable();
-                    adapter.Fill(dataTable);
-
-                    // Convert the DataTable to a list of dictionaries
-                    var data = new List<Dictionary<string, object>>();
-                    foreach (DataRow row in dataTable.Rows)
+                    var result = new List<Dictionary<string, object>>();
+                    while (reader.Read())
                     {
-                        var dict = new Dictionary<string, object>();
-                        foreach (DataColumn col in dataTable.Columns)
+                        var row = new Dictionary<string, object>();
+                        for (var i = 0; i < reader.FieldCount; i++)
                         {
-                            dict[col.ColumnName] = row[col];
+                            row[reader.GetName(i)] = reader.GetValue(i);
                         }
-                        data.Add(dict);
+                        result.Add(row);
                     }
-
-                    return data;
-                }
+                    return result;
+                }                
             }
         }
     }

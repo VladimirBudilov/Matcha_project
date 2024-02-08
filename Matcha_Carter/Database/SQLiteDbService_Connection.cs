@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 
 namespace CarterAndMVC.Database;
 
@@ -14,7 +14,7 @@ public partial class SQLiteDbService
     {
         if (_connection == null)
         {
-            _connection = new SQLiteConnection(_connectionString);
+            _connection = new SqliteConnection(_connectionString);
         }
 
         if (_connection.State != ConnectionState.Open)

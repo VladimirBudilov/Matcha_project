@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using CarterAndMVC.Database;
 using Carter;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,9 +25,17 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ConfigureHttpsDefaults(co =>
+    {
+        co.ClientCertificateMode = ClientCertificateMode.NoCertificate;
+    });
+});
+
 builder.Services.AddSingleton<SQLiteDbService>(
     new SQLiteDbService(
-        $"Data Source={Path.Combine(Directory.GetCurrentDirectory(), dbPath)};Version=3;"));
+        $"Data Source={Path.Combine(Directory.GetCurrentDirectory(), dbPath)}"));
 
 var app = builder.Build();
 app.UseDefaultFiles();
