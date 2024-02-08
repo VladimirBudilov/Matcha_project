@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import Test from './components/Test.vue';
+import axios from 'axios';
+import { onMounted, ref } from 'vue';
+
+
+const test_0 = ref<Object>()
+
+onMounted(async() => {
+  await axios.get('/api/getdata').then((res) => {
+    test_0.value = res
+  })
+})
+
 </script>
 
 <template>
-  <!--<header>
-    <div class="Head">
-
-      <nav>
-        <RouterLink to="/home">Home</RouterLink>
-      </nav>
-    </div>
-  </header>-->
-
-  <RouterView />
-
-  <Test class="Test" />
+  <h1> 1111 </h1>
+  <h1> {{ test_0 }} </h1>
 </template>
 
 <style scoped>
