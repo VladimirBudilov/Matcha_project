@@ -4,10 +4,17 @@ import { onMounted, ref } from 'vue';
 
 
 const test_0 = ref<Object>()
+const test_1 = ref<Object>()
 
 onMounted(async() => {
-  await axios.get('/api/getdata').then((res) => {
+  await axios.get('/api/getdata')
+  .then((res) => {
     test_0.value = res
+  })
+
+  await axios.post('/api/signup', {email : 'test@gmail.com'})
+  .then((res) =>{
+    test_1.value = res
   })
 })
 
@@ -15,7 +22,8 @@ onMounted(async() => {
 
 <template>
   <h1> 1111 </h1>
-  <h1> {{ test_0 }} </h1>
+  <p> {{ test_0 }} </p>
+  <p> {{ test_1 }} </p>
 </template>
 
 <style scoped>

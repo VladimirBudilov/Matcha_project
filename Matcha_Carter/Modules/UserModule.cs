@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Carter;
 using CarterAndMVC.Database;
 using Microsoft.AspNetCore.Builder;
@@ -24,10 +25,11 @@ public class UserModule : ICarterModule
             var data = dbService.GetData("SELECT * FROM User");
             await context.Response.WriteAsJsonAsync(data);
         });
-        
+
         app.MapPost("/api/signup", async context =>
         {
-            var email = context.Request.Body;
+            using var reader = new StreamReader(context.Request.Body);
+            var email = await reader.ReadToEndAsync();
             Console.WriteLine(email);
         });
     }
