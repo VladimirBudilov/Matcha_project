@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using CarterAndMVC.Database;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.Extensions.Hosting;
 
-var builder = WebApplication.CreateBuilder(args);
 var dbPath = Environment.GetEnvironmentVariable("DB_PATH");
 var baseUrl = Environment.GetEnvironmentVariable("BASE_URL");
 var frontUrl = Environment.GetEnvironmentVariable("FRONT_URL");
@@ -16,8 +16,9 @@ var frontUrl = Environment.GetEnvironmentVariable("FRONT_URL");
 Console.WriteLine($"DB_PATH: {dbPath}");
 Console.WriteLine($"BASE_URL: {baseUrl}");
 Console.WriteLine($"FRONT_URL: {frontUrl}");
-builder.Host.UseContentRoot(Directory.GetCurrentDirectory());
 
+var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseContentRoot(Directory.GetCurrentDirectory());
 builder.Services.AddCarter();
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
@@ -25,11 +26,13 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
+builder.WebHost.UseUrls(baseUrl);
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.ConfigureHttpsDefaults(co =>
     {
         co.ClientCertificateMode = ClientCertificateMode.NoCertificate;
+        co.ServerCertificate = new X509Certificate2(Path.Combine(Directory.GetCurrentDirectory(), "cert/aspnetapp.pfx"), "crypticpassword");
     });
 });
 
@@ -43,4 +46,4 @@ app.UseRouting();
 app.MapControllers();
 app.MapCarter();
 app.UseCors();
-app.Run(baseUrl);
+app.Run();
