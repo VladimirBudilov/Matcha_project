@@ -1,11 +1,9 @@
 using System;
 using System.IO;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using CarterAndMVC.Database;
 using Carter;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +21,7 @@ builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
-        builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials());
+        builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 builder.Services.AddSingleton<SQLiteDbService>(
     new SQLiteDbService(

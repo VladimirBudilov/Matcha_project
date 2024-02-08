@@ -1,0 +1,4 @@
+export PATH="$PATH:/Users/tumolabsstudent/.dotnet/"
+export BASE_URL="https://localhost:5100"
+export FRONT_URL="https://localhost:8080"
+export DB_PATH="../Matcha_Data/Matcha_db.sqlite"
