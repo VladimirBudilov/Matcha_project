@@ -6,24 +6,23 @@ const test = 0;
 </script>
 
 <template>
-  <div class="Test" v-if="test">
-    <Test/>
-  </div>
-  <div class="Main" v-else>
-    <header>
-      <div class="Head">
+    <div class="Test" v-if="test">
+      <Test/>
+    </div>
+    <div class="Main" v-else>
+      <header>
+
+      </header>
+      <div class="Body">
         <nav>
-          <RouterView v-slot="{ Component }">
-            <keep-alive>
-              <component :is="Component" />
-            </keep-alive>
-          </RouterView>
+          <RouterLink to="/">Home</RouterLink>
         </nav>
       </div>
-    </header>
-  </div>
+      <footer>
 
-  <!--<RouterView />-->
+      </footer>
+    </div>
+  <RouterView />
 
 
 </template>
