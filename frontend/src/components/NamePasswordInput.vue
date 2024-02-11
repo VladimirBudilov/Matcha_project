@@ -12,22 +12,22 @@ const SignUpButtonTurnOn = () => {
 }
 
 interface FormState {
-username: string;
-password: string;
-remember: boolean;
+	username: string;
+	password: string;
+	remember: boolean;
 }
 
 const formState = reactive<FormState>({
-username: '',
-password: '',
-remember: true,
+	username: '',
+	password: '',
+	remember: true,
 });
 const onFinish = (values: any) => {
-console.log('Success:', values);
+	console.log('Success:', values);
 };
 
 const onFinishFailed = (errorInfo: any) => {
-console.log('Failed:', errorInfo);
+	console.log('Failed:', errorInfo);
 };
 
 </script>
@@ -62,8 +62,10 @@ console.log('Failed:', errorInfo);
 		<a-form-item :wrapper-col="{ offset: 8, span: 16 }">
 			<a-button type="primary" html-type="submit">Submit</a-button>
 		</a-form-item>
+	</a-form>
+	<a-form>
 		<a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-			<a-button type="primary" html-type="submit" @click="SignUpButtonTurnOn">Sign up</a-button>
+			<a-button type="primary" html-type="signup" @click="SignUpButtonTurnOn">Sign up</a-button>
 		</a-form-item>
 	</a-form>
 
@@ -88,7 +90,6 @@ console.log('Failed:', errorInfo);
 
 .SignUpButton {
 	position: relative;
-	/*top: 28vh;*/
 }
 
 </style>

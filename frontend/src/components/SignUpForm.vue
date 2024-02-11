@@ -20,23 +20,20 @@ required: '${label} is required!',
 types: {
 	email: '${label} is not a valid email!',
 	number: '${label} is not a valid number!',
-},
-number: {
-	range: '${label} must be between ${min} and ${max}',
-},
+}
 };
 
 const formState = reactive({
 user: {
-	name: '',
-	age: undefined,
 	email: '',
-	website: '',
-	introduction: '',
+	username: '',
+	firstName: '',
+	lastName: '',
+	password: ''
 },
 });
 const onFinish = (values: any) => {
-console.log('Success:', values);
+	console.log('Success:', values);
 };
 </script>
 
@@ -49,24 +46,24 @@ console.log('Success:', values);
 		:validate-messages="validateMessages"
 		@finish="onFinish"
 	>
-		<a-form-item :name="['user', 'name']" label="Name" :rules="[{ required: true }]">
-		<a-input v-model:value="formState.user.name" />
+		<a-form-item :name="['user', 'email']" label="Email" :rules="[{ type: 'email', required: true }]">
+			<a-input v-model:value="formState.user.email" />
 		</a-form-item>
-		<a-form-item :name="['user', 'email']" label="Email" :rules="[{ type: 'email' }]">
-		<a-input v-model:value="formState.user.email" />
+		<a-form-item :name="['user', 'username']" label="Username" :rules="[{type: 'string', required: true }]">
+		<a-input v-model:value="formState.user.username" />
 		</a-form-item>
-		<a-form-item :name="['user', 'age']" label="Age" :rules="[{ type: 'number', min: 0, max: 99 }]">
-		<a-input-number v-model:value="formState.user.age" />
+		<a-form-item :name="['user', 'firstName']" label="First name" :rules="[{ type: 'string', required: true }]">
+		<a-input v-model:value="formState.user.firstName" />
 		</a-form-item>
-		<a-form-item :name="['user', 'website']" label="Website">
-		<a-input v-model:value="formState.user.website" />
+		<a-form-item :name="['user', 'lastName']" label="Last name" :rules="[{ type: 'string', required: true }]">
+		<a-input v-model:value="formState.user.lastName" />
 		</a-form-item>
-		<a-form-item :name="['user', 'introduction']" label="Introduction">
-		<a-textarea v-model:value="formState.user.introduction" />
+		<a-form-item :name="['user', 'password']" label="Password" :rules="[{ type: 'string', required: true }]">
+		<a-input-password v-model:value="formState.user.password" />
 		</a-form-item>
 		<a-form-item :wrapper-col="{ ...layout.wrapperCol, offset: 8 }">
-			<a-button type="primary" html-type="submit" @click="SignUpButtonTurnOn">Submit</a-button>
-			<a-button type="primary" html-type="submit" @click="SignUpButtonTurnOn" style="margin-left: 1vw;">Cancel</a-button>
+			<a-button type="primary" html-type="submit">Submit</a-button>
+			<a-button danger type="primary"  html-type="cancel" @click="SignUpButtonTurnOn" style="margin-left: 1vw;">Cancel</a-button>
 		</a-form-item>
 	</a-form>
 </template>
