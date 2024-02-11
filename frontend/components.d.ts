@@ -13,10 +13,14 @@ declare module 'vue' {
     AForm: typeof import('ant-design-vue/es')['Form']
     AFormItem: typeof import('ant-design-vue/es')['FormItem']
     AInput: typeof import('ant-design-vue/es')['Input']
+    AInputNumber: typeof import('ant-design-vue/es')['InputNumber']
     AInputPassword: typeof import('ant-design-vue/es')['InputPassword']
     App: typeof import('./src/components/App.vue')['default']
+    ATextarea: typeof import('ant-design-vue/es')['Textarea']
+    NamePasswordInput: typeof import('./src/components/NamePasswordInput.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SignUpForm: typeof import('./src/components/SignUpForm.vue')['default']
     Test: typeof import('./src/components/Test.vue')['default']
   }
 }
