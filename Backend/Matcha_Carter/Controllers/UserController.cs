@@ -7,8 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Matcha_Carter.Controllers
 {
-    [Route("user")]
-    internal class UserController : Controller
+    [ApiController]
+    [Route("[controller]")]
+    internal class UserController : ControllerBase
     {
         public UserController() { }
 
