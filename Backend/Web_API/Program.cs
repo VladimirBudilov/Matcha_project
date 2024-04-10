@@ -1,4 +1,4 @@
-using BLL;
+using BLL.Sevices;
 using DAL.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,11 +23,10 @@ builder.Services.AddScoped<UserService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 app.UseHttpsRedirection();
 
