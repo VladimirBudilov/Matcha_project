@@ -10,16 +10,15 @@ namespace BLL.Sevices
     public class UserService
     {
         private readonly UserRepository _userRepository;
-
+        
         public UserService(UserRepository userRepository)
         {
             _userRepository = userRepository;
         }
-
-        public IEnumerable<string> GetAllUsers()
+        
+        public async Task<IEnumerable<string>> GetAllUsersAsync()
         {
-            return _userRepository.GetAllUsers();
+            throw new NotImplementedException();
         }
-
     }
 }

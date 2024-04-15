@@ -17,34 +17,37 @@ namespace Web_API.Controllers
 
         // GET: api/<UsersController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<string>> Get()
         {
-            return _userService.GetAllUsers();
+            return await _userService.GetAllUsersAsync();
         }
 
-        // GET api/<UsersController>/5
+// GET api/<UsersController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<string> Get(int id)
         {
-            return "value";
+            return await Task.FromResult("value");
         }
 
-        // POST api/<UsersController>
+// POST api/<UsersController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task Post([FromBody] string value)
         {
+            await Task.CompletedTask;
         }
 
-        // PUT api/<UsersController>/5
+// PUT api/<UsersController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task Put(int id, [FromBody] string value)
         {
+            await Task.CompletedTask;
         }
 
-        // DELETE api/<UsersController>/5
+// DELETE api/<UsersController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
+            await Task.CompletedTask;
         }
     }
 }
