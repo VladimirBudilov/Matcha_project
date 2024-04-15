@@ -1,6 +1,5 @@
 using BLL.Sevices;
 using DAL.Repositories;
-using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +18,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<UserProfileService>();
 
 var app = builder.Build();
 
