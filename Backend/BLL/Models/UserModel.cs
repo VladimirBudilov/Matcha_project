@@ -19,7 +19,9 @@ namespace BLL.Models
         public string ResetToken { get; set; }
         public bool IsVerified { get; set; }
         
-        public UserProfileModel? Profile { get; set; }
-        
+        public ProfileModel? Profile { get; set; }
+        public List<PicturesModel> Pictures { get; set; } 
+        public List<LikesModel> Likes { get; set; }
+        public List<InterestsModel> Interests { get; set; }
     }
 }

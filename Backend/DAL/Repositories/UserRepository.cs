@@ -22,7 +22,7 @@ namespace DAL.Repositories
             {
                 await connection.OpenAsync();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT * FROM User WHERE Id = @id";
+                command.CommandText = "SELECT * FROM users WHERE user_id = @id";
                 command.Parameters.AddWithValue("@id", id);
                 var reader = await command.ExecuteReaderAsync();
                 if (await reader.ReadAsync())
@@ -40,7 +40,7 @@ namespace DAL.Repositories
             {
                 await connection.OpenAsync();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT * FROM User";
+                command.CommandText = "SELECT * FROM users";
                 var reader = await command.ExecuteReaderAsync();
                 var users = new List<UserEntity>();
                 while (await reader.ReadAsync())
@@ -58,7 +58,7 @@ namespace DAL.Repositories
             {
                 await connection.OpenAsync();
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT * FROM User WHERE UserName = @userName";
+                command.CommandText = "SELECT * FROM users WHERE user_name = @userName";
                 command.Parameters.AddWithValue("@userName", userName);
                 var reader = await command.ExecuteReaderAsync();
                 if (await reader.ReadAsync())
@@ -76,7 +76,7 @@ namespace DAL.Repositories
             {
                 await connection.OpenAsync();
                 var command = connection.CreateCommand();
-                command.CommandText = "INSERT INTO User (UserName, FirstName, LastName, Email, Password, UpdatedAt, CreatedAt, LastLoginAt, ResetTokenExpiry, ResetToken, IsVerified) " +
+                command.CommandText = "INSERT INTO users (user_name, first_name, last_name, email, password, updated_at, created_at, last_login_at, reset_token_expiry, reset_token, is_verified)" +
                                       "VALUES (@userName, @firstName, @lastName, @email, @password, @updatedAt, @createdAt, @lastLoginAt, @resetTokenExpiry, @resetToken, @isVerified)";
                 FillUserEntityParameters(user, command);
                 await command.ExecuteNonQueryAsync();
@@ -90,8 +90,8 @@ namespace DAL.Repositories
             {
                 await connection.OpenAsync();
                 var command = connection.CreateCommand();
-                command.CommandText = "UPDATE User SET UserName = @userName, FirstName = @firstName, LastName = @lastName, Email = @email, Password = @password, " +
-                                      "UpdatedAt = @updatedAt, CreatedAt = @createdAt, LastLoginAt = @lastLoginAt, ResetTokenExpiry = @resetTokenExpiry, ResetToken = @resetToken, IsVerified = @isVerified " +
+                command.CommandText = "UPDATE users SET user_name = @userName, first_name = @firstName, last_name = @lastName, email = @email, password = @password, " +
+                                      "updated_at = @updatedAt, created_at = @createdAt, last_login_at = @lastLoginAt, reset_token_expiry = @resetTokenExpiry, reset_token = @resetToken, is_verified = @isVerified "+
                                       "WHERE Id = @id";
                 FillUserEntityParameters(user, command);
                 command.Parameters.AddWithValue("@id", user.UserId);

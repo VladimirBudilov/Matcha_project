@@ -1,28 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AutoMapper;
 using BLL.Models;
+using DAL.Entities;
 using DAL.Repositories;
 
 namespace BLL.Sevices
 {
-    public class UserService
+    public class UserService(UserRepository userRepository, IMapper mapper)
     {
-        private readonly UserRepository _userRepository;
         
-        public UserService(UserRepository userRepository)
+        public async Task<UserModel> GetUserByIdAsync(int userId)
         {
-            _userRepository = userRepository;
+            var user = await userRepository.GetUserByIdAsync(userId);
+            var output = mapper.Map<UserModel>(user);
+            return output;
         }
         
         public async Task<IEnumerable<UserModel>> GetAllUsersAsync()
         {
-            var allUsers = await _userRepository.GetAllUsers();
-
+            var allUsers = await userRepository.GetAllUsers();
             var output = new List<UserModel>();
             return output;
+        }
+
+        public async Task CreateUserAsync(UserModel userModel)
+        {
+            var User = mapper.Map<UserEntity>(userModel);
+            await userRepository.AddUserAsync(User);
         }
     }
 }

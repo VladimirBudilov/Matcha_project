@@ -1,6 +1,6 @@
 ﻿namespace DAL.Entities;
 
-public class UserProfileEntity
+public class ProfileEntity
 {
     public int ProfileId { get; set; }
     

@@ -1,6 +1,6 @@
 ﻿namespace BLL.Models;
 
-public class UserProfileModel
+public class ProfileModel
 {
     public int ProfileId { get; set; }
     

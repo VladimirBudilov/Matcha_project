@@ -1,6 +1,6 @@
 ﻿namespace Web_API.DTOs
 {
-    public class UserRegistrationDTO
+    public class UserReguestDTO
     {
         public string Email { get; set; }
         public string Name { get; set; }
