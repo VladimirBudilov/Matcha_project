@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BLL.Models;
 using DAL.Repositories;
 
 namespace BLL.Sevices
@@ -16,9 +17,12 @@ namespace BLL.Sevices
             _userRepository = userRepository;
         }
         
-        public async Task<IEnumerable<string>> GetAllUsersAsync()
+        public async Task<IEnumerable<UserModel>> GetAllUsersAsync()
         {
-            throw new NotImplementedException();
+            var allUsers = await _userRepository.GetAllUsers();
+
+            var output = new List<UserModel>();
+            return output;
         }
     }
 }

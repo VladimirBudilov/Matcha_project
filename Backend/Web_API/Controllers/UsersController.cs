@@ -11,7 +11,7 @@ namespace Web_API.Controllers
         [HttpGet]
         public async Task<IEnumerable<string>> Get()
         {
-            return await userService.GetAllUsersAsync();
+            return new List<string>();
         }
 
         // GET api/<UsersController>/5

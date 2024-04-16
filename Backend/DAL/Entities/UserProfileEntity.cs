@@ -6,9 +6,9 @@ public class UserProfileEntity
     
     public string Gender { get; set; }
     
-    public string SexualPreferences { get; set; }
+    public string? SexualPreferences { get; set; }
     
-    public string Biography { get; set; }
+    public string? Biography { get; set; }
 
     public int? ProfilePictureId { get; set; }
     

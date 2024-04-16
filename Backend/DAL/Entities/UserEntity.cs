@@ -18,9 +18,7 @@ namespace DAL.Entities
         public DateTime? CreatedAt { get; set; }
         public DateTime? LastLoginAt { get; set; }
         public DateTime? ResetTokenExpiry { get; set; }
-        public string ResetToken { get; set; }
+        public string? ResetToken { get; set; }
         public bool IsVerified { get; set; }
-
-        public UserProfileEntity UserProfile { get; set; }
     }
 }
