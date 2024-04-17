@@ -33,6 +33,7 @@ namespace BLL.Sevices
         public async Task RegisterUserAsync(UserModel userModel)
         {
             var User = mapper.Map<UserEntity>(userModel);
+            User.Password = passwordManager.HashPassword(User.Password);
             await userRepository.AddUserAsync(User);
         }
         

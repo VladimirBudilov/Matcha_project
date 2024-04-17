@@ -9,6 +9,7 @@ namespace Web_API.Controllers;
 [ApiController]
 public class AuthController(UserService userService, IMapper mapper, ILogger<AuthController> logger) : ControllerBase
 {
+    [HttpPost("login")]
     public async Task<IActionResult> Login(UserAuthoristaionDTO loginDto)
     {
         var isValid = await userService.AuthenticateUser(loginDto.UserName, loginDto.Password);
