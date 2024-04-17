@@ -15,10 +15,17 @@ namespace BLL.Sevices
             return output;
         }
         
+        public async Task<UserModel> GetUserByUserNameAsync(string userName)
+        {
+            var user = await userRepository.GetUserByUserNameAsync(userName);
+            var output = mapper.Map<UserModel>(user);
+            return output;
+        }
+        
         public async Task<IEnumerable<UserModel>> GetAllUsersAsync()
         {
             var allUsers = await userRepository.GetAllUsers();
-            var output = new List<UserModel>();
+            var output = mapper.Map<IEnumerable<UserModel>>(allUsers);
             return output;
         }
 
@@ -26,6 +33,17 @@ namespace BLL.Sevices
         {
             var User = mapper.Map<UserEntity>(userModel);
             await userRepository.AddUserAsync(User);
+        }
+
+        public async Task UpdateUserAsync(int id, UserModel userModel)
+        {
+            var User = mapper.Map<UserEntity>(userModel);
+            await userRepository.UpdateUserAsync(id, User);
+        }
+
+        public async Task DeleteUserAsync(int id)
+        {
+            await userRepository.DeleteUserAsync(id);
         }
     }
 }

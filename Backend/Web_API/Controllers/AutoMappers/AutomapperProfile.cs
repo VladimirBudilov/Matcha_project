@@ -13,6 +13,8 @@ public class AutomapperProfile : Profile
             .ReverseMap();
         CreateMap<UserModel, UserInfoDto>()
             .ReverseMap();
+        CreateMap<UserModel, UserReguestDTO>()
+            .ReverseMap();
 
 
     }

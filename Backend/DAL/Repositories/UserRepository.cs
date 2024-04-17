@@ -84,7 +84,7 @@ namespace DAL.Repositories
             }
         }
         
-        public async Task<UserEntity?> UpdateUserAsync(UserEntity user)
+        public async Task<UserEntity?> UpdateUserAsync(int id, UserEntity user)
         {
             await using (var connection = new SqliteConnection(_connectionString))
             {
@@ -94,7 +94,7 @@ namespace DAL.Repositories
                                       "updated_at = @updatedAt, created_at = @createdAt, last_login_at = @lastLoginAt, reset_token_expiry = @resetTokenExpiry, reset_token = @resetToken, is_verified = @isVerified "+
                                       "WHERE Id = @id";
                 FillUserEntityParameters(user, command);
-                command.Parameters.AddWithValue("@id", user.UserId);
+                command.Parameters.AddWithValue("@id", id);
                 await command.ExecuteNonQueryAsync();
                 return user;
             }
@@ -119,12 +119,12 @@ namespace DAL.Repositories
             command.Parameters.AddWithValue("@lastName", user.LastName);
             command.Parameters.AddWithValue("@email", user.Email);
             command.Parameters.AddWithValue("@password", user.Password);
-            command.Parameters.AddWithValue("@updatedAt", user.UpdatedAt);
-            command.Parameters.AddWithValue("@createdAt", user.CreatedAt);
-            command.Parameters.AddWithValue("@lastLoginAt", user.LastLoginAt);
-            command.Parameters.AddWithValue("@resetTokenExpiry", user.ResetTokenExpiry);
-            command.Parameters.AddWithValue("@resetToken", user.ResetToken);
-            command.Parameters.AddWithValue("@isVerified", user.IsVerified);
+            command.Parameters.AddWithValue("@updatedAt", user.UpdatedAt ?? DateTime.Now);
+            command.Parameters.AddWithValue("@createdAt", user.CreatedAt ?? DateTime.Now);
+            command.Parameters.AddWithValue("@lastLoginAt", user.LastLoginAt ?? DateTime.Now);
+            command.Parameters.AddWithValue("@resetTokenExpiry", user.ResetTokenExpiry ?? DateTime.Now);
+            command.Parameters.AddWithValue("@resetToken", user.ResetToken ?? "");
+            command.Parameters.AddWithValue("@isVerified", user.IsVerified ?? false);
         }
 
 
