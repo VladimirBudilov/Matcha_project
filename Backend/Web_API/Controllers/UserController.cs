@@ -27,7 +27,7 @@ namespace Web_API.Controllers
             var output = mapper.Map<UserInfoDto>(user);
             return output;
         }
-        
+
         [HttpGet("username/{userName}")]
         public async Task<UserInfoDto> GetUserByUserName(string userName)
         {
@@ -38,10 +38,18 @@ namespace Web_API.Controllers
 
         // POST api/<UsersController>
         [HttpPost]
-        public async Task CreateNewUser([FromBody] UserReguestDTO value)
+        public async Task<IActionResult> CreateNewUser([FromBody] UserReguestDTO value)
         {
-            var userModel = mapper.Map<UserModel>(value);
-            await userService.RegisterUserAsync(userModel);
+            try
+            {
+                var userModel = mapper.Map<UserModel>(value);
+                await userService.RegisterUserAsync(userModel);
+            }
+            catch   (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Ok();
         }
 
         // PUT api/<UsersController>/5
@@ -54,9 +62,10 @@ namespace Web_API.Controllers
 
         // DELETE api/<UsersController>/5
         [HttpDelete("{id}")]
-        public async Task DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
             await userService.DeleteUserAsync(id);
+            return Ok();
         }
     }
 }
