@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
+using BLL.Helpers;
 using BLL.Models;
 using DAL.Entities;
 using DAL.Repositories;
 
 namespace BLL.Sevices
 {
-    public class UserService(UserRepository userRepository, IMapper mapper)
+    public class UserService(UserRepository userRepository, IMapper mapper, PasswordManager passwordManager)
     {
         
         public async Task<UserModel> GetUserByIdAsync(int userId)
@@ -29,10 +30,21 @@ namespace BLL.Sevices
             return output;
         }
 
-        public async Task CreateUserAsync(UserModel userModel)
+        public async Task RegisterUserAsync(UserModel userModel)
         {
             var User = mapper.Map<UserEntity>(userModel);
             await userRepository.AddUserAsync(User);
+        }
+        
+        public async Task<bool> AuthenticateUser(string username, string password)
+        {
+            // Retrieve user from database based on username/email
+            var user = await userRepository.GetUserByUserNameAsync(username);
+            
+            // Verify the password
+            bool isValidPassword = passwordManager.VerifyPassword(password, user.Password);
+
+            return isValidPassword;
         }
 
         public async Task UpdateUserAsync(int id, UserModel userModel)

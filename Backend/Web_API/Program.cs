@@ -1,3 +1,4 @@
+using BLL.Helpers;
 using BLL.Sevices;
 using DAL.Repositories;
 using Web_API.Controllers.AutoMappers;
@@ -20,6 +21,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UserProfileService>();
+builder.Services.AddScoped<PasswordManager>();
 
 builder.Services.AddAutoMapper(typeof(AutomapperProfile));
 

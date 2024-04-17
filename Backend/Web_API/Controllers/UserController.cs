@@ -41,7 +41,7 @@ namespace Web_API.Controllers
         public async Task CreateNewUser([FromBody] UserReguestDTO value)
         {
             var userModel = mapper.Map<UserModel>(value);
-            await userService.CreateUserAsync(userModel);
+            await userService.RegisterUserAsync(userModel);
         }
 
         // PUT api/<UsersController>/5
