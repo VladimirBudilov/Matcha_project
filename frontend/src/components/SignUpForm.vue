@@ -1,6 +1,6 @@
 
 <script lang="ts" setup>
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { SignUpStore } from '@/stores/SignUpStore'
 import { storeToRefs } from 'pinia';
 import axios from 'axios';
@@ -24,18 +24,25 @@ types: {
 }
 };
 
+const errorMsg = ref('')
+
 const formState = reactive({
-user: {
 	email: '',
-	username: '',
+	userName: '',
 	firstName: '',
 	lastName: '',
 	password: ''
-},
 });
 const onFinish = (values: any) => {
-	axios.post('api/user')
-	console.log('Success:', values);
+	errorMsg.value = ''
+	axios.post('api/user', values).catch((msg) => {
+		console.log(msg.response.data)
+		errorMsg.value = msg.response.data
+	}).then(() => {
+		if (errorMsg.value == '') {
+			IsActiveSignUp.value = !IsActiveSignUp.value
+		}
+	})
 };
 </script>
 
@@ -48,24 +55,29 @@ const onFinish = (values: any) => {
 		:validate-messages="validateMessages"
 		@finish="onFinish"
 	>
-		<a-form-item :name="['user', 'email']" label="Email" :rules="[{ type: 'email', required: true }]">
-			<a-input v-model:value="formState.user.email" />
+		<a-form-item :name="['email']" label="Email" :rules="[{ type: 'email', required: true }]">
+			<a-input v-model:value="formState.email" />
 		</a-form-item>
-		<a-form-item :name="['user', 'username']" label="Username" :rules="[{type: 'string', required: true }]">
-		<a-input v-model:value="formState.user.username" />
+		<a-form-item :name="['userName']" label="Username" :rules="[{type: 'string', required: true }]">
+		<a-input v-model:value="formState.userName" />
 		</a-form-item>
-		<a-form-item :name="['user', 'firstName']" label="First name" :rules="[{ type: 'string', required: true }]">
-		<a-input v-model:value="formState.user.firstName" />
+		<a-form-item :name="['firstName']" label="First name" :rules="[{ type: 'string', required: true }]">
+		<a-input v-model:value="formState.firstName" />
 		</a-form-item>
-		<a-form-item :name="['user', 'lastName']" label="Last name" :rules="[{ type: 'string', required: true }]">
-		<a-input v-model:value="formState.user.lastName" />
+		<a-form-item :name="['lastName']" label="Last name" :rules="[{ type: 'string', required: true }]">
+		<a-input v-model:value="formState.lastName" />
 		</a-form-item>
-		<a-form-item :name="['user', 'password']" label="Password" :rules="[{ type: 'string', required: true }]">
-		<a-input-password v-model:value="formState.user.password" />
+		<a-form-item :name="['password']" label="Password" :rules="[{ type: 'string', required: true }]">
+		<a-input-password v-model:value="formState.password" />
 		</a-form-item>
 		<a-form-item :wrapper-col="{ ...layout.wrapperCol, offset: 8 }">
 			<a-button type="primary" html-type="submit">Submit</a-button>
 			<a-button danger type="primary"  html-type="cancel" @click="SignUpButtonTurnOn" style="margin-left: 1vw;">Cancel</a-button>
+			<p style='color: red;'>
+				{{ errorMsg }}
+			</p>
 		</a-form-item>
+
 	</a-form>
+
 </template>
