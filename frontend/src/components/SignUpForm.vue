@@ -3,6 +3,7 @@
 import { reactive } from 'vue';
 import { SignUpStore } from '@/stores/SignUpStore'
 import { storeToRefs } from 'pinia';
+import axios from 'axios';
 
 const IsActiveSignUp = storeToRefs(SignUpStore()).IsActiveSignUp
 
@@ -33,6 +34,7 @@ user: {
 },
 });
 const onFinish = (values: any) => {
+	axios.post('api/user')
 	console.log('Success:', values);
 };
 </script>
