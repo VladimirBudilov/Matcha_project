@@ -76,6 +76,12 @@ public class AuthController : ControllerBase
         });
     }
     
+    [HttpGet("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        return Ok();
+    }
+    
     [HttpPost("registration")]
     public async Task<IActionResult> Register([FromBody] UserDto value)
     {
