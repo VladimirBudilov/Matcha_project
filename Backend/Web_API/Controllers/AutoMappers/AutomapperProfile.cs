@@ -11,9 +11,9 @@ public class AutomapperProfile : Profile
     {
         CreateMap<UserEntity, UserModel>()
             .ReverseMap();
-        CreateMap<UserModel, UserInfoDto>()
+        CreateMap<UserModel, UserInfoRequestDto>()
             .ReverseMap();
-        CreateMap<UserModel, UserReguestDTO>()
+        CreateMap<UserModel, UserReguestDto>()
             .ReverseMap();
 
 

@@ -30,17 +30,40 @@ public class AuthController : ControllerBase
     }
     
     [HttpPost("login")]
-    public async Task<IActionResult> Login(UserAuthRequestDTO loginDto)
+    public async Task<IActionResult> Login(UserAuthRequestDto loginDto)
     {
         var isValid = await _userService.AuthenticateUser(loginDto.UserName, loginDto.Password);
         if (!isValid)
         {
             _logger.LogWarning("Invalid login attempt");
-            return Unauthorized();
+            return BadRequest(new AuthResponseDto()
+            {
+                ErrorMessage = "Invalid Authentication",
+                Result = false
+            });
         }
 
         var token = GenerateJwtToken(await _userService.GetUserByUserNameAsync(loginDto.UserName));
-        return Ok(token);
+        return Ok(new AuthResponseDto()
+        {
+            Result = true,
+            Token = token
+        });
+    }
+    
+    [HttpPost("registration")]
+    public async Task<IActionResult> CreateNewUser([FromBody] UserReguestDto value)
+    {
+        try
+        {
+            var userModel = _mapper.Map<UserModel>(value);
+            await _userService.RegisterUserAsync(userModel);
+        }
+        catch   (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        return Ok();
     }
 
     private string GenerateJwtToken(UserModel user)
