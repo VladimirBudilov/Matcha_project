@@ -1,6 +1,6 @@
 ﻿namespace Web_API.DTOs
 {
-    public record UserReguestDto
+    public record UserDto
     {
         public string UserName { get; init; }
         public string FirstName { get; init; }

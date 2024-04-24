@@ -52,7 +52,7 @@ public class AuthController : ControllerBase
     }
     
     [HttpPost("registration")]
-    public async Task<IActionResult> CreateNewUser([FromBody] UserReguestDto value)
+    public async Task<IActionResult> CreateNewUser([FromBody] UserDto value)
     {
         try
         {
@@ -76,7 +76,7 @@ public class AuthController : ControllerBase
             Subject = new ClaimsIdentity(new[]
             {
                 new Claim("Id", user.UserId.ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             }),

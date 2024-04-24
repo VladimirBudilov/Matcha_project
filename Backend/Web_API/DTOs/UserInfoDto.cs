@@ -1,6 +1,6 @@
 ﻿namespace Web_API.DTOs;
 
-public record UserInfoRequestDto
+public record UserInfoDto
 {
     public string Username { get; init; }
     public string FirstName { get; init; }
