@@ -33,7 +33,7 @@ namespace DAL.Repositories
                 return null;
             }
         }
-        
+
         public async Task<IEnumerable<UserEntity>> GetAllUsers()
         {
             await using (var connection = new SqliteConnection(_connectionString))
@@ -51,7 +51,7 @@ namespace DAL.Repositories
                 return users;
             }
         }
-        
+
         public async Task<UserEntity?> GetUserByUserNameAsync(string userName)
         {
             await using (var connection = new SqliteConnection(_connectionString))
@@ -69,37 +69,39 @@ namespace DAL.Repositories
                 return null;
             }
         }
-        
+
         public async Task<UserEntity?> AddUserAsync(UserEntity user)
         {
             await using (var connection = new SqliteConnection(_connectionString))
             {
                 await connection.OpenAsync();
                 var command = connection.CreateCommand();
-                command.CommandText = "INSERT INTO users (user_name, first_name, last_name, email, password, updated_at, created_at, last_login_at, reset_token_expiry, reset_token, is_verified)" +
-                                      "VALUES (@userName, @firstName, @lastName, @email, @password, @updatedAt, @createdAt, @lastLoginAt, @resetTokenExpiry, @resetToken, @isVerified)";
+                command.CommandText =
+                    "INSERT INTO users (user_name, first_name, last_name, email, password, updated_at, created_at, last_login_at, reset_token_expiry, reset_token, is_verified)" +
+                    "VALUES (@userName, @firstName, @lastName, @email, @password, @updatedAt, @createdAt, @lastLoginAt, @resetTokenExpiry, @resetToken, @isVerified)";
                 FillUserEntityParameters(user, command);
                 await command.ExecuteNonQueryAsync();
                 return user;
             }
         }
-        
+
         public async Task<UserEntity?> UpdateUserAsync(int id, UserEntity user)
         {
             await using (var connection = new SqliteConnection(_connectionString))
             {
                 await connection.OpenAsync();
                 var command = connection.CreateCommand();
-                command.CommandText = "UPDATE users SET user_name = @userName, first_name = @firstName, last_name = @lastName, email = @email, password = @password, " +
-                                      "updated_at = @updatedAt, created_at = @createdAt, last_login_at = @lastLoginAt, reset_token_expiry = @resetTokenExpiry, reset_token = @resetToken, is_verified = @isVerified "+
-                                      "WHERE Id = @id";
+                command.CommandText =
+                    "UPDATE users SET user_name = @userName, first_name = @firstName, last_name = @lastName, email = @email, password = @password, " +
+                    "updated_at = @updatedAt, created_at = @createdAt, last_login_at = @lastLoginAt, reset_token_expiry = @resetTokenExpiry, reset_token = @resetToken, is_verified = @isVerified " +
+                    "WHERE user_id = @id";
                 FillUserEntityParameters(user, command);
                 command.Parameters.AddWithValue("@id", id);
                 await command.ExecuteNonQueryAsync();
                 return user;
             }
         }
-        
+
         public async Task DeleteUserAsync(int id)
         {
             await using (var connection = new SqliteConnection(_connectionString))
@@ -148,6 +150,22 @@ namespace DAL.Repositories
         }
 
 
-        
+        public async Task<UserEntity> GetUserByEmailAsync(string email)
+        {
+            await using (var connection = new SqliteConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                var command = connection.CreateCommand();
+                command.CommandText = "SELECT * FROM users WHERE email = @email";
+                command.Parameters.AddWithValue("@email", email);
+                var reader = await command.ExecuteReaderAsync();
+                if (await reader.ReadAsync())
+                {
+                    return CreateUserEntity(reader);
+                }
+
+                return null;
+            }
+        }
     }
 }

@@ -26,6 +26,7 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UserProfileService>();
 builder.Services.AddScoped<PasswordManager>();
+builder.Services.AddScoped<EmailHelper>();
 
 builder.Services.AddAutoMapper(typeof(AutomapperProfile));
 

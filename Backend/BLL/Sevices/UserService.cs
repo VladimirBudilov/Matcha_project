@@ -6,7 +6,7 @@ using DAL.Repositories;
 
 namespace BLL.Sevices
 {
-    public class UserService(UserRepository userRepository, IMapper mapper, PasswordManager passwordManager)
+    public class UserService(UserRepository userRepository, IMapper mapper, PasswordManager passwordManager, EmailHelper emailHelper)
     {
         
         public async Task<UserModel> GetUserByIdAsync(int userId)
@@ -30,11 +30,14 @@ namespace BLL.Sevices
             return output;
         }
 
-        public async Task RegisterUserAsync(UserModel userModel)
+        public async Task<string> RegisterUserAsync(UserModel userModel)
         {
-            var User = mapper.Map<UserEntity>(userModel);
-            User.Password = passwordManager.HashPassword(User.Password);
-            await userRepository.AddUserAsync(User);
+            var user = mapper.Map<UserEntity>(userModel);
+            user.Password = passwordManager.HashPassword(user.Password);
+            user.ResetToken = emailHelper.GenerateEmailConfirmationToken();
+            user.IsVerified = false;
+            await userRepository.AddUserAsync(user);
+            return user.ResetToken;
         }
         
         public async Task<bool> AuthenticateUser(string username, string password)
@@ -57,6 +60,22 @@ namespace BLL.Sevices
         public async Task DeleteUserAsync(int id)
         {
             await userRepository.DeleteUserAsync(id);
+        }
+
+        public async Task<UserModel> GetUserByEmailAsync(string email)
+        {
+            var user = await userRepository.GetUserByEmailAsync(email);
+            var output = mapper.Map<UserModel>(user);
+            return output;
+        }
+
+        public async Task<bool> ConfirmEmailAsync(int id)
+        {
+            var user = await userRepository.GetUserByIdAsync(id);
+            if (user.IsVerified == true) return false;
+            user.IsVerified = true;
+            await userRepository.UpdateUserAsync(id, user);
+            return true;
         }
     }
 }

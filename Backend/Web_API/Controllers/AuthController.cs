@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
+using BLL.Helpers;
 using BLL.Models;
 using BLL.Sevices;
 using Microsoft.AspNetCore.Mvc;
@@ -20,13 +21,37 @@ public class AuthController : ControllerBase
     private readonly JwtConfig _jwtConfig;
     private readonly IMapper _mapper;
     private readonly ILogger<AuthController> _logger;
+    private readonly EmailHelper _emailHelper;
 
-    public AuthController(UserService userService, IOptions<JwtConfig> jwtConfig, IMapper mapper, ILogger<AuthController> logger)
+    public AuthController(UserService userService, IOptions<JwtConfig> jwtConfig, IMapper mapper, ILogger<AuthController> logger, EmailHelper emailHelper)
     {
         _userService = userService;
         _jwtConfig = jwtConfig.Value;
         _mapper = mapper;
         _logger = logger;
+        _emailHelper = emailHelper;
+    }
+    
+    [HttpGet("verify-email")]
+    public async Task<IActionResult> VerifyEmail([FromQuery]string email, [FromQuery]string token)
+    {
+        var user = await _userService.GetUserByEmailAsync(email);
+        if (user == null)
+        {
+            return BadRequest("User not found");
+        }
+
+        if (user.ResetToken != token)
+        {
+            return BadRequest("Invalid token");
+        }
+
+        var alreadyVerified = await _userService.ConfirmEmailAsync(user.UserId);
+        if (alreadyVerified)
+        {
+            return BadRequest("Email already verified");
+        }
+        return Ok();
     }
     
     [HttpPost("login")]
@@ -52,12 +77,18 @@ public class AuthController : ControllerBase
     }
     
     [HttpPost("registration")]
-    public async Task<IActionResult> CreateNewUser([FromBody] UserDto value)
+    public async Task<IActionResult> Register([FromBody] UserDto value)
     {
         try
         {
             var userModel = _mapper.Map<UserModel>(value);
-            await _userService.RegisterUserAsync(userModel);
+            var token = await _userService.RegisterUserAsync(userModel);
+            
+            var emailUrl = Request.Scheme + "://" + Request.Host + "/api/auth/verify-email?email=" + userModel.Email + "&token=" + token;
+            var emailBody = "Please click on the link to verify your email: <a href=\"" + System.Text.Encodings.Web.HtmlEncoder.Default.Encode(emailUrl) + "\">link</a>";
+            
+            _emailHelper.SendEmail(userModel.Email, emailBody);
+            
         }
         catch   (Exception ex)
         {
