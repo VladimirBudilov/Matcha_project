@@ -26,7 +26,9 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UserProfileService>();
 builder.Services.AddScoped<PasswordManager>();
-builder.Services.AddScoped<EmailHelper>();
+builder.Services.AddScoped<EmailService>();
+
+builder.Services.Configure<SmtpConfig>(builder.Configuration.GetSection("SmtpConfig"));
 
 builder.Services.AddAutoMapper(typeof(AutomapperProfile));
 

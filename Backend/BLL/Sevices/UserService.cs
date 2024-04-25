@@ -6,7 +6,7 @@ using DAL.Repositories;
 
 namespace BLL.Sevices
 {
-    public class UserService(UserRepository userRepository, IMapper mapper, PasswordManager passwordManager, EmailHelper emailHelper)
+    public class UserService(UserRepository userRepository, IMapper mapper, PasswordManager passwordManager, EmailService emailService)
     {
         
         public async Task<UserModel> GetUserByIdAsync(int userId)
@@ -34,7 +34,7 @@ namespace BLL.Sevices
         {
             var user = mapper.Map<UserEntity>(userModel);
             user.Password = passwordManager.HashPassword(user.Password);
-            user.ResetToken = emailHelper.GenerateEmailConfirmationToken();
+            user.ResetToken = emailService.GenerateEmailConfirmationToken();
             user.IsVerified = false;
             await userRepository.AddUserAsync(user);
             return user.ResetToken;

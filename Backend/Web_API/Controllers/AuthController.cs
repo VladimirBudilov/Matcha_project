@@ -21,15 +21,15 @@ public class AuthController : ControllerBase
     private readonly JwtConfig _jwtConfig;
     private readonly IMapper _mapper;
     private readonly ILogger<AuthController> _logger;
-    private readonly EmailHelper _emailHelper;
+    private readonly EmailService _emailService;
 
-    public AuthController(UserService userService, IOptions<JwtConfig> jwtConfig, IMapper mapper, ILogger<AuthController> logger, EmailHelper emailHelper)
+    public AuthController(UserService userService, IOptions<JwtConfig> jwtConfig, IMapper mapper, ILogger<AuthController> logger, EmailService emailService)
     {
         _userService = userService;
         _jwtConfig = jwtConfig.Value;
         _mapper = mapper;
         _logger = logger;
-        _emailHelper = emailHelper;
+        _emailService = emailService;
     }
     
     [HttpGet("verify-email")]
@@ -93,7 +93,7 @@ public class AuthController : ControllerBase
             var emailUrl = Request.Scheme + "://" + Request.Host + "/api/auth/verify-email?email=" + userModel.Email + "&token=" + token;
             var emailBody = "Please click on the link to verify your email: <a href=\"" + System.Text.Encodings.Web.HtmlEncoder.Default.Encode(emailUrl) + "\">link</a>";
             
-            _emailHelper.SendEmail(userModel.Email, emailBody);
+            _emailService.SendEmail(userModel.Email, emailBody);
             
         }
         catch   (Exception ex)

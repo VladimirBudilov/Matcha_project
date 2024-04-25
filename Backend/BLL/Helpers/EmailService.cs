@@ -1,13 +1,17 @@
 ﻿using System.Security.Cryptography;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
 
 namespace BLL.Helpers;
 
-public class EmailHelper
+public class EmailService(IOptions<SmtpConfig> smtpConfig)
 {
+    
+    private readonly SmtpConfig _smtpConfig = smtpConfig.Value;
+
     public string GenerateEmailConfirmationToken()
     {
         using (var rngCryptoServiceProvider = new RNGCryptoServiceProvider())
@@ -22,8 +26,8 @@ public class EmailHelper
     public void SendEmail(string userModelEmail, string emailBody)
     {
         var email = new MimeMessage();
-        email.From.Add(MailboxAddress.Parse("annette.lowe20@ethereal.email"));
-        email.To.Add(MailboxAddress.Parse("annette.lowe20@ethereal.email"));
+        email.From.Add(MailboxAddress.Parse(_smtpConfig.Username));
+        email.To.Add(MailboxAddress.Parse(userModelEmail));
         email.Subject = "Email Confirmation";
         email.Body = new TextPart(TextFormat.Html)
         {
@@ -31,8 +35,8 @@ public class EmailHelper
         };
 
         using var smtp = new SmtpClient();
-        smtp.Connect("smtp.ethereal.email", 587, SecureSocketOptions.StartTls);
-        smtp.Authenticate("annette.lowe20@ethereal.email", "uJ5qF5D81yYtUe7Nsf");
+        smtp.Connect(_smtpConfig.Host, _smtpConfig.Port, SecureSocketOptions.StartTls);
+        smtp.Authenticate(_smtpConfig.Username, _smtpConfig.Password);
 
         smtp.Send(email);
         smtp.Disconnect(true);
