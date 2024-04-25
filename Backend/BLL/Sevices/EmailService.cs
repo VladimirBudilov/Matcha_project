@@ -1,11 +1,12 @@
 ﻿using System.Security.Cryptography;
+using BLL.Helpers;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
 
-namespace BLL.Helpers;
+namespace BLL.Sevices;
 
 public class EmailService(IOptions<SmtpConfig> smtpConfig)
 {

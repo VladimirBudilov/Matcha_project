@@ -1,4 +1,6 @@
-﻿public class SmtpConfig
+﻿namespace BLL.Helpers;
+
+public class SmtpConfig
 {
     public string Host { get; set; }
     public int Port { get; set; }

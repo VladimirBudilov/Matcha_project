@@ -2,7 +2,6 @@
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
-using BLL.Helpers;
 using BLL.Models;
 using BLL.Sevices;
 using Microsoft.AspNetCore.Mvc;
@@ -17,15 +16,17 @@ namespace Web_API.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
+    private readonly AuthService _authService;
     private readonly UserService _userService;
     private readonly JwtConfig _jwtConfig;
     private readonly IMapper _mapper;
     private readonly ILogger<AuthController> _logger;
     private readonly EmailService _emailService;
 
-    public AuthController(UserService userService, IOptions<JwtConfig> jwtConfig, IMapper mapper, ILogger<AuthController> logger, EmailService emailService)
+    public AuthController(UserService userService, AuthService authService, IOptions<JwtConfig> jwtConfig, IMapper mapper, ILogger<AuthController> logger, EmailService emailService)
     {
         _userService = userService;
+        _authService = authService;
         _jwtConfig = jwtConfig.Value;
         _mapper = mapper;
         _logger = logger;
@@ -46,7 +47,7 @@ public class AuthController : ControllerBase
             return BadRequest("Invalid token");
         }
 
-        var alreadyVerified = await _userService.ConfirmEmailAsync(user.UserId);
+        var alreadyVerified = await _authService.ConfirmEmailAsync(user.UserId);
         if (alreadyVerified)
         {
             return BadRequest("Email already verified");
@@ -57,7 +58,7 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(UserAuthRequestDto loginDto)
     {
-        var isValid = await _userService.AuthenticateUser(loginDto.UserName, loginDto.Password);
+        var isValid = await _authService.AuthenticateUser(loginDto.UserName, loginDto.Password);
         if (!isValid)
         {
             _logger.LogWarning("Invalid login attempt");
@@ -88,7 +89,7 @@ public class AuthController : ControllerBase
         try
         {
             var userModel = _mapper.Map<UserModel>(value);
-            var token = await _userService.RegisterUserAsync(userModel);
+            var token = await _authService.RegisterUserAsync(userModel);
             
             var emailUrl = Request.Scheme + "://" + Request.Host + "/api/auth/verify-email?email=" + userModel.Email + "&token=" + token;
             var emailBody = "Please click on the link to verify your email: <a href=\"" + System.Text.Encodings.Web.HtmlEncoder.Default.Encode(emailUrl) + "\">link</a>";
