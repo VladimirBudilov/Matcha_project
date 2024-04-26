@@ -29,7 +29,7 @@ public class AuthService(UserRepository userRepository, IMapper mapper, Password
     {
         var user = await userRepository.GetUserByIdAsync(id);
         if (user.IsVerified == true) return false;
-        user.IsVerified = true;
+        user.IsVerified = false;
         await userRepository.UpdateUserAsync(id, user);
         return true;
     }

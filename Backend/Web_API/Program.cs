@@ -24,7 +24,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<UserProfileService>();
+builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<PasswordManager>();
 builder.Services.AddScoped<EmailService>();
 

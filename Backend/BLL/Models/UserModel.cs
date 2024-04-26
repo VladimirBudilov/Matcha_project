@@ -10,12 +10,12 @@
         public string Password { get; set; }
         public DateTime? LastLoginAt { get; set; }
         public DateTime? ResetTokenExpiry { get; set; }
-        public string ResetToken { get; set; }
-        public bool IsVerified { get; set; }
+        public string? ResetToken { get; set; }
+        public bool? IsVerified { get; set; }
         
         public ProfileModel? Profile { get; set; }
-        public List<PicturesModel> Pictures { get; set; } 
-        public List<LikesModel> Likes { get; set; }
-        public List<InterestsModel> Interests { get; set; }
+        public List<PicturesModel> Pictures { get; set; } = new List<PicturesModel>();
+        public List<LikesModel> Likes { get; set; } = new List<LikesModel>();
+        public List<InterestsModel> Interests { get; set; } = new List<InterestsModel>();
     }
 }

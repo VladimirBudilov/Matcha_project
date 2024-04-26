@@ -5,49 +5,19 @@ using Microsoft.Data.Sqlite;
 
 namespace DAL.Repositories
 {
-    public class UserRepository
+    public class UserRepository(IConfiguration configuration)
     {
-        private readonly string _connectionString;
-
-        public UserRepository(IConfiguration configuration)
-        {
-            _connectionString = configuration.GetConnectionString("UserDbConnection")
-                                ?? throw new ArgumentNullException(nameof(configuration),
-                                    "Connection string not found in configuration");
-        }
-
+        private readonly string _connectionString = configuration.GetConnectionString("UserDbConnection")
+                                                    ?? throw new ArgumentNullException(nameof(configuration),
+                                                        "Connection string not found in configuration");
         #region GettingData
 
         public async Task<UserEntity?> GetUserByIdAsync(int id)
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
-            var command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM users WHERE user_id = @id";
-            command.Parameters.AddWithValue("@id", id);
-            var reader = await command.ExecuteReaderAsync();
-            if (await reader.ReadAsync())
-            {
-                return CreateUserEntity(reader);
-            }
-
-            return null;
-        }
-
-        public async Task<IEnumerable<UserEntity>> GetAllUsers()
-        {
-            await using var connection = new SqliteConnection(_connectionString);
-            await connection.OpenAsync();
-            var command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM users";
-            var reader = await command.ExecuteReaderAsync();
-            var users = new List<UserEntity>();
-            while (await reader.ReadAsync())
-            {
-                users.Add(CreateUserEntity(reader));
-            }
-
-            return users;
+            var dataTable = await GetTableByParameter(connection, "SELECT * FROM users WHERE user_id = @id", "@id", id);
+            return dataTable.Rows.Count > 0 ? CreateUser(dataTable.Rows[0]) : null;
         }
 
         public async Task<UserEntity> GetUserByEmailAsync(string email)
@@ -55,16 +25,8 @@ namespace DAL.Repositories
             await using (var connection = new SqliteConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                var command = connection.CreateCommand();
-                command.CommandText = "SELECT * FROM users WHERE email = @email";
-                command.Parameters.AddWithValue("@email", email);
-                var reader = await command.ExecuteReaderAsync();
-                if (await reader.ReadAsync())
-                {
-                    return CreateUserEntity(reader);
-                }
-
-                return null;
+                var dataTable = await GetTableByParameter(connection, "SELECT * FROM users WHERE email = @email", "@email", email);
+                return dataTable.Rows.Count > 0 ? CreateUser(dataTable.Rows[0]) : null;
             }
         }
 
@@ -72,18 +34,23 @@ namespace DAL.Repositories
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
-            var command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM users WHERE user_name = @userName";
-            command.Parameters.AddWithValue("@userName", userName);
-            var reader = await command.ExecuteReaderAsync();
-            if (await reader.ReadAsync())
-            {
-                return CreateUserEntity(reader);
-            }
-
-            return null;
+            var dataTable = await GetTableByParameter(connection, "SELECT * FROM users WHERE user_name = @userName", "@userName", userName);
+            return dataTable.Rows.Count > 0 ? CreateUser(dataTable.Rows[0]) : null;
         }
 
+        public async Task<IEnumerable<UserEntity>> GetAllUsers()
+        {
+            await using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+            var dataTable = await GetTableByParameter(connection, "SELECT * FROM users", null, null);
+            var users = new List<UserEntity>();
+            foreach (DataRow row in dataTable.Rows)
+            {
+                users.Add(CreateUser(row));
+            }
+
+            return users;
+        }
         #endregion
 
         #region GettingFullData
@@ -93,37 +60,29 @@ namespace DAL.Repositories
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
             var command = connection.CreateCommand();
-            //collect data about user and profile
             var userInfo = await GetTableByParameter(connection, "SELECT * FROM users" +
-                                                             " LEFT JOIN profiles ON users.user_id = profiles.user_id" +
+                                                             " LEFT JOIN profiles ON users.user_id = profiles.profile_id" +
                                                              " WHERE user_id = @id", "@id", id);
-            // collect data about user interests
-            var intersts = await GetTableByParameter(connection, "SELECT * FROM user_interests WHERE user_id = @id",
+            var userInterestsById = await GetTableByParameter(connection, "SELECT * FROM user_interests WHERE user_id = @id",
                 "@id", id);
-            //collect data about howmach peopel liked his prfile by liked_user_id
+            var interestsIds = (from DataRow row in userInterestsById.Rows select row.Field<long>("interest_id")).ToList();
+            command.CommandText = "SELECT * FROM interests WHERE interest_id IN (" +
+                                  string.Join(",", interestsIds) + ")";
+            var interests = new DataTable();
+            interests.Load(await command.ExecuteReaderAsync());
             var likes = await GetTableByParameter(connection, "SELECT * FROM likes WHERE liked_user_id = @id", "@id",
                 id);
-            //collect all users pictures by user_id
             var pictures =
                 await GetTableByParameter(connection, "SELECT * FROM pictures WHERE user_id = @id", "@id", id);
-            //collect data about profile views
             var profileViews = await GetTableByParameter(connection,
-                "SELECT * FROM profile_views WHERE viewed_user_id = @id", "@id", id);
-            //get all user interests by their name
-            var userInterests = new List<string>();
-            foreach (DataRow row in intersts.Rows)
-            {
-                userInterests.Add(row.Field<string>("interest"));
-            }
-
-            //get amount of likes
+                "SELECT * FROM profile_views WHERE profile_user_id = @id", "@id", id);
+            var userInterests = (from DataRow row in interests.Rows select row.Field<string>("name")).ToList();
             var likesAmount = likes.Rows.Count;
-            //get user pictures
             var profilePictures = new List<string>();
-            string? mainProfilePicture = string.Empty;
+            var mainProfilePicture = string.Empty;
             foreach (DataRow row in pictures.Rows)
             {
-                if (row.Field<bool>("is_profile_picture"))
+                if (row.Field<long>("is_profile_picture") == 0)
                 {
                     mainProfilePicture = row.Field<string>("image_path");
                     continue;
@@ -131,64 +90,131 @@ namespace DAL.Repositories
 
                 profilePictures.Add(row.Field<string>("image_path"));
             }
-
-            //get amount of profile views
             var profileViewsAmount = profileViews.Rows.Count;
             if (userInfo.Rows.Count > 0)
             {
-                var user = CreateUserEntityFromTable(userInfo);
-                user.Profile = new ProfileEntity
-                {
-                    ProfileId = userInfo.Rows[0].Field<int>("profile_id"),
-                    Gender = userInfo.Rows[0].Field<string>("gender"),
-                    SexualPreferences = userInfo.Rows[0].Field<string>("sexual_preferences"),
-                    Biography = userInfo.Rows[0].Field<string>("biography"),
-                    ProfilePicture = mainProfilePicture,
-                    ProfilePictureId = userInfo.Rows[0].Field<int>("profile_picture_id"),
-                    FameRating = userInfo.Rows[0].Field<int>("fame_rating"),
-                    Location = userInfo.Rows[0].Field<string>("location"),
-                    Interests = userInterests,
-                    Pictures = profilePictures,
-                    ViewsAmount = profileViewsAmount,
-                    LikesAmount = likesAmount,
-                };
+                var userInfoRow = userInfo.Rows[0];
+                var user = CreateUser(userInfoRow);
+                user.Profile = CreateUserProfile(userInfoRow, mainProfilePicture, userInterests, profilePictures, profileViewsAmount, likesAmount);
                 return user;
+            }
+            return null;
+        }
+
+        private static ProfileEntity CreateUserProfile(DataRow userInfoRow, string? mainProfilePicture, List<string> userInterests, List<string> profilePictures, int profileViewsAmount, int likesAmount)
+        {
+            return new ProfileEntity
+            {
+                ProfileId = userInfoRow.IsNull("profile_id") ? null : userInfoRow.Field<long>("profile_id"),
+                Gender = userInfoRow.IsNull("gender") ? null : userInfoRow.Field<string>("gender"),
+                SexualPreferences = userInfoRow.IsNull("sexual_preferences") ? null : userInfoRow.Field<string>("sexual_preferences"),
+                Biography = userInfoRow.IsNull("biography") ? null : userInfoRow.Field<string>("biography"),
+                ProfilePictureId = userInfoRow.IsNull("profile_picture_id") ? (long?)null : userInfoRow.Field<long>("profile_picture_id"),
+                FameRating = userInfoRow.IsNull("fame_rating") ? null : userInfoRow.Field<long>("fame_rating"),
+                Location = userInfoRow.IsNull("location") ? null : userInfoRow.Field<string>("location"),
+                Age = userInfoRow.Field<long>("age"),
+                ProfilePicture = mainProfilePicture, 
+                Interests = userInterests,
+                Pictures = profilePictures,
+                ViewsAmount = profileViewsAmount,
+                LikesAmount = likesAmount,
+            };
+        }
+
+        private UserEntity? CreateUser(DataRow row)
+        {
+            return new UserEntity
+            {
+                UserId = row.IsNull("user_id") ? (long?)null : row.Field<long>("user_id"),
+                IsVerified = row.IsNull("is_verified") ? (bool?)null : ConvertLongToBool(row.Field<long>("is_verified")),
+                UserName = row.Field<string>("user_name"),
+                FirstName = row.Field<string>("first_name"),
+                LastName = row.Field<string>("last_name"),
+                Email = row.Field<string>("email"),
+                Password = row.Field<string>("password"),
+                UpdatedAt = TryParseDateTime(row.Field<string>("updated_at")),
+                CreatedAt = TryParseDateTime(row.Field<string>("created_at")),
+                LastLoginAt = TryParseDateTime(row.Field<string>("last_login_at")),
+                ResetTokenExpiry = TryParseDateTime(row.Field<string>("reset_token_expiry")),
+                ResetToken = row.Field<string?>("reset_token"),
+            };
+        }
+        
+        private DateTime? TryParseDateTime(string value)
+        {
+            if (DateTime.TryParse(value, out var result))
+            {
+                return result;
             }
 
             return null;
         }
-
-        private UserEntity? CreateUserEntityFromTable(DataTable userInfo)
+        
+        private static T? GetClassValueOrNull<T>(DataRow row, string columnName) where T : class
         {
-            return new UserEntity
+            return row.IsNull(columnName) ? null : row.Field<T>(columnName);
+        }
+
+        private static T? GetStructValueOrNull<T>(DataRow row, string columnName) where T : struct
+        {
+            return row.IsNull(columnName) ? (T?)null : row.Field<T>(columnName);
+        }
+        
+        private bool? ConvertLongToBool(long? value)
+        {
+            if (value == null)
             {
-                UserId = userInfo.Rows[0].Field<int>("user_id"),
-                UserName = userInfo.Rows[0].Field<string>("user_name"),
-                FirstName = userInfo.Rows[0].Field<string>("first_name"),
-                LastName = userInfo.Rows[0].Field<string>("last_name"),
-                Email = userInfo.Rows[0].Field<string>("email"),
-                Password = userInfo.Rows[0].Field<string>("password"),
-                UpdatedAt = userInfo.Rows[0].Field<DateTime?>("updated_at"),
-                CreatedAt = userInfo.Rows[0].Field<DateTime?>("created_at"),
-                LastLoginAt = userInfo.Rows[0].Field<DateTime?>("last_login_at"),
-                ResetTokenExpiry = userInfo.Rows[0].Field<DateTime?>("reset_token_expiry"),
-                ResetToken = userInfo.Rows[0].Field<string>("reset_token"),
-                IsVerified = userInfo.Rows[0].Field<bool>("is_verified")
-            };
+                return null;
+            }
+
+            return value != 0;
+        }
+        
+        private T? TryParse<T>(string value) where T : struct
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return null;
+            }
+
+            var converter = System.ComponentModel.TypeDescriptor.GetConverter(typeof(T));
+            if (converter != null && converter.IsValid(value))
+            {
+                return (T)converter.ConvertFromString(value);
+            }
+            return null;
         }
 
         private static async Task<DataTable> GetTableByParameter(SqliteConnection connection, string sqlQuery,
             string parameterName,
             int parameter)
         {
-            SqliteCommand command;
-            command = connection.CreateCommand();
+            var command = connection.CreateCommand();
             command.CommandText = sqlQuery;
             command.Parameters.AddWithValue(parameterName, parameter);
-            var interestsReader = await command.ExecuteReaderAsync();
-            var interstTable = new DataTable();
-            interstTable.Load(interestsReader);
-            return interstTable;
+            var readerAsync = await command.ExecuteReaderAsync();
+            var table = new DataTable();
+            if (readerAsync.HasRows)
+            {
+                table.Load(readerAsync);
+            }
+            return table;
+        }
+        
+        private static async Task<DataTable> GetTableByParameter(SqliteConnection connection, string sqlQuery,
+            string parameterName,
+            string parameter)
+        {
+            var command = connection.CreateCommand();
+            command.CommandText = sqlQuery;
+            command.Parameters.AddWithValue(parameterName, parameter);
+            var readerAsync = await command.ExecuteReaderAsync();
+            var table = new DataTable();
+            if (readerAsync.HasRows)
+            {
+                table.Load(readerAsync);
+            }
+            return table;
         }
 
         #endregion
@@ -249,26 +275,6 @@ namespace DAL.Repositories
             command.Parameters.AddWithValue("@resetTokenExpiry", user.ResetTokenExpiry ?? DateTime.Now);
             command.Parameters.AddWithValue("@resetToken", user.ResetToken ?? "");
             command.Parameters.AddWithValue("@isVerified", user.IsVerified ?? false);
-        }
-
-
-        private static UserEntity CreateUserEntity(SqliteDataReader reader)
-        {
-            return new UserEntity
-            {
-                UserId = reader.GetInt32(0),
-                UserName = reader.GetString(1),
-                FirstName = reader.GetString(2),
-                LastName = reader.GetString(3),
-                Email = reader.GetString(4),
-                Password = reader.GetString(5),
-                UpdatedAt = reader.IsDBNull(6) ? null : reader.GetDateTime(6),
-                CreatedAt = reader.IsDBNull(7) ? null : reader.GetDateTime(7),
-                LastLoginAt = reader.IsDBNull(8) ? null : reader.GetDateTime(8),
-                ResetTokenExpiry = reader.IsDBNull(9) ? null : reader.GetDateTime(9),
-                ResetToken = reader.IsDBNull(10) ? null : reader.GetString(10),
-                IsVerified = reader.GetBoolean(11)
-            };
         }
 
         #endregion

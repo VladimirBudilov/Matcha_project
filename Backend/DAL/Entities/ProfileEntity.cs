@@ -2,7 +2,7 @@
 
 public class ProfileEntity
 {
-    public int ProfileId { get; set; }
+    public long? ProfileId { get; set; }
     
     public string Gender { get; set; }
     
@@ -10,9 +10,9 @@ public class ProfileEntity
     
     public string? Biography { get; set; }
 
-    public int? ProfilePictureId { get; set; }
+    public long? ProfilePictureId { get; set; }
     
-    public int FameRating { get; set; }
+    public long? FameRating { get; set; }
     
     public DateTime? CreatedAt { get; set; }
     
@@ -29,4 +29,5 @@ public class ProfileEntity
     public long ViewsAmount { get; set; }
     
     public long LikesAmount { get; set; }
+    public long Age { get; set; }
 }

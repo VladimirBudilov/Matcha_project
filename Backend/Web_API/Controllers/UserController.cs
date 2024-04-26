@@ -16,27 +16,27 @@ namespace Web_API.Controllers
     {
         // GET: api/<UsersController>
         [HttpGet]
-        public async Task<IEnumerable<UserInfoDto>> GetUsers()
+        public async Task<IEnumerable<ProfileDto>> GetUsers()
         {
             var users = await userService.GetAllUsersAsync();
-            var output = mapper.Map<IEnumerable<UserInfoDto>>(users);
+            var output = mapper.Map<IEnumerable<ProfileDto>>(users);
             return output;
         }
 
         // GET api/<UsersController>/5
         [HttpGet("{id}")]
-        public async Task<UserInfoDto> GetUserById(int id)
+        public async Task<ProfileDto> GetUserById(int id)
         {
             var user = await userService.GetUserByIdAsync(id);
-            var output = mapper.Map<UserInfoDto>(user);
+            var output = mapper.Map<ProfileDto>(user);
             return output;
         }
 
         [HttpGet("username/{userName}")]
-        public async Task<UserInfoDto> GetUserByUserName(string userName)
+        public async Task<ProfileDto> GetUserByUserName(string userName)
         {
             var user = await userService.GetUserByUserNameAsync(userName);
-            var output = mapper.Map<UserInfoDto>(user);
+            var output = mapper.Map<ProfileDto>(user);
             return output;
         }
 

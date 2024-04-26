@@ -1,24 +1,28 @@
-﻿using BLL.Sevices;
+﻿using AutoMapper;
+using BLL.Sevices;
 using Microsoft.AspNetCore.Mvc;
+using Web_API.DTOs;
 
 namespace Web_API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class UsersProfileController(UserProfileService userProfileService) : ControllerBase
+public class ProfileController(ProfileService profileService, IMapper mapper) : ControllerBase
 {
     // GET: api/<UsersController>
     [HttpGet]
-    public async Task<IEnumerable<string>> Get()
+    public async Task<IEnumerable<string>> GetAllProfilesInfo()
     {
-        return await userProfileService.GetAllUsersAsync();
+        return await profileService.GetAllUsersAsync();
     }
 
     // GET api/<UsersController>/5
     [HttpGet("{id}")]
-    public async Task<string> Get(int id)
+    public async Task<ProfileDto> GetAllProfileInfo(int id)
     {
-        return await Task.FromResult("value");
+        var model =  await profileService.GetFullDataAsync(id);
+        var output = mapper.Map<ProfileDto>(model);
+        return output;
     }
 
     // POST api/<UsersController>
