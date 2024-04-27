@@ -34,6 +34,7 @@ builder.Services.AddScoped<DataParser>();
 builder.Services.AddScoped<EntityCreator>();
 builder.Services.AddScoped<TableFetcher>();
 builder.Services.AddScoped<ParameterInjector>();
+builder.Services.AddScoped<DtoValidator>();
 
 builder.Services.AddMvc(options => options.Filters.Add(new ExceptionHadlerFilter()));
 

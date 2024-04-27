@@ -48,9 +48,7 @@ public class DtoValidator
         }
     }
 
-
     #region
-
     private static void ValidateEmail(string email)
     {
         if (!new EmailAddressAttribute().IsValid(email))

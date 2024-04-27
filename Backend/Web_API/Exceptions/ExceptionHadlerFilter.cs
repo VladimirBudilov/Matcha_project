@@ -20,9 +20,9 @@ public class ExceptionHadlerFilter : ExceptionFilterAttribute
         {
             context.Result = new NotFoundObjectResult(new { error = context.Exception.Message });
         }
-        else
-        {
-            context.Result = new BadRequestObjectResult(new { error = "An error occurred while processing your request" });
-        }
+        // else
+        // {
+        //     context.Result = new BadRequestObjectResult(new { error = "An error occurred while processing your request" });
+        // }
     }
 }
