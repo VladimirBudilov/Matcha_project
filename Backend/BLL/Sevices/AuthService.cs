@@ -2,10 +2,13 @@
 using BLL.Helpers;
 using DAL.Entities;
 using DAL.Repositories;
+using Profile = DAL.Entities.Profile;
 
 namespace BLL.Sevices;
 
-public class AuthService(UserRepository userRepository, IMapper mapper, PasswordManager passwordManager, EmailService emailService)
+public class AuthService(UserRepository userRepository,
+      ProfileRepository profileRepository,  IMapper mapper,
+    PasswordManager passwordManager, EmailService emailService)
 {
     public async Task<string?> RegisterUserAsync(User user)
     {
@@ -19,6 +22,14 @@ public class AuthService(UserRepository userRepository, IMapper mapper, Password
         user.CreatedAt = DateTime.Now;
         user.UpdatedAt = DateTime.Now;
         var res = await userRepository.AddUserAsync(user);
+        var profile = new Profile()
+        {
+            ProfileId = user.UserId,
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now,
+            Gender = "male"
+        };
+        await profileRepository.CreateProfileAsync(profile);
         return res == null ? null : user.ResetToken;
     }
     

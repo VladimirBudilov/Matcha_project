@@ -5,7 +5,7 @@ using DAL.Repositories;
 
 namespace BLL.Sevices;
 
-public class UserService(UserRepository userRepository, IMapper mapper)
+public class UserService(UserRepository userRepository, ProfileRepository profileRepository, IMapper mapper)
 {
     public async Task<User?> GetUserByIdAsync(int userId)
     {
@@ -59,15 +59,6 @@ public class UserService(UserRepository userRepository, IMapper mapper)
         if (output == null)
             throw new ObjectNotFoundException(
                 "User not found by email. You can't get user that doesn't exist by email");
-
-        return output;
-    }
-
-    public async Task<User> GetFullUserDataAsync(int userId)
-    {
-        var output = await userRepository.GetFullDataAsync(userId);
-        if (output == null)
-            throw new ObjectNotFoundException("User not found. You can't get full data of user that doesn't exist");
 
         return output;
     }

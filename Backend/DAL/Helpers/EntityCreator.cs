@@ -8,7 +8,9 @@ public class EntityCreator(DataParser dataParser)
     
     private readonly DataParser _dataParser = dataParser;
     
-    public  Profile CreateUserProfile(DataRow userInfoRow, string? mainProfilePicture, List<string> userInterests, List<string> profilePictures, int profileViewsAmount, int likesAmount)
+    public  Profile CreateUserProfile(DataRow userInfoRow, string? mainProfilePicture = null,
+        List<string> userInterests = null, List<string> profilePictures = null, int profileViewsAmount = 0,
+        int likesAmount = 0)
         {
             return new Profile
             {

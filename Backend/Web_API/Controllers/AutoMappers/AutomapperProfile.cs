@@ -2,6 +2,7 @@
 using DAL.Entities;
 using Web_API.DTOs;
 using Profile = AutoMapper.Profile;
+using EntityProfile = DAL.Entities.Profile;
 
 namespace Web_API.Controllers.AutoMappers;
 
@@ -15,6 +16,9 @@ public class AutomapperProfile : Profile
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
             .ForMember(dest => dest.Password, opt => opt.MapFrom(src => string.Empty));
+        
         CreateMap<UserDto, User>();
+
+        CreateMap<ProfileRequestDto, EntityProfile>();
     }
 }

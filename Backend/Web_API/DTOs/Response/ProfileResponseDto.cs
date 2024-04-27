@@ -1,7 +1,8 @@
 ﻿namespace Web_API.DTOs;
 
-public record ProfileDto
+public record ProfileResponseDto
 {
+    public int ProfileId { get; init; } = 0;
     public string UserName { get; init; } = "";
     public string FirstName { get; init; } = "";
     public string LastName { get; init; } = "";

@@ -1,21 +1,41 @@
 ﻿using AutoMapper;
 using DAL.Entities;
+using DAL.Helpers;
 using DAL.Repositories;
+using Profile = DAL.Entities.Profile;
 
 namespace BLL.Sevices;
 
-public class ProfileService(UserRepository userRepository, IMapper mapper)
+public class ProfileService(UserRepository userRepository, ProfileRepository profileRepository, IMapper mapper)
 {
     private readonly UserRepository _userRepository = userRepository;
     private readonly IMapper _mapper = mapper;
+    private readonly ProfileRepository _profileRepository = profileRepository;
         
-    public async Task<User> GetFullDataAsync(int id)
+    public async Task<User> GetFullProfileByIdAsync(int id)
     {
-        return await _userRepository.GetFullDataAsync(id);
+        var profile=  await _profileRepository.GetFullProfileAsync(id);
+        return profile;
+    }
+    
+    public async Task<Profile> GetProfileAsync(int id)
+    {
+        var profile = await _profileRepository.GetProfileByIdAsync(id);
+        return profile;
     }
 
-    public async Task<IEnumerable<string>> GetAllUsersAsync()
+    public async Task<IEnumerable<string>> GetFullProfilesAsync()
     {
         throw new NotImplementedException();
+    }
+    
+    public async Task UpdateProfileAsync(int id, Profile profile)
+    {
+        var currentProfile = await profileRepository.GetProfileByIdAsync(id);
+        if (currentProfile == null) throw new ObjectNotFoundException("Profile not found");
+        profile.ProfileId = id;
+        profile.UpdatedAt = DateTime.Now;
+        var res = await _profileRepository.UpdateProfileAsync(profile);
+        if (res == null) throw new ObjectNotFoundException("Profile not found");
     }
 }
