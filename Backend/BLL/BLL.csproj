@@ -16,4 +16,8 @@
 	  <PackageReference Include="MailKit" Version="4.5.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Exceptions\" />
+	</ItemGroup>
+
 </Project>

@@ -10,7 +10,9 @@ public class AuthService(UserRepository userRepository, IMapper mapper, Password
     public async Task<string?> RegisterUserAsync(User user)
     {
         //TODO add validation
-        
+        var userByEmail = await userRepository.GetUserByEmailAsync(user.Email);
+        var userByUserName = await userRepository.GetUserByUserNameAsync(user.UserName);
+        if (userByEmail != null || userByUserName != null) return null;
         user.Password = passwordManager.HashPassword(user.Password);
         user.ResetToken = emailService.GenerateEmailConfirmationToken();
         user.IsVerified = false;

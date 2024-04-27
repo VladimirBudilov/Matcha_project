@@ -15,16 +15,6 @@ namespace Web_API.Controllers
     [ApiController]
     public class UserController(UserService userService, IMapper mapper, DtoValidator validator) : ControllerBase
     {
-        // GET: api/<UsersController>
-        //TODO Will be removed in the future
-        [HttpGet]
-        public async Task<IEnumerable<UserDto>> GetUsers()
-        {
-            var users = await userService.GetAllUsersAsync();
-            var output = mapper.Map<IEnumerable<UserDto>>(users);
-            return output;
-        }
-
         // GET api/<UsersController>/5
         [HttpGet("{id:int}")]
         public async Task<UserDto> GetUserById([FromRoute]int id)
@@ -36,17 +26,7 @@ namespace Web_API.Controllers
             var output = mapper.Map<UserDto>(user);
             return output;
         }
-
-        [HttpGet("username/{userName}")]
-        //TODO Will be removed in the future
-        public async Task<UserDto> GetUserByUserName(string userName)
-        {
-            validator.ValidateUsername(userName);
-            var user = await userService.GetUserByUserNameAsync(userName);
-            var output = mapper.Map<UserDto>(user);
-            return output;
-        }
-
+        
         // PUT api/<UsersController>/5
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateUser([FromRoute]int id, [FromBody] UserDto value)
@@ -60,6 +40,17 @@ namespace Web_API.Controllers
             return Ok(userModel);
         }
 
+        // DELETE api/<UsersController>/5
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteUser([FromRoute]int id)
+        {
+            validator.CheckId(id);
+            //TODO turn on when site will be ready
+            //CheckUserAuth(id);
+            var output = await userService.DeleteUserAsync(id);
+            return Ok(output);
+        }
+        
         private void CheckUserAuth(int id)
         {
             if (User?.Claims == null)
@@ -78,17 +69,6 @@ namespace Web_API.Controllers
             {
                 throw new ForbiddenRequestException();
             }
-        }
-
-        // DELETE api/<UsersController>/5
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteUser([FromRoute]int id)
-        {
-            validator.CheckId(id);
-            //TODO turn on when site will be ready
-            //CheckUserAuth(id);
-            await userService.DeleteUserAsync(id);
-            return Ok();
         }
     }
 }
