@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using BLL.Models;
 using Microsoft.AspNetCore.Mvc;
 using BLL.Sevices;
+using DAL.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -9,34 +9,34 @@ using Web_API.DTOs;
 
 namespace Web_API.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController(UserService userService, IMapper mapper) : ControllerBase
     {
         // GET: api/<UsersController>
         [HttpGet]
-        public async Task<IEnumerable<ProfileDto>> GetUsers()
+        public async Task<IEnumerable<UserDto>> GetUsers()
         {
             var users = await userService.GetAllUsersAsync();
-            var output = mapper.Map<IEnumerable<ProfileDto>>(users);
+            var output = mapper.Map<IEnumerable<UserDto>>(users);
             return output;
         }
 
         // GET api/<UsersController>/5
         [HttpGet("{id}")]
-        public async Task<ProfileDto> GetUserById(int id)
+        public async Task<UserDto> GetUserById(int id)
         {
             var user = await userService.GetUserByIdAsync(id);
-            var output = mapper.Map<ProfileDto>(user);
+            var output = mapper.Map<UserDto>(user);
             return output;
         }
 
         [HttpGet("username/{userName}")]
-        public async Task<ProfileDto> GetUserByUserName(string userName)
+        public async Task<UserDto> GetUserByUserName(string userName)
         {
             var user = await userService.GetUserByUserNameAsync(userName);
-            var output = mapper.Map<ProfileDto>(user);
+            var output = mapper.Map<UserDto>(user);
             return output;
         }
 
@@ -60,7 +60,7 @@ namespace Web_API.Controllers
             {
                 return Forbid();
             }
-            var userModel = mapper.Map<UserModel>(value);
+            var userModel = mapper.Map<User>(value);
             await userService.UpdateUserAsync(id, userModel);
             return Ok(userModel);
         }

@@ -4,27 +4,27 @@ namespace DAL.Repositories;
 
 public class ProfileRepository
 {
-    public async Task<ProfileEntity> GetUserProfileByIdAsync(int id)
+    public async Task<Profile> GetUserProfileByIdAsync(int id)
     {
         throw new NotImplementedException();
     }
     
-    public async Task<ProfileEntity> CreateUserProfileAsync(ProfileEntity entity)
+    public async Task<Profile> CreateUserProfileAsync(Profile entity)
     {
         throw new NotImplementedException();
     }
     
-    public async Task<ProfileEntity> UpdateUserProfileAsync(ProfileEntity entity)
+    public async Task<Profile> UpdateUserProfileAsync(Profile entity)
     {
         throw new NotImplementedException();
     }
     
-    public async Task<ProfileEntity> DeleteUserProfileAsync(int id)
+    public async Task<Profile> DeleteUserProfileAsync(int id)
     {
         throw new NotImplementedException();
     }
     
-    public async Task<IEnumerable<ProfileEntity>> GetAllUserProfilesAsync()
+    public async Task<IEnumerable<Profile>> GetAllUserProfilesAsync()
     {
         throw new NotImplementedException();
     }

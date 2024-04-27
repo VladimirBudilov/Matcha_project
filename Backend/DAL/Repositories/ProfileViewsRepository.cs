@@ -4,27 +4,27 @@ namespace DAL.Repositories;
 
 public class ProfileViewsRepository
 {
-    public async Task<ProfileViewsEntity> GetProfileViewsByIdAsync(int id)
+    public async Task<ProfileViews> GetProfileViewsByIdAsync(int id)
     {
         throw new NotImplementedException();
     }
     
-    public async Task<ProfileViewsEntity> CreateProfileViewsAsync(ProfileViewsEntity entity)
+    public async Task<ProfileViews> CreateProfileViewsAsync(ProfileViews entity)
     {
         throw new NotImplementedException();
     }
     
-    public async Task<ProfileViewsEntity> UpdateProfileViewsAsync(ProfileViewsEntity entity)
+    public async Task<ProfileViews> UpdateProfileViewsAsync(ProfileViews entity)
     {
         throw new NotImplementedException();
     }
     
-    public async Task<ProfileViewsEntity> DeleteProfileViewsAsync(int id)
+    public async Task<ProfileViews> DeleteProfileViewsAsync(int id)
     {
         throw new NotImplementedException();
     }
     
-    public async Task<IEnumerable<ProfileViewsEntity>> GetAllProfileViewsAsync()
+    public async Task<IEnumerable<ProfileViews>> GetAllProfileViewsAsync()
     {
         throw new NotImplementedException();
     }

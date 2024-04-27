@@ -17,7 +17,7 @@ namespace DAL.Repositories
         
         #region GettingData
 
-        public async Task<UserEntity?> GetUserByIdAsync(int id)
+        public async Task<User?> GetUserByIdAsync(long id)
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
@@ -25,17 +25,15 @@ namespace DAL.Repositories
             return dataTable.Rows.Count > 0 ? _entityCreator.CreateUser(dataTable.Rows[0]) : null;
         }
 
-        public async Task<UserEntity> GetUserByEmailAsync(string email)
+        public async Task<User?> GetUserByEmailAsync(string email)
         {
-            await using (var connection = new SqliteConnection(_connectionString))
-            {
-                await connection.OpenAsync();
-                var dataTable = await _fetcher.GetTableByParameter(connection, "SELECT * FROM users WHERE email = @email", "@email", email);
-                return dataTable.Rows.Count > 0 ? _entityCreator.CreateUser(dataTable.Rows[0]) : null;
-            }
+            await using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+            var dataTable = await _fetcher.GetTableByParameter(connection, "SELECT * FROM users WHERE email = @email", "@email", email);
+            return dataTable.Rows.Count > 0 ? _entityCreator.CreateUser(dataTable.Rows[0]) : null;
         }
 
-        public async Task<UserEntity?> GetUserByUserNameAsync(string userName)
+        public async Task<User?> GetUserByUserNameAsync(string userName)
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
@@ -43,12 +41,12 @@ namespace DAL.Repositories
             return dataTable.Rows.Count > 0 ? _entityCreator.CreateUser(dataTable.Rows[0]) : null;
         }
 
-        public async Task<IEnumerable<UserEntity>> GetAllUsers()
+        public async Task<IEnumerable<User>> GetAllUsers()
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
-            var dataTable = await _fetcher.GetTableByParameter(connection, "SELECT * FROM users", null, null);
-            var users = new List<UserEntity>();
+            var dataTable = await _fetcher.GetTable(connection, "SELECT * FROM users");
+            var users = new List<User>();
             foreach (DataRow row in dataTable.Rows)
             {
                 users.Add(_entityCreator.CreateUser(row));
@@ -60,7 +58,7 @@ namespace DAL.Repositories
 
         #region GettingFullData
 
-        public async Task<UserEntity?> GetFullDataAsync(int id)
+        public async Task<User?> GetFullDataAsync(int id)
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
@@ -108,7 +106,7 @@ namespace DAL.Repositories
 
         #endregion
 
-        public async Task<UserEntity?> AddUserAsync(UserEntity user)
+        public async Task<User?> AddUserAsync(User user)
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
@@ -121,7 +119,7 @@ namespace DAL.Repositories
             return user;
         }
 
-        public async Task<UserEntity?> UpdateUserAsync(int id, UserEntity user)
+        public async Task<User?> UpdateUserAsync(long id, User user)
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
@@ -132,20 +130,24 @@ namespace DAL.Repositories
                 "WHERE user_id = @id";
             _injector.FillUserEntityParameters(user, command);
             command.Parameters.AddWithValue("@id", id);
-            await command.ExecuteNonQueryAsync();
-            return user;
+            var output = await command.ExecuteNonQueryAsync();
+            return output > 0 ? user : null;
         }
 
-        public async Task DeleteUserAsync(int id)
+        public async Task<User?> DeleteUserAsync(long id)
         {
-            await using (var connection = new SqliteConnection(_connectionString))
+            await using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+            var output = await GetUserByIdAsync(id);
+            if (output == null)
             {
-                await connection.OpenAsync();
-                var command = connection.CreateCommand();
-                command.CommandText = "DELETE FROM User WHERE Id = @id";
-                command.Parameters.AddWithValue("@id", id);
-                await command.ExecuteNonQueryAsync();
+                return null;
             }
+            var command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM User WHERE Id = @id";
+            command.Parameters.AddWithValue("@id", id);
+            await command.ExecuteNonQueryAsync();
+            return output;
         }
     }
 }

@@ -4,27 +4,27 @@ namespace DAL.Repositories;
 
 public class UserInterestsRepository
 {
-    public async Task<UserInterestsEntity> GetUserInterestsByIdAsync(int id)
+    public async Task<UserInterests> GetUserInterestsByIdAsync(int id)
     {
         throw new NotImplementedException();
     }
     
-    public async Task<UserInterestsEntity> CreateUserInterestsAsync(UserInterestsEntity entity)
+    public async Task<UserInterests> CreateUserInterestsAsync(UserInterests entity)
     {
         throw new NotImplementedException();
     }
     
-    public async Task<UserInterestsEntity> UpdateUserInterestsAsync(UserInterestsEntity entity)
+    public async Task<UserInterests> UpdateUserInterestsAsync(UserInterests entity)
     {
         throw new NotImplementedException();
     }
     
-    public async Task<UserInterestsEntity> DeleteUserInterestsAsync(int id)
+    public async Task<UserInterests> DeleteUserInterestsAsync(int id)
     {
         throw new NotImplementedException();
     }
     
-    public async Task<IEnumerable<UserInterestsEntity>> GetAllUserInterestsAsync()
+    public async Task<IEnumerable<UserInterests>> GetAllUserInterestsAsync()
     {
         throw new NotImplementedException();
     }

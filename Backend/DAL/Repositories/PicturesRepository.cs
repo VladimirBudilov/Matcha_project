@@ -4,27 +4,27 @@ namespace DAL.Repositories;
 
 public class PicturesRepository
 {
-    public async Task<PicturesEntity> GetPicturesByIdAsync(int id)
+    public async Task<Pictures> GetPicturesByIdAsync(int id)
     {
         throw new NotImplementedException();
     }
     
-    public async Task<IEnumerable<PicturesEntity>> GetAllPicturesAsync()
+    public async Task<IEnumerable<Pictures>> GetAllPicturesAsync()
     {
         throw new NotImplementedException();
     }
     
-    public async Task<PicturesEntity> CreatePicturesAsync(PicturesEntity entity)
+    public async Task<Pictures> CreatePicturesAsync(Pictures entity)
     {
         throw new NotImplementedException();
     }
     
-    public async Task<PicturesEntity> UpdatePicturesAsync(PicturesEntity entity)
+    public async Task<Pictures> UpdatePicturesAsync(Pictures entity)
     {
         throw new NotImplementedException();
     }
     
-    public async Task<PicturesEntity> DeletePicturesAsync(int id)
+    public async Task<Pictures> DeletePicturesAsync(int id)
     {
         throw new NotImplementedException();
     }

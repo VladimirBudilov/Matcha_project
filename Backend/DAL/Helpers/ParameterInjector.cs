@@ -5,7 +5,7 @@ namespace DAL.Helpers;
 
 public class ParameterInjector
 {
-    public void FillUserEntityParameters(UserEntity user, SqliteCommand command)
+    public void FillUserEntityParameters(User user, SqliteCommand command)
     {
         command.Parameters.AddWithValue("@userName", user.UserName);
         command.Parameters.AddWithValue("@firstName", user.FirstName);

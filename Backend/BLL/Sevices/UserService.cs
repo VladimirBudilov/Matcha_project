@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BLL.Models;
 using DAL.Entities;
 using DAL.Repositories;
 
@@ -8,51 +7,108 @@ namespace BLL.Sevices;
 public class UserService(UserRepository userRepository, IMapper mapper)
 {
         
-    public async Task<UserModel> GetUserByIdAsync(int userId)
+    public async Task<User?> GetUserByIdAsync(int userId)
     {
-        var user = await userRepository.GetUserByIdAsync(userId);
-        var output = mapper.Map<UserModel>(user);
+        //TODO add validation
+        
+        var output = await userRepository.GetUserByIdAsync(userId);
+
+        if (output == null)
+        {
+            //TODO add logging
+            return null;
+        }
+
         return output;
     }
         
-    public async Task<UserModel> GetUserByUserNameAsync(string userName)
+    public async Task<User?> GetUserByUserNameAsync(string userName)
     {
-        var user = await userRepository.GetUserByUserNameAsync(userName);
-        var output = mapper.Map<UserModel>(user);
+        //TODO add validation
+        
+        var output = await userRepository.GetUserByUserNameAsync(userName);
+        
+        if (output == null)
+        {
+            //TODO add logging
+            return null;
+        }
+
         return output;
     }
         
-    public async Task<IEnumerable<UserModel>> GetAllUsersAsync()
+    public async Task<IEnumerable<User>> GetAllUsersAsync()
     {
-        var allUsers = await userRepository.GetAllUsers();
-        var output = mapper.Map<IEnumerable<UserModel>>(allUsers);
+
+        var output = await userRepository.GetAllUsers();
+        
+        if (output == null)
+        {
+            //TODO add logging
+            return null;
+        }
+
         return output;
     }
 
-    public async Task UpdateUserAsync(int id, UserModel userModel)
+    public async Task<User?> UpdateUserAsync(int id, User userModel)
     {
-        var User = mapper.Map<UserEntity>(userModel);
-        await userRepository.UpdateUserAsync(id, User);
+        //TODO add validation
+        
+        userModel.UpdatedAt = DateTime.Now;
+        var output = await userRepository.UpdateUserAsync(id, userModel);
+        
+        if (output == null)
+        {
+            //TODO add logging
+            return null;
+        }
+        
+        return output;
     }
 
-    public async Task DeleteUserAsync(int id)
+    public async Task<User?> DeleteUserAsync(int id)
     {
-        await userRepository.DeleteUserAsync(id);
+        //TODO add validation
+        
+        var output = await userRepository.DeleteUserAsync(id);
+        
+        if (output == null)
+        {
+            //TODO add logging
+            return null;
+        }
+
+        return output;
     }
 
-    public async Task<UserModel> GetUserByEmailAsync(string email)
+    public async Task<User?> GetUserByEmailAsync(string email)
     {
-        var user = await userRepository.GetUserByEmailAsync(email);
-        var output = mapper.Map<UserModel>(user);
+        //TODO add validation
+        
+        var output = await userRepository.GetUserByEmailAsync(email);
+        
+        if (output == null)
+        {
+            //TODO add logging
+            return null;
+        }
+
         return output;
     }
     
-    public async Task<UserModel> GetFullUserDataAsync(int userId)
+    public async Task<User> GetFullUserDataAsync(int userId)
     {
-        var userEntity = await userRepository.GetUserByIdAsync(userId);
-        var user = mapper.Map<UserModel>(userEntity);
+        //TODO add validation
         
-        var output = mapper.Map<UserModel>(user);
+        var output = await userRepository.GetFullDataAsync(userId);
+        
+        if (output == null)
+        {
+            //TODO add logging
+            return null;
+        }
+
         return output;
     }
 }

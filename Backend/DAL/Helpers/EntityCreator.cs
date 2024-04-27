@@ -8,9 +8,9 @@ public class EntityCreator(DataParser dataParser)
     
     private readonly DataParser _dataParser = dataParser;
     
-    public  ProfileEntity CreateUserProfile(DataRow userInfoRow, string? mainProfilePicture, List<string> userInterests, List<string> profilePictures, int profileViewsAmount, int likesAmount)
+    public  Profile CreateUserProfile(DataRow userInfoRow, string? mainProfilePicture, List<string> userInterests, List<string> profilePictures, int profileViewsAmount, int likesAmount)
         {
-            return new ProfileEntity
+            return new Profile
             {
                 ProfileId = userInfoRow.IsNull("profile_id") ? null : userInfoRow.Field<long>("profile_id"),
                 Gender = userInfoRow.IsNull("gender") ? null : userInfoRow.Field<string>("gender"),
@@ -28,11 +28,11 @@ public class EntityCreator(DataParser dataParser)
             };
         }
 
-    public UserEntity? CreateUser(DataRow row)
+    public User? CreateUser(DataRow row)
         {
-            return new UserEntity
+            return new User
             {
-                UserId = row.IsNull("user_id") ? (long?)null : row.Field<long>("user_id"),
+                UserId = row.Field<long>("user_id"),
                 IsVerified = row.IsNull("is_verified") ? (bool?)null : _dataParser.ConvertLongToBool(row.Field<long>("is_verified")),
                 UserName = row.Field<string>("user_name"),
                 FirstName = row.Field<string>("first_name"),

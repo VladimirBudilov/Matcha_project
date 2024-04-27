@@ -2,8 +2,8 @@
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
-using BLL.Models;
 using BLL.Sevices;
+using DAL.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -88,7 +88,7 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var userModel = _mapper.Map<UserModel>(value);
+            var userModel = _mapper.Map<User>(value);
             var token = await _authService.RegisterUserAsync(userModel);
             
             var emailUrl = Request.Scheme + "://" + Request.Host + "/api/auth/verify-email?email=" + userModel.Email + "&token=" + token;
@@ -104,7 +104,7 @@ public class AuthController : ControllerBase
         return Ok();
     }
 
-    private string GenerateJwtToken(UserModel user)
+    private string GenerateJwtToken(User user)
     {
         var jwtTokenHendler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
