@@ -13,7 +13,7 @@ namespace Web_API.Controllers
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController(UserService userService, IMapper mapper) : ControllerBase
+    public class UserController(UserService userService, IMapper mapper, DtoValidator validator) : ControllerBase
     {
         // GET: api/<UsersController>
         //TODO Will be removed in the future
@@ -26,10 +26,12 @@ namespace Web_API.Controllers
         }
 
         // GET api/<UsersController>/5
-        [HttpGet("{id}")]
-        public async Task<UserDto> GetUserById(int id)
+        [HttpGet("{id:int}")]
+        public async Task<UserDto> GetUserById([FromRoute]int id)
         {
-            CheckUserAuth(id);
+            //TODO turn on when site will be ready
+            //CheckUserAuth(id);
+            validator.CheckId(id);
             var user = await userService.GetUserByIdAsync(id);
             var output = mapper.Map<UserDto>(user);
             return output;
@@ -39,16 +41,20 @@ namespace Web_API.Controllers
         //TODO Will be removed in the future
         public async Task<UserDto> GetUserByUserName(string userName)
         {
+            validator.ValidateUsername(userName);
             var user = await userService.GetUserByUserNameAsync(userName);
             var output = mapper.Map<UserDto>(user);
             return output;
         }
 
         // PUT api/<UsersController>/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserDto value)
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateUser([FromRoute]int id, [FromBody] UserDto value)
         {
-            CheckUserAuth(id);
+            validator.CheckId(id);
+            //TODO turn on when site will be ready
+            //CheckUserAuth(id);
+            validator.UserDto(value);
             var userModel = mapper.Map<User>(value);
             await userService.UpdateUserAsync(id, userModel);
             return Ok(userModel);
@@ -75,10 +81,12 @@ namespace Web_API.Controllers
         }
 
         // DELETE api/<UsersController>/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteUser([FromRoute]int id)
         {
-            CheckUserAuth(id);
+            validator.CheckId(id);
+            //TODO turn on when site will be ready
+            //CheckUserAuth(id);
             await userService.DeleteUserAsync(id);
             return Ok();
         }

@@ -5,8 +5,12 @@ namespace Web_API.Helpers;
 
 public class DtoValidator
 {
-    public void UserDtoValidator(UserDto userDto)
+    public void UserDto(UserDto userDto)
     {
+        if (userDto == null)
+        {
+            throw new DataValidationException("UserDto is null.");
+        }
         ValidateEmail(userDto.Email);
         ValidatePassword(userDto.Password);
         ValidateUsername(userDto.UserName);
@@ -14,23 +18,40 @@ public class DtoValidator
         ValidateSurname(userDto.LastName);
     }
     
-    public void UserAuthRequestDtoValidator(UserAuthRequestDto userAuthRequestDto)
+    public void UserAuthRequestDto(UserAuthRequestDto userAuthRequestDto)
     {
+        if (userAuthRequestDto == null)
+        {
+            throw new DataValidationException("UserAuthRequestDto is null.");
+        }
         ValidateUsername(userAuthRequestDto.UserName);
         ValidatePassword(userAuthRequestDto.Password);
     }
 
-    public void ProfileDtoValidator(ProfileDto profileDto)
+    public void ProfileRequestDto(ProfileDto profileDto)
     {
+        if (profileDto == null)
+        {
+            throw new DataValidationException("ProfileDto is null.");
+        }
         ValidateUsername(profileDto.UserName);
         ValidateName(profileDto.FirstName);
         ValidateSurname(profileDto.LastName);
         ValidateAge(profileDto.Age);
     }
+    
+    public void CheckId(int id)
+    {
+        if (id <= 0)
+        {
+            throw new DataValidationException("Invalid id format.");
+        }
+    }
 
 
-    #region 
-    public void ValidateEmail(string email)
+    #region
+
+    private static void ValidateEmail(string email)
     {
         if (!new EmailAddressAttribute().IsValid(email))
         {
@@ -38,7 +59,7 @@ public class DtoValidator
         }
     }
 
-    public void ValidatePassword(string password)
+    private static void ValidatePassword(string password)
     {
         if (!(password.Length >= 8 && password.Length <= 20 &&
               password.Any(char.IsDigit) && password.Any(char.IsUpper)))
@@ -56,7 +77,7 @@ public class DtoValidator
         }
     }
 
-    public void ValidateName(string name)
+    private void ValidateName(string name)
     {
         if (!(name.Length >= 3 && name.Length <= 20 &&
               name.All(char.IsLetter)))
@@ -65,7 +86,7 @@ public class DtoValidator
         }
     }
 
-    public void ValidateSurname(string surname)
+    private void ValidateSurname(string surname)
     {
         if (!(surname.Length >= 3 && surname.Length <= 20 &&
               surname.All(char.IsLetter)))
@@ -74,7 +95,7 @@ public class DtoValidator
         }
     }
 
-    public void ValidatePhoneNumber(string phoneNumber)
+    private void ValidatePhoneNumber(string phoneNumber)
     {
         if (!(phoneNumber.Length == 9 && phoneNumber.All(char.IsDigit)))
         {
@@ -82,7 +103,7 @@ public class DtoValidator
         }
     }
 
-    public void ValidateGender(string gender)
+    private void ValidateGender(string gender)
     {
         if (!(gender is "male" or "female"))
         {
@@ -90,7 +111,7 @@ public class DtoValidator
         }
     }
 
-    public void ValidateSexualPreference(string sexualPreference)
+    private void ValidateSexualPreference(string sexualPreference)
     {
         if (!(sexualPreference is "male" or "female" or "both" or null))
         {
@@ -98,7 +119,7 @@ public class DtoValidator
         }
     }
 
-    public void ValidateAge(int age)
+    private void ValidateAge(int age)
     {
         if (!(age >= 18 && age <= 100))
         {
@@ -106,7 +127,7 @@ public class DtoValidator
         }
     }
 
-    public void ValidateBio(string bio)
+    private void ValidateBio(string bio)
     {
         var isValid = bio.All(char.IsLetterOrDigit) || bio.All(char.IsPunctuation);
         if (!(isValid && bio.Length <= 500))
@@ -115,7 +136,7 @@ public class DtoValidator
         }
     }
 
-    public void ValidateTag(string tag)
+    private void ValidateTag(string tag)
     {
         if (!(tag.Length >= 3 && tag.Length <= 20 && tag.All(char.IsLetter)))
         {
@@ -123,7 +144,7 @@ public class DtoValidator
         }
     }
 
-    public void ValidateTagList(string tagList)
+    private void ValidateTagList(string tagList)
     {
         var tags = tagList.Split(',');
         if (!tags.All(tag =>
@@ -143,14 +164,14 @@ public class DtoValidator
         }
     }
 
-    public void ValidateLocation(string location)
+    private void ValidateLocation(string location)
     {
         // Add your validation logic here
         // If validation fails, throw exception
         // throw new DataValidationException("Invalid location format.");
     }
 
-    public void ValidatePhoto(string photo)
+    private void ValidatePhoto(string photo)
     {
         // Add your validation logic here
         // If validation fails, throw exception

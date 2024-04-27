@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DAL.Entities;
+using DAL.Helpers;
 using DAL.Repositories;
 
 namespace BLL.Sevices;
@@ -53,16 +54,11 @@ public class UserService(UserRepository userRepository, IMapper mapper)
 
     public async Task<User?> UpdateUserAsync(int id, User userModel)
     {
-        //TODO add validation
-        
+        var user = await userRepository.GetUserByIdAsync(id);
+        if (user == null) throw new ObjectNotFoundException("User not found. You can't update user that doesn't exist");
         userModel.UpdatedAt = DateTime.Now;
         var output = await userRepository.UpdateUserAsync(id, userModel);
-        
-        if (output == null)
-        {
-            //TODO add logging
-            return null;
-        }
+        if (output == null) throw new ObjectNotFoundException("User not found. You can't update user with the same data");
         
         return output;
     }
