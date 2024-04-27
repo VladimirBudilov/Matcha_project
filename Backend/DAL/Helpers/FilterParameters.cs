@@ -1,4 +1,4 @@
-﻿namespace Web_API.DTOs;
+﻿namespace DAL.Helpers;
 
 public class FilterParameters
 {

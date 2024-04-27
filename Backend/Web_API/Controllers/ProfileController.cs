@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BLL.Sevices;
+using DAL.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Web_API.DTOs;
 using Web_API.Helpers;
@@ -15,11 +16,13 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
 {
     // GET: api/<UsersController>
     [HttpGet]
-    public async Task<IEnumerable<string>> GetAllProfilesInfo()
+    public async Task<IEnumerable<ProfileResponseDto>> GetAllProfilesInfo([FromQuery]FilterParameters filter)
     {
-        return await profileService.GetFullProfilesAsync();
+        var output = await profileService.GetFullProfilesAsync(filter);
+        var profiles = mapper.Map<IEnumerable<ProfileResponseDto>>(output);
+        return profiles;
     }
-
+    
     // GET api/<UsersController>/5
     [HttpGet("{id:int}")]
     public async Task<ProfileResponseDto> GetAllProfileInfoById([FromRoute]int id)
@@ -32,7 +35,7 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
 
     // PUT api/<UsersController>/5
     [HttpPut("{id:int}")]
-    public async Task Put([FromRoute]int id, [FromBody] ProfileRequestDto profile)
+    public async Task UpdateProfile([FromRoute]int id, [FromBody] ProfileRequestDto profile)
     {
         validator.CheckId(id);
         validator.ProfileRequestDto(profile);

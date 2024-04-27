@@ -25,11 +25,14 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<ProfileRepository>();
+
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<PasswordManager>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<AuthService>();
+
 builder.Services.AddScoped<DataParser>();
 builder.Services.AddScoped<EntityCreator>();
 builder.Services.AddScoped<TableFetcher>();
@@ -71,13 +74,9 @@ var app = builder.Build();
 app.UseCors();
 app.UseSwagger();
 app.UseSwaggerUI();
-
-
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

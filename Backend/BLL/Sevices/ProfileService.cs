@@ -24,7 +24,7 @@ public class ProfileService(UserRepository userRepository, ProfileRepository pro
         return profile;
     }
 
-    public async Task<IEnumerable<string>> GetFullProfilesAsync()
+    public async Task<IEnumerable<User>> GetFullProfilesAsync(FilterParameters filter)
     {
         throw new NotImplementedException();
     }
