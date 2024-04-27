@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Web_API.DTOs;
+using Web_API.Helpers;
 
 namespace Web_API.Controllers
 {
@@ -15,6 +16,7 @@ namespace Web_API.Controllers
     public class UserController(UserService userService, IMapper mapper) : ControllerBase
     {
         // GET: api/<UsersController>
+        //TODO Will be removed in the future
         [HttpGet]
         public async Task<IEnumerable<UserDto>> GetUsers()
         {
@@ -27,12 +29,14 @@ namespace Web_API.Controllers
         [HttpGet("{id}")]
         public async Task<UserDto> GetUserById(int id)
         {
+            CheckUserAuth(id);
             var user = await userService.GetUserByIdAsync(id);
             var output = mapper.Map<UserDto>(user);
             return output;
         }
 
         [HttpGet("username/{userName}")]
+        //TODO Will be removed in the future
         public async Task<UserDto> GetUserByUserName(string userName)
         {
             var user = await userService.GetUserByUserNameAsync(userName);
@@ -44,48 +48,37 @@ namespace Web_API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UserDto value)
         {
+            CheckUserAuth(id);
+            var userModel = mapper.Map<User>(value);
+            await userService.UpdateUserAsync(id, userModel);
+            return Ok(userModel);
+        }
+
+        private void CheckUserAuth(int id)
+        {
             if (User?.Claims == null)
             {
-                return Unauthorized();
+                throw new NotAuthorizedRequestException();
             }
 
             var claim = User.Claims.FirstOrDefault(c => c.Type == "Id");
             if (claim == null)
             {
-                return Unauthorized();
+                throw new NotAuthorizedRequestException();
             }
 
             var authorised = int.TryParse(claim.Value, out var userId);
             if (!authorised || id != userId)
             {
-                return Forbid();
+                throw new ForbiddenRequestException();
             }
-            var userModel = mapper.Map<User>(value);
-            await userService.UpdateUserAsync(id, userModel);
-            return Ok(userModel);
         }
 
         // DELETE api/<UsersController>/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            if (User?.Claims == null)
-            {
-                return Unauthorized();
-            }
-
-            var claim = User.Claims.FirstOrDefault(c => c.Type == "Id");
-            if (claim == null)
-            {
-                return Unauthorized();
-            }
-
-            var authorised = int.TryParse(claim.Value, out var userId);
-            if (!authorised || id != userId)
-            {
-                return Forbid();
-            }
-            
+            CheckUserAuth(id);
             await userService.DeleteUserAsync(id);
             return Ok();
         }

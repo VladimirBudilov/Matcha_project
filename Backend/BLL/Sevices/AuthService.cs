@@ -7,7 +7,7 @@ namespace BLL.Sevices;
 
 public class AuthService(UserRepository userRepository, IMapper mapper, PasswordManager passwordManager, EmailService emailService)
 {
-    public async Task<string> RegisterUserAsync(User user)
+    public async Task<string?> RegisterUserAsync(User user)
     {
         //TODO add validation
         
@@ -16,8 +16,8 @@ public class AuthService(UserRepository userRepository, IMapper mapper, Password
         user.IsVerified = false;
         user.CreatedAt = DateTime.Now;
         user.UpdatedAt = DateTime.Now;
-        await userRepository.AddUserAsync(user);
-        return user.ResetToken;
+        var res = await userRepository.AddUserAsync(user);
+        return res == null ? null : user.ResetToken;
     }
     
     public async Task<bool> AuthenticateUser(string username, string password)

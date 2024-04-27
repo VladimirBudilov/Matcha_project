@@ -4,109 +4,150 @@ using DAL.Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Data.Sqlite;
 
-namespace DAL.Repositories
+namespace DAL.Repositories;
+
+public class UserRepository(
+    IConfiguration configuration,
+    EntityCreator entityCreator,
+    TableFetcher fetcher,
+    ParameterInjector injector)
 {
-    public class UserRepository(IConfiguration configuration, EntityCreator entityCreator, TableFetcher fetcher, ParameterInjector injector)
+    private readonly string _connectionString = configuration.GetConnectionString("UserDbConnection")
+                                                ?? throw new ArgumentNullException(nameof(configuration),
+                                                    "Connection string not found in configuration");
+
+    private readonly EntityCreator _entityCreator = entityCreator;
+    private readonly TableFetcher _fetcher = fetcher;
+    private readonly ParameterInjector _injector = injector;
+
+    #region GettingData
+
+    public async Task<User?> GetUserByIdAsync(long id)
     {
-        private readonly string _connectionString = configuration.GetConnectionString("UserDbConnection")
-                                                    ?? throw new ArgumentNullException(nameof(configuration),
-                                                        "Connection string not found in configuration");
-        private readonly EntityCreator _entityCreator = entityCreator;
-        private readonly TableFetcher _fetcher = fetcher;
-        private readonly ParameterInjector _injector = injector;
-        
-        #region GettingData
-
-        public async Task<User?> GetUserByIdAsync(long id)
+        try
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
-            var dataTable = await _fetcher.GetTableByParameter(connection, "SELECT * FROM users WHERE user_id = @id", "@id", id);
+            var dataTable = await _fetcher.GetTableByParameter(connection,
+                "SELECT * FROM users WHERE user_id = @id", "@id", id);
             return dataTable.Rows.Count > 0 ? _entityCreator.CreateUser(dataTable.Rows[0]) : null;
         }
+        catch (Exception e)
+        {
+            throw new DataAccessErrorException("Error while getting user by id", e);
+        }
+    }
 
-        public async Task<User?> GetUserByEmailAsync(string email)
+    public async Task<User?> GetUserByEmailAsync(string email)
+    {
+        try
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
-            var dataTable = await _fetcher.GetTableByParameter(connection, "SELECT * FROM users WHERE email = @email", "@email", email);
+            var dataTable = await _fetcher.GetTableByParameter(connection,
+                "SELECT * FROM users WHERE email = @email", "@email",
+                email);
             return dataTable.Rows.Count > 0 ? _entityCreator.CreateUser(dataTable.Rows[0]) : null;
         }
+        catch (Exception e)
+        {
+            throw new DataAccessErrorException("Error while getting user by email", e);
+        }
+    }
 
-        public async Task<User?> GetUserByUserNameAsync(string userName)
+    public async Task<User?> GetUserByUserNameAsync(string userName)
+    {
+        try
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
-            var dataTable = await _fetcher.GetTableByParameter(connection, "SELECT * FROM users WHERE user_name = @userName", "@userName", userName);
+            var dataTable = await _fetcher.GetTableByParameter(connection,
+                "SELECT * FROM users WHERE user_name = @userName",
+                "@userName", userName);
             return dataTable.Rows.Count > 0 ? _entityCreator.CreateUser(dataTable.Rows[0]) : null;
         }
+        catch (Exception e)
+        {
+            throw new DataAccessErrorException("Error while getting user by username", e);
+        }
+    }
 
-        public async Task<IEnumerable<User>> GetAllUsers()
+    public async Task<IEnumerable<User>> GetAllUsers()
+    {
+        try
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
             var dataTable = await _fetcher.GetTable(connection, "SELECT * FROM users");
-            var users = new List<User>();
-            foreach (DataRow row in dataTable.Rows)
-            {
-                users.Add(_entityCreator.CreateUser(row));
-            }
-
-            return users;
+            return (from DataRow row in dataTable.Rows select _entityCreator.CreateUser(row)).ToList();
         }
-        #endregion
-
-        #region GettingFullData
-
-        public async Task<User?> GetFullDataAsync(int id)
+        catch (Exception e)
         {
-            await using var connection = new SqliteConnection(_connectionString);
-            await connection.OpenAsync();
-            var command = connection.CreateCommand();
-            var userInfo = await fetcher.GetTableByParameter(connection, "SELECT * FROM users" +
-                                                                        " LEFT JOIN profiles ON users.user_id = profiles.profile_id" +
-                                                                        " WHERE user_id = @id", "@id", id);
-            var userInterestsById = await fetcher.GetTableByParameter(connection, "SELECT * FROM user_interests WHERE user_id = @id",
-                "@id", id);
-            var interestsIds = (from DataRow row in userInterestsById.Rows select row.Field<long>("interest_id")).ToList();
-            command.CommandText = "SELECT * FROM interests WHERE interest_id IN (" +
-                                  string.Join(",", interestsIds) + ")";
-            var interests = new DataTable();
-            interests.Load(await command.ExecuteReaderAsync());
-            var likes = await fetcher.GetTableByParameter(connection, "SELECT * FROM likes WHERE liked_user_id = @id", "@id",
-                id);
-            var pictures =
-                await fetcher.GetTableByParameter(connection, "SELECT * FROM pictures WHERE user_id = @id", "@id", id);
-            var profileViews = await fetcher.GetTableByParameter(connection,
-                "SELECT * FROM profile_views WHERE profile_user_id = @id", "@id", id);
-            var userInterests = (from DataRow row in interests.Rows select row.Field<string>("name")).ToList();
-            var likesAmount = likes.Rows.Count;
-            var profilePictures = new List<string>();
-            var mainProfilePicture = string.Empty;
-            foreach (DataRow row in pictures.Rows)
-            {
-                if (row.Field<long>("is_profile_picture") == 0)
-                {
-                    mainProfilePicture = row.Field<string>("image_path");
-                    continue;
-                }
+            throw new DataAccessErrorException("Error while getting all users", e);
+        }
+    }
 
-                profilePictures.Add(row.Field<string>("image_path"));
-            }
-            var profileViewsAmount = profileViews.Rows.Count;
-            if (userInfo.Rows.Count > 0)
+    #endregion
+
+    #region GettingFullData
+
+    public async Task<User?> GetFullDataAsync(int id)
+    {
+        await using var connection = new SqliteConnection(_connectionString);
+        await connection.OpenAsync();
+        var command = connection.CreateCommand();
+        var userInfo = await fetcher.GetTableByParameter(connection, "SELECT * FROM users" +
+                                                                     " LEFT JOIN profiles ON users.user_id = profiles.profile_id" +
+                                                                     " WHERE user_id = @id", "@id", id);
+        var userInterestsById = await fetcher.GetTableByParameter(connection,
+            "SELECT * FROM user_interests WHERE user_id = @id",
+            "@id", id);
+        var interestsIds =
+            (from DataRow row in userInterestsById.Rows select row.Field<long>("interest_id")).ToList();
+        command.CommandText = "SELECT * FROM interests WHERE interest_id IN (" +
+                              string.Join(",", interestsIds) + ")";
+        var interests = new DataTable();
+        interests.Load(await command.ExecuteReaderAsync());
+        var likes = await fetcher.GetTableByParameter(connection, "SELECT * FROM likes WHERE liked_user_id = @id",
+            "@id",
+            id);
+        var pictures =
+            await fetcher.GetTableByParameter(connection, "SELECT * FROM pictures WHERE user_id = @id", "@id", id);
+        var profileViews = await fetcher.GetTableByParameter(connection,
+            "SELECT * FROM profile_views WHERE profile_user_id = @id", "@id", id);
+        var userInterests = (from DataRow row in interests.Rows select row.Field<string>("name")).ToList();
+        var likesAmount = likes.Rows.Count;
+        var profilePictures = new List<string>();
+        var mainProfilePicture = string.Empty;
+        foreach (DataRow row in pictures.Rows)
+        {
+            if (row.Field<long>("is_profile_picture") == 0)
             {
-                var userInfoRow = userInfo.Rows[0];
-                var user = _entityCreator.CreateUser(userInfoRow);
-                user.Profile = _entityCreator.CreateUserProfile(userInfoRow, mainProfilePicture, userInterests, profilePictures, profileViewsAmount, likesAmount);
-                return user;
+                mainProfilePicture = row.Field<string>("image_path");
+                continue;
             }
-            return null;
+
+            profilePictures.Add(row.Field<string>("image_path"));
         }
 
-        #endregion
+        var profileViewsAmount = profileViews.Rows.Count;
+        if (userInfo.Rows.Count > 0)
+        {
+            var userInfoRow = userInfo.Rows[0];
+            var user = _entityCreator.CreateUser(userInfoRow);
+            user.Profile = _entityCreator.CreateUserProfile(userInfoRow, mainProfilePicture, userInterests,
+                profilePictures, profileViewsAmount, likesAmount);
+            return user;
+        }
 
-        public async Task<User?> AddUserAsync(User user)
+        return null;
+    }
+
+    #endregion
+
+    public async Task<User?> AddUserAsync(User user)
+    {
+        try
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
@@ -115,39 +156,50 @@ namespace DAL.Repositories
                 "INSERT INTO users (user_name, first_name, last_name, email, password, updated_at, created_at, last_login_at, reset_token_expiry, reset_token, is_verified)" +
                 "VALUES (@userName, @firstName, @lastName, @email, @password, @updatedAt, @createdAt, @lastLoginAt, @resetTokenExpiry, @resetToken, @isVerified)";
             _injector.FillUserEntityParameters(user, command);
-            await command.ExecuteNonQueryAsync();
-            return user;
+            var res = await command.ExecuteNonQueryAsync();
+            return res > 0 ? user : null;
         }
+        catch (Exception e)
+        {
+            throw new DataAccessErrorException("Error while adding user", e);
+        }
+    }
 
-        public async Task<User?> UpdateUserAsync(long id, User user)
+    public async Task<User?> UpdateUserAsync(long id, User user)
+    {
+        try
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
             var command = connection.CreateCommand();
             command.CommandText =
-                "UPDATE users SET user_name = @userName, first_name = @firstName, last_name = @lastName, email = @email, password = @password, " +
-                "updated_at = @updatedAt, created_at = @createdAt, last_login_at = @lastLoginAt, reset_token_expiry = @resetTokenExpiry, reset_token = @resetToken, is_verified = @isVerified " +
-                "WHERE user_id = @id";
+                "UPDATE users SET user_name = @userName, first_name = @firstName, last_name = @lastName, email = @email, password = @password, updated_at = @updatedAt, last_login_at = @lastLoginAt, reset_token_expiry = @resetTokenExpiry, reset_token = @resetToken, is_verified = @isVerified WHERE user_id = @id";
             _injector.FillUserEntityParameters(user, command);
             command.Parameters.AddWithValue("@id", id);
-            var output = await command.ExecuteNonQueryAsync();
-            return output > 0 ? user : null;
+            var res = await command.ExecuteNonQueryAsync();
+            return res > 0 ? user : null;
         }
+        catch (Exception e)
+        {
+            throw new DataAccessErrorException("Error while updating user", e);
+        }
+    }
 
-        public async Task<User?> DeleteUserAsync(long id)
+    public async Task<User?> DeleteUserAsync(long id)
+    {
+        try
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
-            var output = await GetUserByIdAsync(id);
-            if (output == null)
-            {
-                return null;
-            }
             var command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM User WHERE Id = @id";
+            command.CommandText = "DELETE FROM users WHERE user_id = @id";
             command.Parameters.AddWithValue("@id", id);
-            await command.ExecuteNonQueryAsync();
-            return output;
+            var res = await command.ExecuteNonQueryAsync();
+            return res > 0 ? new User() : null;
+        }
+        catch (Exception e)
+        {
+            throw new DataAccessErrorException("Error while deleting user", e);
         }
     }
 }

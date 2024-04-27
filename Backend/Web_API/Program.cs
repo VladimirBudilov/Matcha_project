@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Web_API.Configurations;
 using Web_API.Controllers.AutoMappers;
+using Web_API.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,8 @@ builder.Services.AddScoped<DataParser>();
 builder.Services.AddScoped<EntityCreator>();
 builder.Services.AddScoped<TableFetcher>();
 builder.Services.AddScoped<ParameterInjector>();
+
+builder.Services.AddMvc(options => options.Filters.Add(new ExceptionHadlerFilter()));
 
 builder.Services.Configure<SmtpConfig>(builder.Configuration.GetSection("SmtpConfig"));
 
