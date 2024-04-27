@@ -1,6 +1,7 @@
 using System.Text;
 using BLL.Helpers;
 using BLL.Sevices;
+using DAL.Helpers;
 using DAL.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -27,6 +28,10 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<PasswordManager>();
 builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<DataParser>();
+builder.Services.AddScoped<EntityCreator>();
+builder.Services.AddScoped<TableFetcher>();
+builder.Services.AddScoped<ParameterInjector>();
 
 builder.Services.Configure<SmtpConfig>(builder.Configuration.GetSection("SmtpConfig"));
 
