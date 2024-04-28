@@ -21,31 +21,6 @@ public class ProfileRepository(
 
     public async Task<User?> GetFullProfileAsync(long id)
     {
-        // var userInterestsById = await fetcher.GetTableByParameter(connection,
-        //     "SELECT * FROM user_interests WHERE user_id = @id",
-        //     "@id", id);
-        // var interestsIds =
-        //     (from DataRow row in userInterestsById.Rows select row.Field<long>("interest_id")).ToList();
-        // command.CommandText = "SELECT * FROM interests WHERE interest_id IN (" +
-        //                       string.Join(",", interestsIds) + ")";
-        // var interests = new DataTable();
-        // interests.Load(await command.ExecuteReaderAsync());
-        // var pictures =
-        //     await fetcher.GetTableByParameter(connection, "SELECT * FROM pictures WHERE user_id = @id", "@id", id);
-        //
-        // var userInterests = (from DataRow row in interests.Rows select row.Field<string>("name")).ToList();
-        // var profilePictures = new List<string>();
-        // var mainProfilePicture = string.Empty;
-        // foreach (DataRow row in pictures.Rows)
-        // {
-        //     if (row.Field<long>("is_profile_picture") == 0)
-        //     {
-        //         mainProfilePicture = row.Field<string>("image_path");
-        //         continue;
-        //     }
-        //
-        //     profilePictures.Add(row.Field<string>("image_path"));
-        // }
         await using var connection = new SqliteConnection(_connectionString);
         await connection.OpenAsync();
         connection.CreateCommand();
@@ -62,7 +37,6 @@ public class ProfileRepository(
 
         return null;
     }
-
 
     public async Task<Profile> GetProfileByIdAsync(long id)
     {
