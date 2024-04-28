@@ -32,12 +32,6 @@ public class ProfileService(UserRepository userRepository, ProfileRepository pro
         return builder.Build();
     }
     
-    public async Task<Profile> GetProfileAsync(long id)
-    {
-        var profile = await _profileRepository.GetProfileByIdAsync(id);
-        return profile;
-    }
-
     public async Task<IEnumerable<User>> GetFullProfilesAsync(FilterParameters filter)
     {
         throw new NotImplementedException();

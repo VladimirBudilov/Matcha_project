@@ -46,6 +46,7 @@ public class EmailService(IOptions<SmtpConfig> smtpConfig)
     
     public async Task CheckEmailAndToken(UserService userService, AuthService authService, string email, string token)
     {
+        
         var user = await userService.GetUserByEmailAsync(email);
         if (user == null)
         {

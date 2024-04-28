@@ -2,7 +2,7 @@
 
 public class Profile
 {
-    public long? ProfileId { get; set; }
+    public long ProfileId { get; set; }
     public string Gender { get; set; }
     public string? SexualPreferences { get; set; }
     public string? Biography { get; set; }

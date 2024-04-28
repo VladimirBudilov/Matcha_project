@@ -22,12 +22,14 @@ public class AuthService(UserRepository userRepository,
         user.CreatedAt = DateTime.Now;
         user.UpdatedAt = DateTime.Now;
         var res = await userRepository.CreateUserAsync(user);
+        userByUserName = await userRepository.GetUserByUserNameAsync(user.UserName);
         var profile = new Profile()
         {
-            ProfileId = user.UserId,
+            ProfileId = userByUserName.UserId,
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now,
-            Gender = "male"
+            Gender = "male",
+            Age = 18,
         };
         await profileRepository.CreateProfileAsync(profile);
         return res == null ? null : user.ResetToken;

@@ -71,7 +71,7 @@ public class ProfileRepository(
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
             var dataTable = await _fetcher.GetTableByParameter(connection,
-                "SELECT * FROM profile WHERE profile_id = @id", "@id", id);
+                "SELECT * FROM profiles WHERE profile_id = @id", "@id", id);
             return dataTable.Rows.Count > 0 ? _entityCreator.CreateUserProfile(dataTable.Rows[0]) : null;
         }
         catch (Exception e)
@@ -88,9 +88,13 @@ public class ProfileRepository(
             await connection.OpenAsync();
             var command = connection.CreateCommand();
             command.CommandText =
-                "INSERT INTO profile (profile_id " +
-                "VALUES (@profile_id)";
+                "INSERT INTO profiles (profile_id, created_at, updated_at, gender, age) " +
+                " VALUES (@profile_id, @created_at, @updated_at, @gender, @age)";
             command.Parameters.AddWithValue("@profile_id", entity.ProfileId);
+            command.Parameters.AddWithValue("@created_at", entity.CreatedAt.ToString());
+            command.Parameters.AddWithValue("@updated_at", entity.UpdatedAt.ToString());
+            command.Parameters.AddWithValue("@gender", entity.Gender);
+            command.Parameters.AddWithValue("@age", entity.Age);
             var res = await command.ExecuteNonQueryAsync();
             return res > 0 ? entity : null;
         }
@@ -108,18 +112,15 @@ public class ProfileRepository(
         await connection.OpenAsync();
         var command = connection.CreateCommand();
         command.CommandText =
-            "UPDATE profile SET gender = @gender, sexual_preferences = @sexual_preferences, biography = @biography, profile_picture_id = @profile_picture_id, fame_rating = @fame_rating, created_at = @created_at, updated_at = @updated_at, location = @location, age = @age WHERE profile_id = @profile_id";
+            "UPDATE profiles SET gender = @gender, sexual_preferences = @sexual_preferences, biography = @biography,  updated_at = @updated_at, location = @location, age = @age WHERE profile_id = @profile_id";
         
+        command.Parameters.AddWithValue("@profile_id", entity.ProfileId);
         command.Parameters.AddWithValue("@gender", entity.Gender);
         command.Parameters.AddWithValue("@sexual_preferences", entity.SexualPreferences);
         command.Parameters.AddWithValue("@biography", entity.Biography);
-        command.Parameters.AddWithValue("@profile_picture_id", entity.ProfilePictureId);
-        command.Parameters.AddWithValue("@fame_rating", entity.FameRating);
-        command.Parameters.AddWithValue("@created_at", entity.CreatedAt.ToString());
         command.Parameters.AddWithValue("@updated_at", entity.UpdatedAt.ToString());
         command.Parameters.AddWithValue("@location", entity.Location);
         command.Parameters.AddWithValue("@age", entity.Age);
-        command.Parameters.AddWithValue("@profile_id", entity.ProfileId);
 
         var res = await command.ExecuteNonQueryAsync();
         return res > 0 ? entity : null;

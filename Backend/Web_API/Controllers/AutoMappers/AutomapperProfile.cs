@@ -12,7 +12,7 @@ public class AutomapperProfile : Profile
     {
         CreateMap<User, UserDto>().ReverseMap();
 
-        CreateMap<ProfileCreationRequestDto, EntityProfile>();
+        CreateMap<ProfileDto, EntityProfile>().ReverseMap();
 
         CreateMap<UserRegestrationDto, User>();
 

@@ -35,7 +35,7 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
 
     // PUT api/<UsersController>/5
     [HttpPut("{id:long}")]
-    public async Task UpdateProfile([FromRoute]long id, [FromBody] ProfileCreationRequestDto profileCreation)
+    public async Task UpdateProfile([FromRoute]long id, [FromBody] ProfileDto profileCreation)
     {
         validator.CheckId(id);
         validator.ProfileRequestDto(profileCreation);

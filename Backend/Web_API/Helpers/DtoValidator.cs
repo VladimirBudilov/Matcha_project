@@ -40,7 +40,7 @@ public class DtoValidator
         ValidatePassword(userAuthRequestDto.Password);
     }
 
-    public void ProfileRequestDto(ProfileCreationRequestDto profileCreationResponseDto)
+    public void ProfileRequestDto(ProfileDto profileCreationResponseDto)
     {
         if (profileCreationResponseDto == null)
         {
@@ -50,9 +50,7 @@ public class DtoValidator
         ValidateSexualPreference(profileCreationResponseDto.SexualPreferences);
         ValidateBio(profileCreationResponseDto.Biography);
         ValidateLocation(profileCreationResponseDto.Location);
-        ValidatePhoto(profileCreationResponseDto.ProfilePicture);
         ValidateAge(profileCreationResponseDto.Age);
-        //TODO add photos and interests validation
     }
     
     public void CheckId(long id)
@@ -192,4 +190,12 @@ public class DtoValidator
     }
     #endregion
 
+    public void EmailAndToken(string email, string token)
+    {
+        ValidateEmail(email);
+        if (string.IsNullOrEmpty(token))
+        {
+            throw new DataValidationException("Token is null or empty.");
+        }
+    }
 }

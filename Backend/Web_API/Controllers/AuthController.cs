@@ -31,6 +31,7 @@ public class AuthController(UserService userService, AuthService authService,
     [HttpGet("verify-email")]
     public async Task<IActionResult> VerifyEmail([FromQuery]string email, [FromQuery]string token)
     {
+        _validator.EmailAndToken(email, token);
         await _emailService.CheckEmailAndToken(_userService, _authService, email, token);
         return Ok();
     }

@@ -27,13 +27,7 @@ public class UserService(
 
         return output;
     }
-
-    public async Task<IEnumerable<User>> GetAllUsersAsync()
-    {
-        var output = await userRepository.GetAllUsers();
-        return output;
-    }
-
+    
     public async Task<User?> UpdateUserAsync(long id, User userModel)
     {
         var user = await userRepository.GetUserByIdAsync(id);
@@ -78,7 +72,7 @@ public class UserService(
         var user = await userRepository.GetUserByIdAsync(id);
         if (user == null)
             throw new ObjectNotFoundException("User not found. You can't update password for user that doesn't exist");
-        if (passwordManager.VerifyPassword(valueOldPassword, user.Password))
+        if (!passwordManager.VerifyPassword(valueOldPassword, user.Password))
             throw new DataAccessErrorException("Old password is incorrect");
         user.Password = passwordManager.HashPassword(valueNewPassword);
         var res = await userRepository.UpdateUserAsync(id, user);

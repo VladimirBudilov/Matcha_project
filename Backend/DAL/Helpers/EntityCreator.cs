@@ -11,14 +11,14 @@ public class EntityCreator(DataParser dataParser)
     {
         return new Profile
         {
-            ProfileId = userInfoRow.IsNull("profile_id") ? null : userInfoRow.Field<long>("profile_id"),
+            ProfileId = userInfoRow.Field<long>("profile_id"),
             Gender = userInfoRow.IsNull("gender") ? null : userInfoRow.Field<string>("gender"),
             SexualPreferences = userInfoRow.IsNull("sexual_preferences")
                 ? null
                 : userInfoRow.Field<string>("sexual_preferences"),
             Biography = userInfoRow.IsNull("biography") ? null : userInfoRow.Field<string>("biography"),
             ProfilePictureId = userInfoRow.IsNull("profile_picture_id")
-                ? (long?)null
+                ? null
                 : userInfoRow.Field<long>("profile_picture_id"),
             FameRating = userInfoRow.IsNull("fame_rating") ? null : userInfoRow.Field<long>("fame_rating"),
             Location = userInfoRow.IsNull("location") ? null : userInfoRow.Field<string>("location"),
@@ -32,7 +32,7 @@ public class EntityCreator(DataParser dataParser)
         {
             UserId = row.Field<long>("user_id"),
             IsVerified = row.IsNull("is_verified")
-                ? (bool?)null
+                ? null
                 : _dataParser.ConvertLongToBool(row.Field<long>("is_verified")),
             UserName = row.Field<string>("user_name"),
             FirstName = row.Field<string>("first_name"),
