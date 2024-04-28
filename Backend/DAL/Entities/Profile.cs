@@ -12,11 +12,11 @@ public class Profile
     public string? Location { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
-
     
-    public long ViewsAmount { get; set; }
-    public long LikesAmount { get; set; }
-    public string? ProfilePicture { get; set; }
-    public List<string> Pictures { get; set; } = new List<string>();
-    public List<string> Interests { get; set; } = new List<string>();
+    
+    public Picture? ProfilePicture { get; set; }
+    public List<Picture> Pictures { get; set; } = new List<Picture>();
+    public List<Interests> Interests { get; set; } = new List<Interests>();
+    public List<Like> Likes { get; set; } = new List<Like>();
+    
 }

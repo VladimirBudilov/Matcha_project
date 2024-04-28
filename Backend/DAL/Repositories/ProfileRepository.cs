@@ -21,50 +21,42 @@ public class ProfileRepository(
 
     public async Task<User?> GetFullProfileAsync(long id)
     {
+        // var userInterestsById = await fetcher.GetTableByParameter(connection,
+        //     "SELECT * FROM user_interests WHERE user_id = @id",
+        //     "@id", id);
+        // var interestsIds =
+        //     (from DataRow row in userInterestsById.Rows select row.Field<long>("interest_id")).ToList();
+        // command.CommandText = "SELECT * FROM interests WHERE interest_id IN (" +
+        //                       string.Join(",", interestsIds) + ")";
+        // var interests = new DataTable();
+        // interests.Load(await command.ExecuteReaderAsync());
+        // var pictures =
+        //     await fetcher.GetTableByParameter(connection, "SELECT * FROM pictures WHERE user_id = @id", "@id", id);
+        //
+        // var userInterests = (from DataRow row in interests.Rows select row.Field<string>("name")).ToList();
+        // var profilePictures = new List<string>();
+        // var mainProfilePicture = string.Empty;
+        // foreach (DataRow row in pictures.Rows)
+        // {
+        //     if (row.Field<long>("is_profile_picture") == 0)
+        //     {
+        //         mainProfilePicture = row.Field<string>("image_path");
+        //         continue;
+        //     }
+        //
+        //     profilePictures.Add(row.Field<string>("image_path"));
+        // }
         await using var connection = new SqliteConnection(_connectionString);
         await connection.OpenAsync();
-        var command = connection.CreateCommand();
+        connection.CreateCommand();
         var userInfo = await fetcher.GetTableByParameter(connection, "SELECT * FROM users" +
                                                                      " LEFT JOIN profiles ON users.user_id = profiles.profile_id" +
                                                                      " WHERE user_id = @id", "@id", id);
-        var userInterestsById = await fetcher.GetTableByParameter(connection,
-            "SELECT * FROM user_interests WHERE user_id = @id",
-            "@id", id);
-        var interestsIds =
-            (from DataRow row in userInterestsById.Rows select row.Field<long>("interest_id")).ToList();
-        command.CommandText = "SELECT * FROM interests WHERE interest_id IN (" +
-                              string.Join(",", interestsIds) + ")";
-        var interests = new DataTable();
-        interests.Load(await command.ExecuteReaderAsync());
-        var likes = await fetcher.GetTableByParameter(connection, "SELECT * FROM likes WHERE liked_user_id = @id",
-            "@id",
-            id);
-        var pictures =
-            await fetcher.GetTableByParameter(connection, "SELECT * FROM pictures WHERE user_id = @id", "@id", id);
-        var profileViews = await fetcher.GetTableByParameter(connection,
-            "SELECT * FROM profile_views WHERE profile_user_id = @id", "@id", id);
-        var userInterests = (from DataRow row in interests.Rows select row.Field<string>("name")).ToList();
-        var likesAmount = likes.Rows.Count;
-        var profilePictures = new List<string>();
-        var mainProfilePicture = string.Empty;
-        foreach (DataRow row in pictures.Rows)
-        {
-            if (row.Field<long>("is_profile_picture") == 0)
-            {
-                mainProfilePicture = row.Field<string>("image_path");
-                continue;
-            }
-
-            profilePictures.Add(row.Field<string>("image_path"));
-        }
-
-        var profileViewsAmount = profileViews.Rows.Count;
         if (userInfo.Rows.Count > 0)
         {
             var userInfoRow = userInfo.Rows[0];
             var user = _entityCreator.CreateUser(userInfoRow);
-            user.Profile = _entityCreator.CreateUserProfile(userInfoRow, mainProfilePicture, userInterests,
-                profilePictures, profileViewsAmount, likesAmount);
+            user.Profile = _entityCreator.CreateUserProfile(userInfoRow);
             return user;
         }
 

@@ -16,30 +16,30 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
 {
     // GET: api/<UsersController>
     [HttpGet]
-    public async Task<IEnumerable<ProfileResponseDto>> GetAllProfilesInfo([FromQuery]FilterParameters filter)
+    public async Task<IEnumerable<ProfileFullDataForOtherUsersDto>> GetAllProfilesInfo([FromQuery]FilterParameters filter)
     {
         var output = await profileService.GetFullProfilesAsync(filter);
-        var profiles = mapper.Map<IEnumerable<ProfileResponseDto>>(output);
+        var profiles = mapper.Map<IEnumerable<ProfileFullDataForOtherUsersDto>>(output);
         return profiles;
     }
     
     // GET api/<UsersController>/5
     [HttpGet("{id:long}")]
-    public async Task<ProfileResponseDto> GetAllProfileInfoById([FromRoute]long id)
+    public async Task<ProfileFullDataForOtherUsersDto> GetProfileFullDataById([FromRoute]long id)
     {
         validator.CheckId(id);
         var model =  await profileService.GetFullProfileByIdAsync(id);
-        var output = mapper.Map<ProfileResponseDto>(model);
+        var output = mapper.Map<ProfileFullDataForOtherUsersDto>(model);
         return output;
     }
 
     // PUT api/<UsersController>/5
     [HttpPut("{id:long}")]
-    public async Task UpdateProfile([FromRoute]long id, [FromBody] ProfileRequestDto profile)
+    public async Task UpdateProfile([FromRoute]long id, [FromBody] ProfileCreationRequestDto profileCreation)
     {
         validator.CheckId(id);
-        validator.ProfileRequestDto(profile);
-        var model = mapper.Map<Profile>(profile);
+        validator.ProfileRequestDto(profileCreation);
+        var model = mapper.Map<Profile>(profileCreation);
         await profileService.UpdateProfileAsync(id, model);
     }
 }

@@ -1,10 +1,10 @@
 ﻿namespace DAL.Entities;
 
-public class Pictures
+public class Picture
 {
-    public int PictureId { get; set; }
-    public int? UserId { get; set; }
-    public string? ImagePath { get; set; }
+    public long PictureId { get; set; }
+    public long UserId { get; set; }
+    public string? PicturePath { get; set; }
     public bool IsProfilePicture { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }

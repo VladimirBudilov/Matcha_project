@@ -40,18 +40,18 @@ public class DtoValidator
         ValidatePassword(userAuthRequestDto.Password);
     }
 
-    public void ProfileRequestDto(ProfileRequestDto profileResponseDto)
+    public void ProfileRequestDto(ProfileCreationRequestDto profileCreationResponseDto)
     {
-        if (profileResponseDto == null)
+        if (profileCreationResponseDto == null)
         {
             throw new DataValidationException("ProfileDto is null.");
         }
-        ValidateGender(profileResponseDto.Gender);
-        ValidateSexualPreference(profileResponseDto.SexualPreferences);
-        ValidateBio(profileResponseDto.Biography);
-        ValidateLocation(profileResponseDto.Location);
-        ValidatePhoto(profileResponseDto.ProfilePicture);
-        ValidateAge(profileResponseDto.Age);
+        ValidateGender(profileCreationResponseDto.Gender);
+        ValidateSexualPreference(profileCreationResponseDto.SexualPreferences);
+        ValidateBio(profileCreationResponseDto.Biography);
+        ValidateLocation(profileCreationResponseDto.Location);
+        ValidatePhoto(profileCreationResponseDto.ProfilePicture);
+        ValidateAge(profileCreationResponseDto.Age);
         //TODO add photos and interests validation
     }
     

@@ -1,6 +1,8 @@
-﻿namespace Web_API.DTOs;
+﻿using DAL.Entities;
 
-public record ProfileResponseDto
+namespace Web_API.DTOs;
+
+public record ProfileFullDataForOtherUsersDto
 {
     public long ProfileId { get; init; } = 0;
     public string UserName { get; init; } = "";
@@ -14,4 +16,5 @@ public record ProfileResponseDto
     public string Location { get; init; } = "";
     public string ProfilePicture { get; init; } = "";
     public List<string> Pictures { get; init; } = new();
+    public List<string> Interests { get; init; } = new();
 }
