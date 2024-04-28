@@ -24,8 +24,8 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
     }
     
     // GET api/<UsersController>/5
-    [HttpGet("{id:int}")]
-    public async Task<ProfileResponseDto> GetAllProfileInfoById([FromRoute]int id)
+    [HttpGet("{id:long}")]
+    public async Task<ProfileResponseDto> GetAllProfileInfoById([FromRoute]long id)
     {
         validator.CheckId(id);
         var model =  await profileService.GetFullProfileByIdAsync(id);
@@ -34,8 +34,8 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
     }
 
     // PUT api/<UsersController>/5
-    [HttpPut("{id:int}")]
-    public async Task UpdateProfile([FromRoute]int id, [FromBody] ProfileRequestDto profile)
+    [HttpPut("{id:long}")]
+    public async Task UpdateProfile([FromRoute]long id, [FromBody] ProfileRequestDto profile)
     {
         validator.CheckId(id);
         validator.ProfileRequestDto(profile);

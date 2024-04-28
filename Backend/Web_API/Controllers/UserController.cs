@@ -16,8 +16,8 @@ namespace Web_API.Controllers
     public class UserController(UserService userService, IMapper mapper, DtoValidator validator) : ControllerBase
     {
         // GET api/<UsersController>/5
-        [HttpGet("{id:int}")]
-        public async Task<UserDto> GetUserById([FromRoute]int id)
+        [HttpGet("{id:long}")]
+        public async Task<UserDto> GetUserById([FromRoute]long id)
         {
             //TODO turn on when site will be ready
             //CheckUserAuth(id);
@@ -29,7 +29,7 @@ namespace Web_API.Controllers
         
         // PUT api/<UsersController>/5
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateUser([FromRoute]int id, [FromBody] UserDto value)
+        public async Task<IActionResult> UpdateUser([FromRoute]long id, [FromBody] UserDto value)
         {
             validator.CheckId(id);
             //TODO turn on when site will be ready
@@ -39,7 +39,7 @@ namespace Web_API.Controllers
             await userService.UpdateUserAsync(id, userModel);
             return Ok(userModel);
         }
-        
+        [HttpPut("{id:int}/update-password")]
         public async Task<IActionResult> UpdateUserPassword([FromRoute]int id, [FromBody] PasswordUpdatingDto value)
         {
             validator.CheckId(id);
@@ -52,8 +52,8 @@ namespace Web_API.Controllers
         }
 
         // DELETE api/<UsersController>/5
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteUser([FromRoute]int id)
+        [HttpDelete("{id:long}")]
+        public async Task<IActionResult> DeleteUser([FromRoute]long id)
         {
             validator.CheckId(id);
             //TODO turn on when site will be ready
@@ -62,7 +62,7 @@ namespace Web_API.Controllers
             return Ok(output);
         }
         
-        private void CheckUserAuth(int id)
+        private void CheckUserAuth(long id)
         {
             if (User?.Claims == null)
             {

@@ -15,5 +15,7 @@ public class AutomapperProfile : Profile
         CreateMap<ProfileRequestDto, EntityProfile>();
 
         CreateMap<UserRegestrationDto, User>();
+
+        CreateMap<User, ProfileResponseDto>();
     }
 }

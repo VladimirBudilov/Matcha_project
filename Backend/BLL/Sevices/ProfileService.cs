@@ -12,13 +12,13 @@ public class ProfileService(UserRepository userRepository, ProfileRepository pro
     private readonly IMapper _mapper = mapper;
     private readonly ProfileRepository _profileRepository = profileRepository;
         
-    public async Task<User> GetFullProfileByIdAsync(int id)
+    public async Task<User> GetFullProfileByIdAsync(long id)
     {
         var profile=  await _profileRepository.GetFullProfileAsync(id);
         return profile;
     }
     
-    public async Task<Profile> GetProfileAsync(int id)
+    public async Task<Profile> GetProfileAsync(long id)
     {
         var profile = await _profileRepository.GetProfileByIdAsync(id);
         return profile;
@@ -29,7 +29,7 @@ public class ProfileService(UserRepository userRepository, ProfileRepository pro
         throw new NotImplementedException();
     }
     
-    public async Task UpdateProfileAsync(int id, Profile profile)
+    public async Task UpdateProfileAsync(long id, Profile profile)
     {
         var currentProfile = await profileRepository.GetProfileByIdAsync(id);
         if (currentProfile == null) throw new ObjectNotFoundException("Profile not found");

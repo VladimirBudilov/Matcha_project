@@ -55,7 +55,7 @@ public class DtoValidator
         //TODO add photos and interests validation
     }
     
-    public void CheckId(int id)
+    public void CheckId(long id)
     {
         if (id <= 0)
         {

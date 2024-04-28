@@ -19,7 +19,7 @@ public class ProfileRepository(
     private readonly TableFetcher _fetcher = fetcher;
     private readonly ParameterInjector _injector = injector;
 
-    public async Task<User?> GetFullProfileAsync(int id)
+    public async Task<User?> GetFullProfileAsync(long id)
     {
         await using var connection = new SqliteConnection(_connectionString);
         await connection.OpenAsync();
@@ -72,7 +72,7 @@ public class ProfileRepository(
     }
 
 
-    public async Task<Profile> GetProfileByIdAsync(int id)
+    public async Task<Profile> GetProfileByIdAsync(long id)
     {
         try
         {
