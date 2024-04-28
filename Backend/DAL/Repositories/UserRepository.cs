@@ -89,7 +89,7 @@ public class UserRepository(
 
     #endregion
 
-    public async Task<User?> AddUserAsync(User user)
+    public async Task<User?> CreateUserAsync(User user)
     {
         try
         {

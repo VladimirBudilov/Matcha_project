@@ -39,6 +39,17 @@ namespace Web_API.Controllers
             await userService.UpdateUserAsync(id, userModel);
             return Ok(userModel);
         }
+        
+        public async Task<IActionResult> UpdateUserPassword([FromRoute]int id, [FromBody] PasswordUpdatingDto value)
+        {
+            validator.CheckId(id);
+            //TODO turn on when site will be ready
+            //CheckUserAuth(id);
+            validator.ValidatePassword(value.NewPassword);
+            validator.ValidatePassword(value.OldPassword);
+            await userService.UpdatePasswordAsync(id, value.OldPassword, value.NewPassword);
+            return Ok();
+        }
 
         // DELETE api/<UsersController>/5
         [HttpDelete("{id:int}")]

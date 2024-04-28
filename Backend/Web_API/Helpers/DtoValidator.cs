@@ -12,10 +12,22 @@ public class DtoValidator
             throw new DataValidationException("UserDto is null.");
         }
         ValidateEmail(userDto.Email);
-        ValidatePassword(userDto.Password);
         ValidateUsername(userDto.UserName);
         ValidateName(userDto.FirstName);
         ValidateSurname(userDto.LastName);
+    }
+    
+    public void UserRegistrationDto(UserRegestrationDto userRegestrationDto)
+    {
+        if (userRegestrationDto == null)
+        {
+            throw new DataValidationException("UserRegestrationDto is null.");
+        }
+        ValidateEmail(userRegestrationDto.Email);
+        ValidateUsername(userRegestrationDto.UserName);
+        ValidateName(userRegestrationDto.FirstName);
+        ValidateSurname(userRegestrationDto.LastName);
+        ValidatePassword(userRegestrationDto.Password);
     }
     
     public void UserAuthRequestDto(UserAuthRequestDto userAuthRequestDto)
@@ -60,7 +72,7 @@ public class DtoValidator
         }
     }
 
-    private static void ValidatePassword(string password)
+    public void ValidatePassword(string password)
     {
         if (!(password.Length >= 8 && password.Length <= 20 &&
               password.Any(char.IsDigit) && password.Any(char.IsUpper)))

@@ -21,7 +21,7 @@ public class AuthService(UserRepository userRepository,
         user.IsVerified = false;
         user.CreatedAt = DateTime.Now;
         user.UpdatedAt = DateTime.Now;
-        var res = await userRepository.AddUserAsync(user);
+        var res = await userRepository.CreateUserAsync(user);
         var profile = new Profile()
         {
             ProfileId = user.UserId,
@@ -35,9 +35,8 @@ public class AuthService(UserRepository userRepository,
     
     public async Task<bool> AuthenticateUser(string username, string password)
     {
-        //TODO add validation
-        
         var user = await userRepository.GetUserByUserNameAsync(username);
+        if (user == null) return false;
         var isValidPassword = passwordManager.VerifyPassword(password, user!.Password);
         return isValidPassword;
     }
@@ -52,4 +51,5 @@ public class AuthService(UserRepository userRepository,
         await userRepository.UpdateUserAsync(id, user);
         return true;
     }
+    
 }

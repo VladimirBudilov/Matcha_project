@@ -5,6 +5,7 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
+using Web_API.Helpers;
 
 namespace BLL.Sevices;
 
@@ -41,5 +42,25 @@ public class EmailService(IOptions<SmtpConfig> smtpConfig)
 
         smtp.Send(email);
         smtp.Disconnect(true);
+    }
+    
+    public async Task CheckEmailAndToken(UserService userService, AuthService authService, string email, string token)
+    {
+        var user = await userService.GetUserByEmailAsync(email);
+        if (user == null)
+        {
+            throw new DataValidationException("Invalid email");
+        }
+
+        if (user.ResetToken != token)
+        {
+            throw new DataValidationException("Invalid token");
+        }
+
+        var alreadyVerified = await authService.ConfirmEmailAsync(user.UserId);
+        if (alreadyVerified)
+        {
+            throw new DataValidationException("Email already verified");
+        }
     }
 }

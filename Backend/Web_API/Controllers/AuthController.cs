@@ -31,14 +31,15 @@ public class AuthController(UserService userService, AuthService authService,
     [HttpGet("verify-email")]
     public async Task<IActionResult> VerifyEmail([FromQuery]string email, [FromQuery]string token)
     {
-        await CheckEmailAndToken(email, token);
+        await _emailService.CheckEmailAndToken(_userService, _authService, email, token);
         return Ok();
     }
 
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(UserAuthRequestDto loginDto)
+    public async Task<IActionResult> Login([FromBody]UserAuthRequestDto loginDto)
     {
+        _validator.UserAuthRequestDto(loginDto);
         var isValid = await _authService.AuthenticateUser(loginDto.UserName, loginDto.Password);
         if (!isValid)
         {
@@ -67,9 +68,9 @@ public class AuthController(UserService userService, AuthService authService,
     }
     
     [HttpPost("registration")]
-    public async Task<IActionResult> Register([FromBody] UserDto value)
+    public async Task<IActionResult> Register([FromBody] UserRegestrationDto value)
     {
-        _validator.UserDto(value);
+        _validator.UserRegistrationDto(value);
         try
         {
             var userModel = _mapper.Map<User>(value);
@@ -110,25 +111,4 @@ public class AuthController(UserService userService, AuthService authService,
         
         return jwtTokenHendler.WriteToken(token);
     }
-    
-    private async Task CheckEmailAndToken(string email, string token)
-    {
-        var user = await _userService.GetUserByEmailAsync(email);
-        if (user == null)
-        {
-            throw new DataValidationException("Invalid email");
-        }
-
-        if (user.ResetToken != token)
-        {
-            throw new DataValidationException("Invalid token");
-        }
-
-        var alreadyVerified = await _authService.ConfirmEmailAsync(user.UserId);
-        if (alreadyVerified)
-        {
-            throw new DataValidationException("Email already verified");
-        }
-    }
-
 }

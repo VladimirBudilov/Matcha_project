@@ -1,11 +1,16 @@
 ﻿using AutoMapper;
+using BLL.Helpers;
 using DAL.Entities;
 using DAL.Helpers;
 using DAL.Repositories;
 
 namespace BLL.Sevices;
 
-public class UserService(UserRepository userRepository, ProfileRepository profileRepository, IMapper mapper)
+public class UserService(
+    UserRepository userRepository,
+    ProfileRepository profileRepository,
+    IMapper mapper,
+    PasswordManager passwordManager)
 {
     public async Task<User?> GetUserByIdAsync(int userId)
     {
@@ -33,10 +38,15 @@ public class UserService(UserRepository userRepository, ProfileRepository profil
     {
         var user = await userRepository.GetUserByIdAsync(id);
         if (user == null) throw new ObjectNotFoundException("User not found. You can't update user that doesn't exist");
-        userModel.UpdatedAt = DateTime.Now;
+        user.UpdatedAt = DateTime.Now;
+        user.UserName = userModel.UserName;
+        user.FirstName = userModel.FirstName;
+        user.LastName = userModel.LastName;
+        user.Email = userModel.Email;
+
         var output = await userRepository.UpdateUserAsync(id, userModel);
         if (output == null)
-            throw new ObjectNotFoundException("User not found. You can't update user with the same data");
+            throw new DataAccessErrorException("User not found. You can't update user that doesn't exist");
 
         return output;
     }
@@ -61,5 +71,18 @@ public class UserService(UserRepository userRepository, ProfileRepository profil
                 "User not found by email. You can't get user that doesn't exist by email");
 
         return output;
+    }
+
+    public async Task UpdatePasswordAsync(int id, string valueOldPassword, string valueNewPassword)
+    {
+        var user = await userRepository.GetUserByIdAsync(id);
+        if (user == null)
+            throw new ObjectNotFoundException("User not found. You can't update password for user that doesn't exist");
+        if (passwordManager.VerifyPassword(valueOldPassword, user.Password))
+            throw new DataAccessErrorException("Old password is incorrect");
+        user.Password = passwordManager.HashPassword(valueNewPassword);
+        var res = await userRepository.UpdateUserAsync(id, user);
+        if (res == null)
+            throw new DataAccessErrorException("User not found. You can't update password for user that doesn't exist");
     }
 }

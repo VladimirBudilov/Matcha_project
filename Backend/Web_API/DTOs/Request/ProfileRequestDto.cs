@@ -1,6 +1,6 @@
 ﻿namespace Web_API.DTOs;
 
-public class ProfileRequestDto
+public record ProfileRequestDto
 {
     public string Gender { get; init; } = "";
     public string SexualPreferences { get; init; } = "";
