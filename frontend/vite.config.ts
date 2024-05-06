@@ -15,7 +15,10 @@ export default defineConfig({
     https: {
       key: fs.readFileSync('./certs/dev.local+4-key.pem'),
       cert: fs.readFileSync('./certs/dev.local+4.pem'),
-    }
+    },
+    //hmr: {
+    //  clientPort: 3000
+    //}
   },
   plugins: [
     vue(),

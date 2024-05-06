@@ -29,7 +29,7 @@ public class AuthController(UserService userService, AuthService authService,
     private readonly DtoValidator _validator = validator;
 
     [HttpGet("verify-email")]
-    public async Task<IActionResult> VerifyEmail([FromQuery]string email, [FromQuery]string token)
+    public async Task<IActionResult> VerifyEmail([FromQuery] string email, [FromQuery] string token)
     {
         _validator.EmailAndToken(email, token);
         await _emailService.CheckEmailAndToken(_userService, _authService, email, token);
@@ -38,7 +38,7 @@ public class AuthController(UserService userService, AuthService authService,
 
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody]UserAuthRequestDto loginDto)
+    public async Task<IActionResult> Login([FromBody] UserAuthRequestDto loginDto)
     {
         _validator.UserAuthRequestDto(loginDto);
         var isValid = await _authService.AuthenticateUser(loginDto.UserName, loginDto.Password);
@@ -47,7 +47,7 @@ public class AuthController(UserService userService, AuthService authService,
             _logger.LogWarning("Invalid login attempt");
             return BadRequest(new AuthResponseDto()
             {
-                ErrorMessage = "Invalid Authentication",
+                Error = "Invalid Authentication",
                 Result = false
             });
         }
@@ -59,7 +59,7 @@ public class AuthController(UserService userService, AuthService authService,
             Token = token
         });
     }
-    
+
     [HttpGet("logout")]
     public async Task<IActionResult> Logout()
     {
@@ -67,7 +67,7 @@ public class AuthController(UserService userService, AuthService authService,
         //TODO implement logout
         //remove jwt token from user
     }
-    
+
     [HttpPost("registration")]
     public async Task<IActionResult> Register([FromBody] UserRegestrationDto value)
     {
@@ -76,14 +76,14 @@ public class AuthController(UserService userService, AuthService authService,
         {
             var userModel = _mapper.Map<User>(value);
             var token = await _authService.RegisterUserAsync(userModel);
-            if(token == null) return BadRequest("User already exists");
+            if (token == null) return BadRequest("User already exists");
             var emailUrl = Request.Scheme + "://" + Request.Host + "/api/auth/verify-email?email=" + userModel.Email + "&token=" + token;
             var emailBody = "Please click on the link to verify your email: <a href=\"" + System.Text.Encodings.Web.HtmlEncoder.Default.Encode(emailUrl) + "\">link</a>";
-            
+
             //TODO uncomment when will be ready smtp server
             //_emailService.SendEmail(userModel.Email, emailBody);
         }
-        catch   (Exception ex)
+        catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
@@ -94,7 +94,7 @@ public class AuthController(UserService userService, AuthService authService,
     {
         var jwtTokenHendler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
-        
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
@@ -107,9 +107,9 @@ public class AuthController(UserService userService, AuthService authService,
             Expires = DateTime.UtcNow.AddHours(6),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
-        
+
         var token = jwtTokenHendler.CreateToken(tokenDescriptor);
-        
+
         return jwtTokenHendler.WriteToken(token);
     }
 }

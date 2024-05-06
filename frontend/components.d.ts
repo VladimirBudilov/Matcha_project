@@ -12,6 +12,8 @@ declare module 'vue' {
     AFormItem: typeof import('ant-design-vue/es')['FormItem']
     AInput: typeof import('ant-design-vue/es')['Input']
     AInputPassword: typeof import('ant-design-vue/es')['InputPassword']
+    Header: typeof import('./src/components/Header.vue')['default']
+    Logout: typeof import('./src/components/Logout.vue')['default']
     NamePasswordInput: typeof import('./src/components/NamePasswordInput.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

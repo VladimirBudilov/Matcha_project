@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { reactive } from 'vue';
-import NamePasswordInput from '../components/NamePasswordInput.vue'
+import { reactive, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { SignUpStore } from '@/stores/SignUpStore';
+import axios from 'axios';
 
 const IsActiveSignUp = storeToRefs(SignUpStore()).IsActiveSignUp
+const IsLogin = storeToRefs(SignUpStore()).IsLogin
 
 
 const SignUpButtonTurnOn = () => {
@@ -17,13 +18,33 @@ interface FormState {
 	remember: boolean;
 }
 
+interface loginRes {
+	error?: string
+	token?: string
+}
+
+
+const errorMsg = ref('')
+
 const formState = reactive<FormState>({
 	username: '',
 	password: '',
 	remember: true,
 });
 const onFinish = (values: any) => {
-	console.log('Success:', values);
+	errorMsg.value = ''
+	axios.post('api/auth/login', values).catch((msg) => {
+		if (msg.response.data.error) {
+			errorMsg.value = msg.response.data.error
+		}
+	}).then((res) => {
+		const loginRes : loginRes = res?.data
+		if (errorMsg.value == '' && loginRes.token) {
+			IsLogin.value = true
+			localStorage.setItem("token", loginRes.token)
+			window.location.assign('https://' + window.location.host)
+		}
+	})
 };
 
 const onFinishFailed = (errorInfo: any) => {
@@ -61,6 +82,9 @@ const onFinishFailed = (errorInfo: any) => {
 
 		<a-form-item :wrapper-col="{ offset: 8, span: 16 }">
 			<a-button type="primary" html-type="submit">Submit</a-button>
+			<p style='color: red;'>
+				{{ errorMsg }}
+			</p>
 		</a-form-item>
 	</a-form>
 	<a-form>
@@ -68,6 +92,7 @@ const onFinishFailed = (errorInfo: any) => {
 			<a-button type="primary" html-type="signup" @click="SignUpButtonTurnOn">Sign up</a-button>
 		</a-form-item>
 	</a-form>
+
 
 </template>
 

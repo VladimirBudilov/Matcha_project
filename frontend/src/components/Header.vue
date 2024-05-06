@@ -1,29 +1,13 @@
 <script setup lang="ts">
-import axios from 'axios';
-import { onMounted, ref } from 'vue';
+import Logout from '@/components/Logout.vue'
 
-
-const test_0 = ref<Object>()
-const test_1 = ref<Object>()
-
-onMounted(async() => {
-  await axios.get('/api/getdata')
-  .then((res) => {
-    test_0.value = res
-  })
-
-  await axios.post('/api/signup', {email : 'test@gmail.com'})
-  .then((res) =>{
-    test_1.value = res
-  })
-})
 
 </script>
 
 <template>
-  <h1> 1111 </h1>
-  <p> {{ test_0 }} </p>
-  <p> {{ test_1 }} </p>
+  <header>
+    <Logout />
+  </header>
 </template>
 
 <style scoped>
