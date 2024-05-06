@@ -44,7 +44,7 @@ builder.Services.AddScoped<DtoValidator>();
 
 builder.Services.AddMvc(options => options.Filters.Add(new ExceptionHadlerFilter()));
 
-builder.Services.Configure<SmtpConfig>(builder.Configuration.GetSection("SmtpConfig"));
+//builder.Services.Configure<SmtpConfig>(builder.Configuration.GetSection("SmtpConfig"));
 
 builder.Services.AddAutoMapper(typeof(AutomapperProfile));
 
