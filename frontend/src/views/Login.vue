@@ -21,7 +21,14 @@ const IsActiveSignUp = storeToRefs(SignUpStore()).IsActiveSignUp
 <style>
 .Login {
 	position: relative;
-	top: 30vh;
+	top: 15vh;
+	right: 4vw;
+}
+
+.SignUpForm {
+	position: relative;
+	top: 10vh;
+	right: 4vw;
 }
 
 </style>

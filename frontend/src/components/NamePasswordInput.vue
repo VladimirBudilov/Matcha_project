@@ -62,7 +62,6 @@ const onFinishFailed = (errorInfo: any) => {
 		:wrapper-col="{ span: 16 }"
 		autocomplete="on"
 		@finish="onFinish"
-		@finishFailed="onFinishFailed"
 		>
 		<a-form-item style="color: var(--color-text);"
 			label="Username"
@@ -85,23 +84,15 @@ const onFinishFailed = (errorInfo: any) => {
 			<p style='color: red;'>
 				{{ errorMsg }}
 			</p>
-		</a-form-item>
-	</a-form>
-	<a-form>
-		<a-form-item :wrapper-col="{ offset: 8, span: 16 }">
 			<a-button type="primary" html-type="signup" @click="SignUpButtonTurnOn">Sign up</a-button>
 		</a-form-item>
 	</a-form>
 
 
+
 </template>
 
 <style>
-.Login {
-	position: relative;
-	top: 30vh;
-}
-
 :where(.css-dev-only-do-not-override-1hsjdkk).ant-form {
     margin-left: 10%;
 	margin-right: 10%;
@@ -111,10 +102,6 @@ const onFinishFailed = (errorInfo: any) => {
 
 :where(.css-dev-only-do-not-override-1hsjdkk).ant-form-item .ant-form-item-label >label {
 	color: var(--color-text);
-}
-
-.SignUpButton {
-	position: relative;
 }
 
 </style>
