@@ -1,10 +1,31 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using Web_API.DTOs;
 
 namespace Web_API.Helpers;
 
 public class DtoValidator
 {
+    
+    public void CheckUserAuth(long id, IEnumerable<Claim> claims)
+    {
+        if (claims == null)
+        {
+            throw new NotAuthorizedRequestException();
+        }
+
+        var claimId = claims.FirstOrDefault(c => c.Type == "Id");
+        if (claimId == null)
+        {
+            throw new NotAuthorizedRequestException();
+        }
+
+        var authorised = int.TryParse(claimId.Value, out var userId);
+        if (!authorised || id != userId)
+        {
+            throw new ForbiddenRequestException();
+        }
+    }
     public void UserDto(UserDto userDto)
     {
         if (userDto == null)

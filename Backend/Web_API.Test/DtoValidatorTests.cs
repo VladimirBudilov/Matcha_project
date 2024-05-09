@@ -12,7 +12,7 @@ namespace Web_API.Test
             var validator = new DtoValidator();
             validator.ValidatePassword("12345");
             //Assign
-
+            
             //Assert
         }
     }

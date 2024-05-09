@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
@@ -65,7 +65,7 @@ public class AuthController(UserService userService, AuthService authService,
     {
         return Ok();
         //TODO implement logout
-        //remove jwt token from user
+        //remove jwt refresh token
     }
 
     [HttpPost("registration")]
@@ -111,5 +111,12 @@ public class AuthController(UserService userService, AuthService authService,
         var token = jwtTokenHendler.CreateToken(tokenDescriptor);
 
         return jwtTokenHendler.WriteToken(token);
+    }
+    
+    [HttpGet("get-id")]
+    public async Task<IActionResult> GetId()
+    {
+        var id = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
+        return Ok(id);
     }
 }

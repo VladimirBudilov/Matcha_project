@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BLL.Sevices;
 using DAL.Helpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web_API.DTOs;
 using Web_API.Helpers;
@@ -8,6 +10,7 @@ using Profile = DAL.Entities.Profile;
 
 namespace Web_API.Controllers;
 
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route("api/[controller]")]
 [ApiController]
 public class ProfileController(ProfileService profileService, IMapper mapper,
@@ -37,6 +40,7 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
     [HttpPut("{id:long}")]
     public async Task UpdateProfile([FromRoute]long id, [FromBody] ProfileDto profileCreation)
     {
+        validator.CheckUserAuth(id, User.Claims);
         validator.CheckId(id);
         validator.ProfileRequestDto(profileCreation);
         var model = mapper.Map<Profile>(profileCreation);
