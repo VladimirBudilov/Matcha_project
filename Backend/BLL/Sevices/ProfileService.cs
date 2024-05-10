@@ -15,8 +15,6 @@ public class ProfileService(UserRepository userRepository, ProfileRepository pro
     private readonly UserRepository _userRepository = userRepository;
     private readonly IMapper _mapper = mapper;
     private readonly ProfileRepository _profileRepository = profileRepository;
-    private readonly PicturesRepository _picturesRepository = picturesRepository;
-    private readonly InterestsRepository _interestsRepository = interestsRepository;
     private readonly LikesRepository _likesRepository = likesRepository;
         
     public async Task<User> GetFullProfileByIdAsync(long id)
@@ -26,15 +24,30 @@ public class ProfileService(UserRepository userRepository, ProfileRepository pro
         
         var builder = new ProfileBuilder();
         builder.AddMainData(user);
-        builder.AddProfilePictures(await _picturesRepository.GetPicturesByUserIdAsync(user.UserId));
-        builder.AddMainProfilePicture(await _picturesRepository.GetProfilePictureAsync(user.Profile?.ProfilePictureId));
-        builder.AddUserInterests(await _interestsRepository.GetUserInterestsByUserIdAsync(id));
+        builder.AddProfilePictures(await picturesRepository.GetPicturesByUserIdAsync(user.UserId));
+        builder.AddMainProfilePicture(await picturesRepository.GetProfilePictureAsync(user.Profile?.ProfilePictureId));
+        builder.AddUserInterests(await interestsRepository.GetUserInterestsByUserIdAsync(id));
         return builder.Build();
     }
     
-    public async Task<IEnumerable<User>> GetFullProfilesAsync(FilterParameters filter)
+    public async Task<IEnumerable<User>> GetFullProfilesAsync(SearchParameters search, SortParameters sort,
+        PaginationParameters pagination)
     {
-        throw new NotImplementedException();
+        /*var users = await _profileRepository.GetFullProfilesAsync(search);
+        if (users == null) throw new ObjectNotFoundException("Users not found");
+        
+        var builder = new ProfileBuilder();
+        var result = new List<User>();
+        foreach (var user in users)
+        {
+            builder.AddMainData(user);
+            builder.AddProfilePictures(await _picturesRepository.GetPicturesByUserIdAsync(user.UserId));
+            builder.AddMainProfilePicture(await _picturesRepository.GetProfilePictureAsync(user.Profile?.ProfilePictureId));
+            builder.AddUserInterests(await _interestsRepository.GetUserInterestsByUserIdAsync(user.UserId));
+            result.Add(builder.Build());
+        }
+        return result;*/
+        return null;
     }
     
     public async Task UpdateProfileAsync(long id, Profile profile)

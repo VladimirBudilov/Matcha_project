@@ -1,4 +1,6 @@
 ﻿using System.Data;
+using System.Data.SQLite;
+using System.Text;
 using DAL.Entities;
 using DAL.Helpers;
 using Microsoft.Data.Sqlite;
@@ -10,14 +12,11 @@ public class ProfileRepository(
     IConfiguration configuration,
     EntityCreator entityCreator,
     TableFetcher fetcher,
-    ParameterInjector injector)
+    QueryBuilder queryBuilder)
 {
     private readonly string _connectionString = configuration.GetConnectionString("UserDbConnection")
                                                 ?? throw new ArgumentNullException(nameof(configuration),
                                                     "Connection string not found in configuration");
-    private readonly EntityCreator _entityCreator = entityCreator;
-    private readonly TableFetcher _fetcher = fetcher;
-    private readonly ParameterInjector _injector = injector;
 
     public async Task<User?> GetFullProfileAsync(long id)
     {
@@ -30,8 +29,8 @@ public class ProfileRepository(
         if (userInfo.Rows.Count > 0)
         {
             var userInfoRow = userInfo.Rows[0];
-            var user = _entityCreator.CreateUser(userInfoRow);
-            user.Profile = _entityCreator.CreateUserProfile(userInfoRow);
+            var user = entityCreator.CreateUser(userInfoRow);
+            user.Profile = entityCreator.CreateUserProfile(userInfoRow);
             return user;
         }
 
@@ -44,9 +43,9 @@ public class ProfileRepository(
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
-            var dataTable = await _fetcher.GetTableByParameter(connection,
+            var dataTable = await fetcher.GetTableByParameter(connection,
                 "SELECT * FROM profiles WHERE profile_id = @id", "@id", id);
-            return dataTable.Rows.Count > 0 ? _entityCreator.CreateUserProfile(dataTable.Rows[0]) : null;
+            return dataTable.Rows.Count > 0 ? entityCreator.CreateUserProfile(dataTable.Rows[0]) : null;
         }
         catch (Exception e)
         {
@@ -78,30 +77,48 @@ public class ProfileRepository(
         }
     }
 
-   public async Task<Profile> UpdateProfileAsync(Profile entity)
-{
-    try
+    public async Task<Profile> UpdateProfileAsync(Profile entity)
     {
-        await using var connection = new SqliteConnection(_connectionString);
-        await connection.OpenAsync();
-        var command = connection.CreateCommand();
-        command.CommandText =
-            "UPDATE profiles SET gender = @gender, sexual_preferences = @sexual_preferences, biography = @biography,  updated_at = @updated_at, location = @location, age = @age WHERE profile_id = @profile_id";
-        
-        command.Parameters.AddWithValue("@profile_id", entity.ProfileId);
-        command.Parameters.AddWithValue("@gender", entity.Gender);
-        command.Parameters.AddWithValue("@sexual_preferences", entity.SexualPreferences);
-        command.Parameters.AddWithValue("@biography", entity.Biography);
-        command.Parameters.AddWithValue("@updated_at", entity.UpdatedAt.ToString());
-        command.Parameters.AddWithValue("@location", entity.Location);
-        command.Parameters.AddWithValue("@age", entity.Age);
+        try
+        {
+            await using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+            var command = connection.CreateCommand();
+            command.CommandText =
+                "UPDATE profiles SET gender = @gender, sexual_preferences = @sexual_preferences, biography = @biography,  updated_at = @updated_at, location = @location, age = @age WHERE profile_id = @profile_id";
 
-        var res = await command.ExecuteNonQueryAsync();
-        return res > 0 ? entity : null;
+            command.Parameters.AddWithValue("@profile_id", entity.ProfileId);
+            command.Parameters.AddWithValue("@gender", entity.Gender);
+            command.Parameters.AddWithValue("@sexual_preferences", entity.SexualPreferences);
+            command.Parameters.AddWithValue("@biography", entity.Biography);
+            command.Parameters.AddWithValue("@updated_at", entity.UpdatedAt.ToString());
+            command.Parameters.AddWithValue("@location", entity.Location);
+            command.Parameters.AddWithValue("@age", entity.Age);
+
+            var res = await command.ExecuteNonQueryAsync();
+            return res > 0 ? entity : null;
+        }
+        catch (Exception e)
+        {
+            throw new DataAccessErrorException("Error while updating profile", e);
+        }
     }
-    catch (Exception e)
+
+    public async Task<IEnumerable<User>> GetFullProfilesAsync(SearchParameters searchParams, SortParameters sortParams)
     {
-        throw new DataAccessErrorException("Error while updating profile", e);
+        try
+        {
+            await using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+            var command = connection.CreateCommand();
+            queryBuilder.Select(
+                "first_name, last_name, gender, sexual_preferences,\n fame_rating, age, profile_picture_id,");
+        }
+        catch (Exception e)
+        {
+            throw new DataAccessErrorException("Error while getting full profiles", e);
+        }
+
+        return null;
     }
-}
 }
