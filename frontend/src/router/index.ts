@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeVue from '@/views/Home.vue'
 import LoginVue from '@/views/Login.vue'
+import Profile from '@/components/Profile.vue'
+import axios from 'axios'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,12 +16,12 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginVue
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: Profile
     }
-    //{
-    //  path: '/signup',
-    //    name: 'Signup',
-    //    component: SignupView
-    //}
   ]
 })
 
@@ -28,12 +30,24 @@ router.beforeEach(async (to, from) => {
   if (localStorage.getItem('token')) {
     status = 1
   }
-
   if (status == 0 && to.name !== 'login') {
     return 'login'
   }
   else if (status == 1 && to.name === 'login') {
     return '/'
+  }
+  else {
+    await axios.get('/api/auth/get-id')
+    .then((res) => {
+      if (res?.status === 204) {
+        localStorage.removeItem('token')
+        localStorage.removeItem('UserId')
+        return 'login'
+      }
+      else {
+        localStorage.setItem('UserId', res.data)
+      }
+    })
   }
 })
 

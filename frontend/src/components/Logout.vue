@@ -8,6 +8,7 @@ const IsLogin = storeToRefs(SignUpStore()).IsLogin
 const LogoutButtonTurnOn = () => {
 	axios.get('api/auth/logout').then(() => {
 		localStorage.removeItem('token')
+		localStorage.removeItem('UserId')
 		IsLogin.value = false
 		window.location.assign('https://' + window.location.host + '/login')
 	})
@@ -15,11 +16,8 @@ const LogoutButtonTurnOn = () => {
 </script>
 
 <template>
-	<div class="Logout">
-		<a-button type="primary" html-type="signup" @click="LogoutButtonTurnOn">Logout</a-button>
-	</div>
+	<a-button type="text" size="large" html-type="signup" @click="LogoutButtonTurnOn" style="font-size: 25px; color:firebrick">Logout</a-button>
 </template>
 
 <style>
-
 </style>
