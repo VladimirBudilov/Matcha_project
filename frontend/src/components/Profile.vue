@@ -6,6 +6,8 @@ import axios from 'axios';
 const componentDisabled = ref(false);
 const labelCol = { style: { width: '150px' } };
 const wrapperCol = { span: 14 };
+const uploadUrl = ref('')
+const errorMsg = ref('')
 
 
 interface profile {
@@ -41,12 +43,43 @@ const profile = ref<profile>({
 })
 
 
-onMounted(() => {
-	axios.get('api/profile/' + localStorage.getItem('UserId')).then((res) => {
+onMounted(async () => {
+	await axios.get('api/profile/' + localStorage.getItem('UserId')).then((res) => {
 		profile.value = res?.data
+		uploadUrl.value = 'api/FileManager/uploadPhoto/' + profile.value.profileId
 		console.log(profile.value)
 	})
+
 })
+
+const SubmiteChanges = async () => {
+	errorMsg.value = ''
+	await axios.put('api/profile/' + profile.value.profileId, profile.value).catch((msg) => {
+		if (msg.response.data.errors) {
+			if (msg.response.data.errors.Biography) {
+				errorMsg.value = errorMsg.value + ' The Biography field is required.'
+			}
+			if (msg.response.data.errors.Location) {
+				errorMsg.value = errorMsg.value + " The Location field is required."
+			}
+			if (msg.response.data.errors.SexualPreferences) {
+				errorMsg.value = errorMsg.value + " The Sexual preferences field is required."
+			}
+			console.log(errorMsg.value)
+		}
+		if (msg.response.data.error) {
+			errorMsg.value = errorMsg.value + msg.response.data.error
+		}
+	}).then((res) => {
+		if (errorMsg.value == '') {
+			errorMsg.value = "Success"
+		}
+
+	})
+	setTimeout(() => {
+		errorMsg.value = ''
+	}, 10000)
+}
 
 </script>
 
@@ -59,19 +92,19 @@ onMounted(() => {
     style="max-width: 70vw"
   	>
 		<a-form-item label="ID">
-			<a-input-number v-model:value="profile.profileId" disabled="true" style="background-color: grey; color:black"/>
+			<a-input-number v-model:value="profile.profileId" disabled style="background-color: grey; color:black"/>
 		</a-form-item>
 		<a-form-item label="Fame rating">
-			<a-input-number v-model:value="profile.fameRating" disabled="true" style="background-color: grey; color:black"/>
+			<a-input-number v-model:value="profile.fameRating" disabled style="background-color: grey; color:black"/>
 		</a-form-item>
 		<a-form-item label="Username">
-			<a-input v-model:value="profile.userName" disabled="true" style="background-color: grey; color:black"/>
+			<a-input v-model:value="profile.userName" disabled style="background-color: grey; color:black"/>
 		</a-form-item>
 		<a-form-item label="First Name">
-			<a-input v-model:value="profile.firstName" disabled="true" style="background-color: grey; color:black"/>
+			<a-input v-model:value="profile.firstName" disabled style="background-color: grey; color:black"/>
 		</a-form-item>
 		<a-form-item label="Last Name">
-			<a-input v-model:value="profile.lastName" disabled="true" style="background-color: grey; color:black"/>
+			<a-input v-model:value="profile.lastName" disabled style="background-color: grey; color:black"/>
 		</a-form-item>
 		<a-form-item label="Gender">
 			<a-select ref="select" style="width: 120px; color: red;" v-model:value="profile.gender">
@@ -94,8 +127,23 @@ onMounted(() => {
 		<a-form-item label="Biography">
 			<a-textarea v-model:value="profile.biography" placeholder="Biography" :rows="4" />
 		</a-form-item>
-		<a-form-item label="Upload pictures">
-			<a-upload list-type="picture-card" maxCount="6" accept=".jpg, .jpeg, .png">
+		<a-button type="primary" html-type="signup" @click="SubmiteChanges" style="left: 40%;">Submite</a-button>
+		<div v-if='errorMsg != "Success"' style="color: red">
+			<span> {{errorMsg}} </span>
+		</div>
+		<div v-else-if='errorMsg = "Success"' style="color: green;">
+			<span> {{errorMsg}} </span>
+		</div>
+		<a-form-item label="Avatar" style="position: absolute ;top: 20vh; left: 5vw">
+			<a-upload :action="uploadUrl + '?id=1'" list-type="picture-card" :maxCount="1" accept=".jpg, .jpeg, .png">
+				<div>
+					<PlusOutlined style="color:grey"/>
+				<div style="margin-top: 8px; color:grey">Upload</div>
+				</div>
+			</a-upload>
+		</a-form-item>
+		<a-form-item label="Photos" style="position: absolute ;top: 20vh; right: 5vw; max-width: 25vw;">
+			<a-upload :action="uploadUrl + '?id=2'" list-type="picture-card" :maxCount="6" accept=".jpg, .jpeg, .png">
 				<div>
 					<PlusOutlined style="color:grey"/>
 				<div style="margin-top: 8px; color:grey" >Upload</div>
