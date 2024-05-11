@@ -22,8 +22,9 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
     public async Task<IEnumerable<ProfileFullDataForOtherUsersDto>> GetAllProfilesInfo([FromQuery]SearchParameters search,
         [FromQuery] SortParameters sort,[FromQuery] PaginationParameters pagination)
     {
-        //TODO add search and sort data validation
-        
+        /*validator.CheckSearchParameters(search);
+        validator.CheckSortParameters(sort);
+        validator.CheckPaginationParameters(pagination);*/
         
         var output = await profileService.GetFullProfilesAsync(search, sort, pagination);
         var profiles = mapper.Map<IEnumerable<ProfileFullDataForOtherUsersDto>>(output);

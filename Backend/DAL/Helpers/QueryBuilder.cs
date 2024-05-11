@@ -4,10 +4,12 @@ namespace DAL.Helpers;
 
 public class QueryBuilder
 {
-    StringBuilder _selectPart = new StringBuilder("Select ");
-    StringBuilder _fromPart = new StringBuilder("From ");
+    StringBuilder _selectPart = new StringBuilder("SELECT ");
+    StringBuilder _fromPart = new StringBuilder("FROM ");
     StringBuilder _wherePart = new StringBuilder("Where ");
+    StringBuilder _groupByPart = new StringBuilder("Group By ");
     StringBuilder _orderByPart = new StringBuilder("Order By ");
+    StringBuilder _havingPart = new StringBuilder("Having ");
     StringBuilder _limitPart = new StringBuilder("Limit ");
     StringBuilder _offsetPart = new StringBuilder("Offset ");
     
@@ -47,15 +49,29 @@ public class QueryBuilder
         return this;
     }
     
+    public QueryBuilder GroupBy(string groupBy)
+    {
+        _groupByPart.Append(groupBy);
+        return this;
+    }
+    
+    public QueryBuilder Having(string having)
+    {
+        _havingPart.Append(having);
+        return this;
+    }
+    
     public string Build()
     {
         StringBuilder query = new();
         query.Append(_selectPart);
         query.Append(_fromPart);
-        query.Append(_wherePart);
+        if(_wherePart.ToString() != "Where ") query.Append(_wherePart);
+        query.Append(_groupByPart);
         query.Append(_orderByPart);
-        query.Append(_limitPart);
-        query.Append(_offsetPart);
+        if(_havingPart.ToString() != "Having ") query.Append(_havingPart);
+        /*query.Append(_limitPart);
+        query.Append(_offsetPart);*/
         return query.ToString();
     }
 }

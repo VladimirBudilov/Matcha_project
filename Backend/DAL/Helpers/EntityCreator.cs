@@ -21,7 +21,7 @@ public class EntityCreator(DataParser dataParser)
                 ? null
                 : userInfoRow.Field<long>("profile_picture_id"),
             FameRating = userInfoRow.IsNull("fame_rating") ? null : userInfoRow.Field<long>("fame_rating"),
-            Location = userInfoRow.IsNull("location") ? null : userInfoRow.Field<string>("location"),
+            Location = userInfoRow.IsNull("location") ? null : userInfoRow.Field<long>("location"),
             Age = userInfoRow.Field<long>("age"),
         };
     }
@@ -77,5 +77,16 @@ public class EntityCreator(DataParser dataParser)
         {
             Interest = row.Field<string>("name"),
         };
+    }
+
+    public IEnumerable<User> CreateUsers(DataTable dataTable)
+    {
+        var users = new List<User>();
+        foreach (DataRow row in dataTable.Rows)
+        {
+            users.Add(CreateUser(row));
+        }
+
+        return users;
     }
 }

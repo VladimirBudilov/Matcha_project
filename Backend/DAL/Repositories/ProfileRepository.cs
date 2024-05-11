@@ -104,20 +104,42 @@ public class ProfileRepository(
         }
     }
 
-    public async Task<IEnumerable<User>> GetFullProfilesAsync(SearchParameters searchParams, SortParameters sortParams)
+    public async Task<IEnumerable<User>> GetFullProfilesAsync(SearchParameters searchParams, SortParameters sortParams,
+        PaginationParameters pagination)
     {
-        try
-        {
+        /*try
+        {*/
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
             var command = connection.CreateCommand();
             queryBuilder.Select(
-                "first_name, last_name, gender, sexual_preferences,\n fame_rating, age, profile_picture_id,");
-        }
+                " users.user_id as user_id, users.*, gender, sexual_preferences,fame_rating, age, profile_picture_id ");
+            queryBuilder.From(" users \n JOIN profiles ON users.user_id = profiles.profile_id ");
+            queryBuilder.From(" LEFT JOIN user_interests ON user_interests.user_id = users.user_id ");
+            queryBuilder.From(" LEFT JOIN interests ON user_interests.interest_id = interests.interest_id ");
+            queryBuilder.From(" JOIN locations On profiles.location = locations.location_id ");
+            if (searchParams != null)
+            {
+                
+            }
+            if (sortParams?.MainParameter != null)
+            {
+                
+            }
+
+            queryBuilder.GroupBy(" users.user_id ");
+            queryBuilder.OrderBy(" fame_rating ASC, count(interests.name) DESC, age, fame_rating DESC ");
+            
+            command.CommandText = queryBuilder.Build();
+            var dataTable = new DataTable();
+            var reader = await command.ExecuteReaderAsync();
+            dataTable.Load(reader);
+            return dataTable.Rows.Count > 0 ? entityCreator.CreateUsers(dataTable) : null;            
+        /*}
         catch (Exception e)
         {
             throw new DataAccessErrorException("Error while getting full profiles", e);
-        }
+        }*/
 
         return null;
     }
