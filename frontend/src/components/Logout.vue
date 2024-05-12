@@ -15,9 +15,7 @@ const LogoutButtonTurnOn = () => {
 </script>
 
 <template>
-	<div class="Logout">
-		<a-button type="primary" html-type="signup" @click="LogoutButtonTurnOn">Logout</a-button>
-	</div>
+	<a-button type="text" size="large" html-type="signup" @click="LogoutButtonTurnOn" style="font-size: 25px; color:firebrick">Logout</a-button>
 </template>
 
 <style>
