@@ -4,8 +4,30 @@ import Header from './components/Header.vue';
 import { SignUpStore } from '@/stores/SignUpStore';
 import { storeToRefs } from 'pinia';
 import Login from './views/Login.vue';
+import { onMounted, ref } from 'vue';
+import axios from 'axios';
+
 
 const IsLogin = storeToRefs(SignUpStore()).IsLogin
+
+const firstName = ref('')
+const lastName = ref('')
+
+async function GetProfileInfo(){
+  await axios.get('api/profile/' + localStorage.getItem('UserId')).then((res) => {
+      firstName.value = res.data.firstName
+      lastName.value = res.data.lastName
+    })
+}
+
+onMounted (async () => {
+  setTimeout(async () => {
+    if (localStorage.getItem('UserId')) {
+      await GetProfileInfo()
+    }
+  }, 100)
+
+})
 
 </script>
 
@@ -24,7 +46,7 @@ const IsLogin = storeToRefs(SignUpStore()).IsLogin
         </nav>
       </div>
     </div>
-  <!--<RouterView />-->
+  <RouterView />
 </template>
 
 <style scoped>
