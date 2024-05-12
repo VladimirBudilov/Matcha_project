@@ -1,3 +1,4 @@
+using System.Data.SQLite;
 using System.Text;
 using BLL.Helpers;
 using BLL.Sevices;
@@ -54,6 +55,8 @@ builder.Services.AddCors(options =>
         corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
+SQLiteFunction.RegisterFunction(typeof(HaversineFunction));
+
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<ProfileRepository>();
 builder.Services.AddScoped<InterestsRepository>();
@@ -65,7 +68,8 @@ builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<PasswordManager>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<AuthService>();
-
+    
+builder.Services.AddScoped<QueryBuilder>();
 builder.Services.AddScoped<DataParser>();
 builder.Services.AddScoped<EntityCreator>();
 builder.Services.AddScoped<TableFetcher>();

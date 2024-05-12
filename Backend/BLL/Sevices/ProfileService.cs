@@ -12,29 +12,34 @@ public class ProfileService(UserRepository userRepository, ProfileRepository pro
     LikesRepository likesRepository,
     IMapper mapper)
 {
-    private readonly UserRepository _userRepository = userRepository;
-    private readonly IMapper _mapper = mapper;
-    private readonly ProfileRepository _profileRepository = profileRepository;
-    private readonly PicturesRepository _picturesRepository = picturesRepository;
-    private readonly InterestsRepository _interestsRepository = interestsRepository;
-    private readonly LikesRepository _likesRepository = likesRepository;
-        
     public async Task<User> GetFullProfileByIdAsync(long id)
     {
-        var user = await _profileRepository.GetFullProfileAsync(id);
+        var user = await profileRepository.GetFullProfileAsync(id);
         if (user == null) throw new ObjectNotFoundException("User not found");
         
         var builder = new ProfileBuilder();
         builder.AddMainData(user);
-        builder.AddProfilePictures(await _picturesRepository.GetPicturesByUserIdAsync(user.UserId));
-        builder.AddMainProfilePicture(await _picturesRepository.GetProfilePictureAsync(user.Profile?.ProfilePictureId));
-        builder.AddUserInterests(await _interestsRepository.GetUserInterestsByUserIdAsync(id));
+        builder.AddProfilePictures(await picturesRepository.GetPicturesByUserIdAsync(user.UserId));
+        builder.AddMainProfilePicture(await picturesRepository.GetProfilePictureAsync(user.Profile?.ProfilePictureId));
+        builder.AddUserInterests(await interestsRepository.GetUserInterestsByUserIdAsync(id));
         return builder.Build();
     }
     
-    public async Task<IEnumerable<User>> GetFullProfilesAsync(FilterParameters filter)
+    public async Task<IEnumerable<User>> GetFullProfilesAsync(SearchParameters search, SortParameters sort,
+        PaginationParameters pagination)
     {
-        throw new NotImplementedException();
+        var users = await profileRepository.GetFullProfilesAsync(search, sort, pagination);
+        var builder = new ProfileBuilder();
+        var usersList = new List<User>();
+        foreach (var user in users)
+        {
+              user.Profile = await profileRepository.GetProfileByIdAsync(user.UserId);
+            builder.AddMainData(user);
+            builder.AddMainProfilePicture(await picturesRepository.GetProfilePictureAsync(user.Profile?.ProfilePictureId));
+            builder.AddUserInterests(await interestsRepository.GetUserInterestsByUserIdAsync(user.UserId));
+            usersList.Add(builder.Build());
+        }
+        return usersList;
     }
     
     public async Task UpdateProfileAsync(long id, Profile profile)
@@ -43,7 +48,7 @@ public class ProfileService(UserRepository userRepository, ProfileRepository pro
         if (currentProfile == null) throw new ObjectNotFoundException("Profile not found");
         profile.ProfileId = id;
         profile.UpdatedAt = DateTime.Now;
-        var res = await _profileRepository.UpdateProfileAsync(profile);
+        var res = await profileRepository.UpdateProfileAsync(profile);
         if (res == null) throw new ObjectNotFoundException("Profile not found");
     }
 }

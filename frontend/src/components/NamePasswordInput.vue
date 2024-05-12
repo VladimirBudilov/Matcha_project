@@ -31,20 +31,24 @@ const formState = reactive<FormState>({
 	password: '',
 	remember: true,
 });
-const onFinish = async (values: any) => {
+const onFinish = (values: any) => {
 	errorMsg.value = ''
-	await axios.post('api/auth/login', values).catch((msg) => {
+	axios.post('api/auth/login', values).catch((msg) => {
 		if (msg.response.data.error) {
 			errorMsg.value = msg.response.data.error
 		}
-	}).then(async (res) => {
+	}).then((res) => {
 		const loginRes : loginRes = res?.data
 		if (errorMsg.value == '' && loginRes.token) {
-			localStorage.setItem("token", loginRes.token)
 			IsLogin.value = true
+			localStorage.setItem("token", loginRes.token)
 			window.location.assign('https://' + window.location.host)
 		}
 	})
+};
+
+const onFinishFailed = (errorInfo: any) => {
+	console.log('Failed:', errorInfo);
 };
 
 </script>

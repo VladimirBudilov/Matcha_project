@@ -1,8 +1,8 @@
 ﻿namespace Web_API.DTOs;
 
-public class PicturesDto
+public class PictureDto
 {
     public long ProfileId { get; init; }
-    public List<string> Pictures { get; init; }
+    public string Picture { get; init; }
 
 }

@@ -9,7 +9,7 @@ public class Profile
     public long? ProfilePictureId { get; set; }
     public long? FameRating { get; set; }
     public long Age { get; set; }
-    public string? Location { get; set; }
+    public long? Location { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using DAL.Helpers;
 using Web_API.DTOs;
 
 namespace Web_API.Helpers;
@@ -218,5 +219,20 @@ public class DtoValidator
         {
             throw new DataValidationException("Token is null or empty.");
         }
+    }
+
+    public void CheckSearchParameters(SearchParameters search)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void CheckSortParameters(SortParameters sort)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void CheckPaginationParameters(PaginationParameters pagination)
+    {
+        throw new NotImplementedException();
     }
 }

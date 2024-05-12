@@ -28,6 +28,11 @@ const router = createRouter({
       name: 'settings',
       component: Settings
     }
+    //{
+    //  path: '/signup',
+    //    name: 'Signup',
+    //    component: SignupView
+    //}
   ]
 })
 
@@ -36,24 +41,12 @@ router.beforeEach(async (to, from) => {
   if (localStorage.getItem('token')) {
     status = 1
   }
+
   if (status == 0 && to.name !== 'login') {
     return 'login'
   }
   else if (status == 1 && to.name === 'login') {
     return '/'
-  }
-  else {
-    await axios.get('/api/auth/get-id')
-    .then((res) => {
-      if (res?.status === 204) {
-        localStorage.removeItem('token')
-        localStorage.removeItem('UserId')
-        return 'login'
-      }
-      else {
-        localStorage.setItem('UserId', res.data)
-      }
-    })
   }
 })
 
