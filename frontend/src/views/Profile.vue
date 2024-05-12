@@ -65,7 +65,14 @@ const SubmiteChanges = async () => {
 	}, 10000)
 }
 
-const test = ref('test')
+const getLocation = async () => {
+	let position : GeolocationPosition
+	const result = navigator.geolocation.getCurrentPosition((pos => {position}), (err => { err}))
+	console.log("result = " + result)
+	console.log("pos = " + position)
+	//profile.value.location = pos
+}
+
 
 </script>
 
@@ -108,7 +115,9 @@ const test = ref('test')
 			</select>
 		</a-form-item>
 		<a-form-item label="Location">
-			<a-input v-model:value="profile.location"/>
+			<a-input style="max-width: 75%;" v-model:value="profile.location"/>
+			<a-button type="primary" html-type="signup" @click="getLocation" style="margin-left: 5px;">Location</a-button>
+
 		</a-form-item>
 		<a-form-item label="Biography">
 			<a-textarea v-model:value="profile.biography" placeholder="Biography" :rows="4" />
@@ -124,7 +133,7 @@ const test = ref('test')
 			<a-upload :action="uploadUrl + '?id=1'" list-type="picture-card" :maxCount="1" accept=".jpg, .jpeg, .png">
 				<div>
 					<PlusOutlined style="color:grey"/>
-				<div style="margin-top: 8px; color:grey">Upload</div>
+					<div style="margin-top: 8px; color:grey">Upload</div>
 				</div>
 			</a-upload>
 		</a-form-item>
