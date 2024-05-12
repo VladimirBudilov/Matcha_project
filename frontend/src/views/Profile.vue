@@ -2,31 +2,15 @@
 import { onMounted, ref } from 'vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import axios from 'axios';
+import {type Profile} from '@/stores/SignUpStore'
 
 const componentDisabled = ref(false);
-const labelCol = { style: { width: '150px' } };
+const labelCol = { style: { width: '15vw' } };
 const wrapperCol = { span: 14 };
 const uploadUrl = ref('')
 const errorMsg = ref('')
 
-
-interface profile {
-	"profileId": number,
-	"userName": string,
-	"firstName": string,
-	"lastName": string,
-	"gender": string | null,
-	"sexualPreferences": string | null,
-	"biography": string | null,
-	"fameRating": number,
-	"age": number,
-	"location": string | null,
-	"profilePicture": number | null,
-	"pictures": Array<number>,
-	"interests": Array<number>
-}
-
-const profile = ref<profile>({
+const profile = ref<Profile>({
 	"profileId": 0,
 	"userName": 'string',
 	"firstName": 'string',
@@ -81,6 +65,8 @@ const SubmiteChanges = async () => {
 	}, 10000)
 }
 
+const test = ref('test')
+
 </script>
 
 <template>
@@ -107,19 +93,19 @@ const SubmiteChanges = async () => {
 			<a-input v-model:value="profile.lastName" disabled style="background-color: grey; color:black"/>
 		</a-form-item>
 		<a-form-item label="Gender">
-			<a-select ref="select" style="width: 120px; color: red;" v-model:value="profile.gender">
-				<a-select-option value="male" style="color:red">Male</a-select-option>
-				<a-select-option value="female" style="color:red">Female</a-select-option>
-			</a-select>
+			<select class="Gender" v-model="profile.gender">
+				<option value="male">Male</option>
+				<option value="female">Female</option>
+			</select>
 		</a-form-item>
 		<a-form-item label="Age">
 			<a-input-number v-model:value="profile.age" :min="18" :max="120"/>
 		</a-form-item>
 		<a-form-item label="Sexual preferences">
-			<a-select v-model:value="profile.sexualPreferences">
-				<a-select-option value="male">Male</a-select-option>
-				<a-select-option value="female">Female</a-select-option>
-			</a-select>
+			<select class="Gender" v-model="profile.sexualPreferences">
+				<option value="male">Male</option>
+				<option value="female">Female</option>
+			</select>
 		</a-form-item>
 		<a-form-item label="Location">
 			<a-input v-model:value="profile.location"/>
@@ -151,9 +137,15 @@ const SubmiteChanges = async () => {
 			</a-upload>
 		</a-form-item>
 	</a-form>
-
 </template>
 
 <style>
+.Gender {
+	width: 100%;
+	height: 32px;
+	padding: 0 11px;
+	cursor: pointer;
+	border-radius: 6px
+}
 
 </style>
