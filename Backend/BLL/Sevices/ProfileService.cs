@@ -55,4 +55,11 @@ public class ProfileService(
         var res = await profileRepository.UpdateProfileAsync(profile);
         if (res == null) throw new ObjectNotFoundException("Profile not found");
     }
+
+    public void UploadPhoto(long id, byte[] filePicture, bool isMain)
+    {
+        //TODO add validation
+        var isProfilePicture = isMain ? 1 : 0;
+        picturesRepository.UploadPhoto(id, filePicture, isProfilePicture);
+    }
 }

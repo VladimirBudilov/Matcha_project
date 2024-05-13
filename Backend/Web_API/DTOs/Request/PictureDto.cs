@@ -3,6 +3,6 @@
 public class PictureDto
 {
     public long ProfileId { get; init; }
-    public string Picture { get; init; }
+    public byte[] Picture { get; init; }
 
 }

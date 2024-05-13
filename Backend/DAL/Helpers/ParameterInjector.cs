@@ -1,4 +1,5 @@
-﻿using DAL.Entities;
+﻿using System.Text;
+using DAL.Entities;
 using Microsoft.Data.Sqlite;
 
 namespace DAL.Helpers;
@@ -18,5 +19,13 @@ public class ParameterInjector
         command.Parameters.AddWithValue("@resetTokenExpiry", user.ResetTokenExpiry ?? DateTime.Now);
         command.Parameters.AddWithValue("@resetToken", user.ResetToken ?? "");
         command.Parameters.AddWithValue("@isVerified", user.IsVerified ?? false);
+    }
+
+    public void InjectParameters(StringBuilder query, Dictionary<string, object> parameters)
+    {
+        foreach (var (key, value) in parameters)
+        {
+            query.Replace(key, value.ToString());
+        }
     }
 }

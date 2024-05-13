@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Text;
 using DAL.Entities;
 using DAL.Helpers;
 using Microsoft.Data.Sqlite;
@@ -15,9 +16,6 @@ public class PicturesRepository(
     private readonly string _connectionString = configuration.GetConnectionString("UserDbConnection")
                                                 ?? throw new ArgumentNullException(nameof(configuration),
                                                     "Connection string not found in configuration");
-    private readonly EntityCreator _entityCreator = entityCreator;
-    private readonly TableFetcher _fetcher = fetcher;
-    private readonly ParameterInjector _injector = injector;
 
     public async Task<Picture> GetProfilePictureAsync(long? id)
     {
@@ -28,20 +26,9 @@ public class PicturesRepository(
         var table = await fetcher.GetTableByParameter(connection, "SELECT * FROM pictures" +
                                                                      " WHERE picture_id = @id", "@id", (long)id);
         if (table.Rows.Count == 0) return null;
-        return _entityCreator.CreatePicture(table.Rows[0]);
+        return entityCreator.CreatePicture(table.Rows[0]);
     }
     
-    /*public async Task<Pictures> CreatePicturesAsync(Pictures entity)
-    {
-        
-    }
-    
-    
-    public async Task<Pictures> DeletePicturesAsync(int id)
-    {
-        
-    }*/
-
     public async Task<IEnumerable<Picture>> GetPicturesByUserIdAsync(long id)
     {
         var output = new List<Picture>();
@@ -52,9 +39,22 @@ public class PicturesRepository(
                                                                      " WHERE user_id = @id", "@id", id);
         foreach (DataRow row in table.Rows)
         {
-            output.Add(_entityCreator.CreatePicture(row));
+            output.Add(entityCreator.CreatePicture(row));
         }
         
         return output;
+    }
+
+    public void UploadPhoto(long id, byte[] filePicture, long isMain)
+    {
+        var query = new StringBuilder("INSERT INTO pictures (user_id, picture_path, is_profile_picture) VALUES (@userId, @picture, @isMain)");
+        using var connection = new SqliteConnection(_connectionString);
+        connection.Open();
+        var command = connection.CreateCommand();
+        command.Parameters.AddWithValue("@userId", id);
+        command.Parameters.AddWithValue("@picture", filePicture);
+        command.Parameters.AddWithValue("@isMain", isMain);
+        command.CommandText = query.ToString();
+        command.ExecuteNonQuery();
     }
 }

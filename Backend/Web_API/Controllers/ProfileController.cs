@@ -36,6 +36,8 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
     public async Task<ProfileFullDataForOtherUsersDto> GetProfileFullDataById([FromRoute]long id)
     {
         validator.CheckId(id);
+        //TODO change fem rating if check somebody else's profile
+        
         var model =  await profileService.GetFullProfileByIdAsync(id);
         var output = mapper.Map<ProfileFullDataForOtherUsersDto>(model);
         return output;
