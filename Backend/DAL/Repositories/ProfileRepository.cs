@@ -106,30 +106,6 @@ public class ProfileRepository(
             throw new DataAccessErrorException("Error while updating profile", e);
         }
     }
-    
-    //update location
-    public async Task<Profile> UpdateLocationAsync(Profile entity)
-    {
-        try
-        {
-            await using var connection = new SqliteConnection(_connectionString);
-            await connection.OpenAsync();
-            var command = connection.CreateCommand();
-            command.CommandText =
-                "UPDATE profiles SET longitude = @longitude,   = @latitude WHERE profile_id = @profile_id";
-
-            command.Parameters.AddWithValue("@latitude", entity.Latitude);
-            command.Parameters.AddWithValue("@longitude", entity.Longitude);
-            command.Parameters.AddWithValue("@updated_at", entity.UpdatedAt.ToString());
-
-            var res = await command.ExecuteNonQueryAsync();
-            return res > 0 ? entity : null;
-        }
-        catch (Exception e)
-        {
-            throw new DataAccessErrorException("Error while updating location", e);
-        }
-    }
 
     public async Task<IEnumerable<User>> GetFullProfilesAsync(SearchParameters searchParams, SortParameters sortParams,
         PaginationParameters pagination)

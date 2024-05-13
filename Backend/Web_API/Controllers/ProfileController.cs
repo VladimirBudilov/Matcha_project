@@ -51,14 +51,4 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
         var model = mapper.Map<Profile>(profileCreation);
         await profileService.UpdateProfileAsync(id, model);
     }
-    
-    [HttpPut("location/{id:long}")]
-    public async Task UpdateProfileLocation([FromRoute]long id, [FromBody] ProfileDto profileCreation)
-    {
-        validator.CheckUserAuth(id, User.Claims);
-        validator.CheckId(id);
-        validator.ProfileRequestDto(profileCreation);
-        var model = mapper.Map<Profile>(profileCreation);
-        await profileService.UpdateProfileAsync(id, model);
-    }
 }
