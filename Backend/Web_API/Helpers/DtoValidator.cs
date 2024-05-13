@@ -7,7 +7,6 @@ namespace Web_API.Helpers;
 
 public class DtoValidator
 {
-    
     public void CheckUserAuth(long id, IEnumerable<Claim> claims)
     {
         if (claims == null)
@@ -27,37 +26,41 @@ public class DtoValidator
             throw new ForbiddenRequestException();
         }
     }
+
     public void UserDto(UserDto userDto)
     {
         if (userDto == null)
         {
             throw new DataValidationException("UserDto is null.");
         }
+
         ValidateEmail(userDto.Email);
         ValidateUsername(userDto.UserName);
         ValidateName(userDto.FirstName);
         ValidateSurname(userDto.LastName);
     }
-    
+
     public void UserRegistrationDto(UserRegestrationDto userRegestrationDto)
     {
         if (userRegestrationDto == null)
         {
             throw new DataValidationException("UserRegestrationDto is null.");
         }
+
         ValidateEmail(userRegestrationDto.Email);
         ValidateUsername(userRegestrationDto.UserName);
         ValidateName(userRegestrationDto.FirstName);
         ValidateSurname(userRegestrationDto.LastName);
         ValidatePassword(userRegestrationDto.Password);
     }
-    
+
     public void UserAuthRequestDto(UserAuthRequestDto userAuthRequestDto)
     {
         if (userAuthRequestDto == null)
         {
             throw new DataValidationException("UserAuthRequestDto is null.");
         }
+
         ValidateUsername(userAuthRequestDto.UserName);
         ValidatePassword(userAuthRequestDto.Password);
     }
@@ -68,13 +71,15 @@ public class DtoValidator
         {
             throw new DataValidationException("ProfileDto is null.");
         }
+
         ValidateGender(profileCreationResponseDto.Gender);
         ValidateSexualPreference(profileCreationResponseDto.SexualPreferences);
         ValidateBio(profileCreationResponseDto.Biography);
-        ValidateLocation(profileCreationResponseDto.Location);
+        ValidateLocation(profileCreationResponseDto.Latitude);
+        ValidateLocation(profileCreationResponseDto.Longitude);
         ValidateAge(profileCreationResponseDto.Age);
     }
-    
+
     public void CheckId(long id)
     {
         if (id <= 0)
@@ -84,6 +89,7 @@ public class DtoValidator
     }
 
     #region
+
     private static void ValidateEmail(string email)
     {
         if (!new EmailAddressAttribute().IsValid(email))
@@ -97,7 +103,8 @@ public class DtoValidator
         if (!(password.Length >= 8 && password.Length <= 20 &&
               password.Any(char.IsDigit) && password.Any(char.IsUpper)))
         {
-            throw new DataValidationException("Invalid password format. Must be between 8 and 20 characters long, contain at least one digit and one uppercase letter.");
+            throw new DataValidationException(
+                "Invalid password format. Must be between 8 and 20 characters long, contain at least one digit and one uppercase letter.");
         }
     }
 
@@ -197,7 +204,7 @@ public class DtoValidator
         }
     }
 
-    private void ValidateLocation(string location)
+    private void ValidateLocation(double? location)
     {
         // Add your validation logic here
         // If validation fails, throw exception
@@ -210,6 +217,7 @@ public class DtoValidator
         // If validation fails, throw exception
         // throw new DataValidationException("Invalid photo format.");
     }
+
     #endregion
 
     public void EmailAndToken(string email, string token)

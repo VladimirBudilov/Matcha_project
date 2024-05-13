@@ -85,7 +85,9 @@ public class ProfileRepository(
             await connection.OpenAsync();
             var command = connection.CreateCommand();
             command.CommandText =
-                "UPDATE profiles SET gender = @gender, sexual_preferences = @sexual_preferences, biography = @biography,  updated_at = @updated_at, age = @age WHERE profile_id = @profile_id";
+                "UPDATE profiles SET gender = @gender, sexual_preferences = @sexual_preferences, biography = @biography,  updated_at = @updated_at, age = @age, " +
+                "latitude = @latitude, longitude = @longitude" +
+                " WHERE profile_id = @profile_id";
 
             command.Parameters.AddWithValue("@profile_id", entity.ProfileId);
             command.Parameters.AddWithValue("@gender", entity.Gender);
@@ -93,6 +95,8 @@ public class ProfileRepository(
             command.Parameters.AddWithValue("@biography", entity.Biography);
             command.Parameters.AddWithValue("@updated_at", entity.UpdatedAt.ToString());
             command.Parameters.AddWithValue("@age", entity.Age);
+            command.Parameters.AddWithValue("@latitude", entity.Latitude);
+            command.Parameters.AddWithValue("@longitude", entity.Longitude);
 
             var res = await command.ExecuteNonQueryAsync();
             return res > 0 ? entity : null;
