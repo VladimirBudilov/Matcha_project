@@ -27,6 +27,7 @@ public class EmailService(IOptions<SmtpConfig> smtpConfig)
 
     public void SendEmail(string userModelEmail, string emailBody)
     {
+        
         var email = new MimeMessage();
         email.From.Add(MailboxAddress.Parse(_smtpConfig.Username));
         email.To.Add(MailboxAddress.Parse(userModelEmail));

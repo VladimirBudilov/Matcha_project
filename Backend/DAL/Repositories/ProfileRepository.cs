@@ -85,14 +85,13 @@ public class ProfileRepository(
             await connection.OpenAsync();
             var command = connection.CreateCommand();
             command.CommandText =
-                "UPDATE profiles SET gender = @gender, sexual_preferences = @sexual_preferences, biography = @biography,  updated_at = @updated_at, location = @location, age = @age WHERE profile_id = @profile_id";
+                "UPDATE profiles SET gender = @gender, sexual_preferences = @sexual_preferences, biography = @biography,  updated_at = @updated_at, age = @age WHERE profile_id = @profile_id";
 
             command.Parameters.AddWithValue("@profile_id", entity.ProfileId);
             command.Parameters.AddWithValue("@gender", entity.Gender);
             command.Parameters.AddWithValue("@sexual_preferences", entity.SexualPreferences);
             command.Parameters.AddWithValue("@biography", entity.Biography);
             command.Parameters.AddWithValue("@updated_at", entity.UpdatedAt.ToString());
-            command.Parameters.AddWithValue("@location", entity.Location);
             command.Parameters.AddWithValue("@age", entity.Age);
 
             var res = await command.ExecuteNonQueryAsync();
@@ -101,6 +100,30 @@ public class ProfileRepository(
         catch (Exception e)
         {
             throw new DataAccessErrorException("Error while updating profile", e);
+        }
+    }
+    
+    //update location
+    public async Task<Profile> UpdateLocationAsync(Profile entity)
+    {
+        try
+        {
+            await using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+            var command = connection.CreateCommand();
+            command.CommandText =
+                "UPDATE profiles SET longitude = @longitude,   = @latitude WHERE profile_id = @profile_id";
+
+            command.Parameters.AddWithValue("@latitude", entity.Latitude);
+            command.Parameters.AddWithValue("@longitude", entity.Longitude);
+            command.Parameters.AddWithValue("@updated_at", entity.UpdatedAt.ToString());
+
+            var res = await command.ExecuteNonQueryAsync();
+            return res > 0 ? entity : null;
+        }
+        catch (Exception e)
+        {
+            throw new DataAccessErrorException("Error while updating location", e);
         }
     }
 
@@ -113,14 +136,13 @@ public class ProfileRepository(
             await connection.OpenAsync();
             var command = connection.CreateCommand();
             queryBuilder.Select(
-                " users.user_id as user_id, users.*, gender, sexual_preferences,fame_rating, age, profile_picture_id ");
+                " users.user_id as user_id, users.*, profiles.* ");
             queryBuilder.From(" users \n JOIN profiles ON users.user_id = profiles.profile_id ");
             queryBuilder.From(" LEFT JOIN user_interests ON user_interests.user_id = users.user_id ");
             queryBuilder.From(" LEFT JOIN interests ON user_interests.interest_id = interests.interest_id ");
-            queryBuilder.From(" JOIN locations On profiles.location = locations.location_id ");
             if (searchParams != null)
             {
-                
+                 
             }
             if (sortParams?.MainParameter != null)
             {

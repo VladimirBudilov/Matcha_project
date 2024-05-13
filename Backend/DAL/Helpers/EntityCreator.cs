@@ -21,7 +21,8 @@ public class EntityCreator(DataParser dataParser)
                 ? null
                 : userInfoRow.Field<long>("profile_picture_id"),
             FameRating = userInfoRow.IsNull("fame_rating") ? null : userInfoRow.Field<long>("fame_rating"),
-            Location = userInfoRow.IsNull("location") ? null : userInfoRow.Field<long>("location"),
+            Latitude = userInfoRow.IsNull("latitude") ? null : userInfoRow.Field<double>("latitude"),
+            Longitude = userInfoRow.IsNull("longitude") ? null : userInfoRow.Field<double>("longitude"),
             Age = userInfoRow.Field<long>("age"),
         };
     }
@@ -84,7 +85,10 @@ public class EntityCreator(DataParser dataParser)
         var users = new List<User>();
         foreach (DataRow row in dataTable.Rows)
         {
-            users.Add(CreateUser(row));
+            var user = CreateUser(row);
+            user.Profile = CreateUserProfile(row);
+            users.Add(user);
+            
         }
 
         return users;

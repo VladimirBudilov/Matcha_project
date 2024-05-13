@@ -7,8 +7,11 @@ using Profile = DAL.Entities.Profile;
 
 namespace BLL.Sevices;
 
-public class ProfileService(UserRepository userRepository, ProfileRepository profileRepository,
-    PicturesRepository picturesRepository, InterestsRepository interestsRepository,
+public class ProfileService(
+    UserRepository userRepository,
+    ProfileRepository profileRepository,
+    PicturesRepository picturesRepository,
+    InterestsRepository interestsRepository,
     LikesRepository likesRepository,
     IMapper mapper)
 {
@@ -16,7 +19,7 @@ public class ProfileService(UserRepository userRepository, ProfileRepository pro
     {
         var user = await profileRepository.GetFullProfileAsync(id);
         if (user == null) throw new ObjectNotFoundException("User not found");
-        
+
         var builder = new ProfileBuilder();
         builder.AddMainData(user);
         builder.AddProfilePictures(await picturesRepository.GetPicturesByUserIdAsync(user.UserId));
@@ -24,7 +27,7 @@ public class ProfileService(UserRepository userRepository, ProfileRepository pro
         builder.AddUserInterests(await interestsRepository.GetUserInterestsByUserIdAsync(id));
         return builder.Build();
     }
-    
+
     public async Task<IEnumerable<User>> GetFullProfilesAsync(SearchParameters search, SortParameters sort,
         PaginationParameters pagination)
     {
@@ -33,15 +36,16 @@ public class ProfileService(UserRepository userRepository, ProfileRepository pro
         var usersList = new List<User>();
         foreach (var user in users)
         {
-              user.Profile = await profileRepository.GetProfileByIdAsync(user.UserId);
             builder.AddMainData(user);
-            builder.AddMainProfilePicture(await picturesRepository.GetProfilePictureAsync(user.Profile?.ProfilePictureId));
+            builder.AddMainProfilePicture(
+                await picturesRepository.GetProfilePictureAsync(user.Profile?.ProfilePictureId));
             builder.AddUserInterests(await interestsRepository.GetUserInterestsByUserIdAsync(user.UserId));
             usersList.Add(builder.Build());
         }
+
         return usersList;
     }
-    
+
     public async Task UpdateProfileAsync(long id, Profile profile)
     {
         var currentProfile = await profileRepository.GetProfileByIdAsync(id);

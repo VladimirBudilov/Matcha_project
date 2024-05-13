@@ -41,7 +41,7 @@ public sealed class InterestsRepository(
         await connection.OpenAsync();
         connection.CreateCommand();
         var table = await fetcher.GetTableByParameter(connection, "SELECT interests.name FROM interests"+
-                                                                  " JOIN user_interests ON interests.interest_id = user_interests.user_id"+
+                                                                  " JOIN user_interests ON interests.interest_id = user_interests.interest_id"+
                                                                   " WHERE user_interests.user_id = @id", "@id", id);
         foreach (DataRow row in table.Rows)
         {
