@@ -11,11 +11,6 @@ const SignUpButtonTurnOn = () => {
 	IsActiveSignUp.value = !IsActiveSignUp.value
 }
 
-const layout = {
-labelCol: { span: 8 },
-wrapperCol: { span: 16 },
-};
-
 const validateMessages = {
 required: '${label} is required!',
 types: {
@@ -50,7 +45,8 @@ const onFinish = (values: any) => {
 <template>
 	<a-form
 		:model="formState"
-		v-bind="layout"
+		:label-col="{ span: 9 }"
+		:wrapper-col="{ span: 7 }"
 		name="nest-messages"
 		:validate-messages="validateMessages"
 		@finish="onFinish"
@@ -70,13 +66,15 @@ const onFinish = (values: any) => {
 		<a-form-item :name="['password']" label="Password" :rules="[{ type: 'string', required: true }]">
 		<a-input-password v-model:value="formState.password" />
 		</a-form-item>
-		<a-form-item :wrapper-col="{ ...layout.wrapperCol, offset: 8 }">
+		<a-form-item :wrapper-col="{ offset: 9, span: 7 }">
 			<a-button type="primary" html-type="submit">Submit</a-button>
 			<a-button danger type="primary"  html-type="cancel" @click="SignUpButtonTurnOn" style="margin-left: 1vw;">Cancel</a-button>
 			<p style='color: red;'>
 				{{ errorMsg }}
 			</p>
 		</a-form-item>
+
+
 
 	</a-form>
 

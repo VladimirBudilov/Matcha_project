@@ -41,8 +41,8 @@ const onFinish = async (values: FormState) => {
 	<a-form
 		:model="formState"
 		name="basic"
-		:label-col="{ style: { width: '15vw' } }"
-		:wrapper-col="{ span: 9 }"
+		:label-col="{ span: 9 }"
+		:wrapper-col="{ span: 7 }"
 		autocomplete="on"
 		@finish="onFinish"
 		>
@@ -70,7 +70,7 @@ const onFinish = async (values: FormState) => {
 			<a-input-password v-model:value="formState.rememberPassword" />
 		</a-form-item>
 
-		<a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+		<a-form-item :wrapper-col="{ offset: 9, span: 7 }">
 			<a-button type="primary" html-type="submit">Submit</a-button>
 
 			<p v-if='errorMsg == "Success!"' style='color: green;'>

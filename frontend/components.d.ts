@@ -13,6 +13,7 @@ declare module 'vue' {
     AInput: typeof import('ant-design-vue/es')['Input']
     AInputNumber: typeof import('ant-design-vue/es')['InputNumber']
     AInputPassword: typeof import('ant-design-vue/es')['InputPassword']
+    ASelect: typeof import('ant-design-vue/es')['Select']
     ATextarea: typeof import('ant-design-vue/es')['Textarea']
     AUpload: typeof import('ant-design-vue/es')['Upload']
     Header: typeof import('./src/components/Header.vue')['default']

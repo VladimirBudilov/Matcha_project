@@ -5,23 +5,25 @@ import axios from 'axios';
 import {type Profile} from '@/stores/SignUpStore'
 
 const componentDisabled = ref(false);
-const labelCol = { style: { width: '15vw' } };
-const wrapperCol = { span: 14 };
 const uploadUrl = ref('')
 const errorMsg = ref('')
 
 const profile = ref<Profile>({
 	"profileId": 0,
-	"userName": 'string',
-	"firstName": 'string',
-	"lastName": 'string',
+	"userName": '',
+	"firstName": '',
+	"lastName": '',
 	"gender": null,
 	"sexualPreferences": null,
 	"biography": null,
 	"fameRating": 0,
 	"age": 0,
-	"location": null,
-	"profilePicture": null,
+	"latitude": 0,
+	"longitude": 0,
+	"profilePicture": {
+		"pictureId": 0,
+		"picture": ''
+	},
 	"pictures": [],
 	"interests": []
 })
@@ -32,6 +34,7 @@ onMounted(async () => {
 		profile.value = res?.data
 		uploadUrl.value = 'api/FileManager/uploadPhoto/' + profile.value.profileId
 		console.log(profile.value)
+		console.log(profile.value.interests)
 	})
 
 })
@@ -66,20 +69,26 @@ const SubmiteChanges = async () => {
 }
 
 const getLocation = async () => {
-	let position : GeolocationPosition
-	const result = navigator.geolocation.getCurrentPosition((pos => {position}), (err => { err}))
-	console.log("result = " + result)
-	console.log("pos = " + position)
-	//profile.value.location = pos
+	errorMsg.value = ''
+	navigator.geolocation.getCurrentPosition((pos => {
+		profile.value.latitude = pos.coords.latitude
+		profile.value.longitude = pos.coords.longitude
+	}), (err => {
+		profile.value.latitude = 0
+		profile.value.longitude = 0
+		errorMsg.value = err.message
+	}))
 }
 
+const interests = [{value: 'Music'} , {value: 'Dance'}, {value: 'kek'}, {value: 'Movie'}]
+const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Female'}]
 
 </script>
 
 <template>
 	<a-form class="Profile"
-    :label-col="labelCol"
-    :wrapper-col="wrapperCol"
+	:label-col="{ span: 9 }"
+	:wrapper-col="{ span: 9 }"
     layout="horizontal"
     :disabled="componentDisabled"
     style="max-width: 70vw"
@@ -100,24 +109,37 @@ const getLocation = async () => {
 			<a-input v-model:value="profile.lastName" disabled style="background-color: grey; color:black"/>
 		</a-form-item>
 		<a-form-item label="Gender">
-			<select class="Gender" v-model="profile.gender">
-				<option value="male">Male</option>
-				<option value="female">Female</option>
-			</select>
+			<a-select
+			v-model:value="profile.gender"
+			:options="genders"
+			size="middle"
+			placeholder="Please select"
+			></a-select>
 		</a-form-item>
 		<a-form-item label="Age">
 			<a-input-number v-model:value="profile.age" :min="18" :max="120"/>
 		</a-form-item>
 		<a-form-item label="Sexual preferences">
-			<select class="Gender" v-model="profile.sexualPreferences">
-				<option value="male">Male</option>
-				<option value="female">Female</option>
-			</select>
+			<a-select
+			v-model:value="profile.sexualPreferences"
+			:options="genders"
+			size="middle"
+			placeholder="Please select"
+			></a-select>
 		</a-form-item>
 		<a-form-item label="Location">
-			<a-input style="max-width: 75%;" v-model:value="profile.location"/>
+			<a-input-number style="width: 35%;" v-model:value="profile.latitude"/>
+			<a-input-number style="width: 35%; margin-left: 5px;" v-model:value="profile.longitude"/>
 			<a-button type="primary" html-type="signup" @click="getLocation" style="margin-left: 5px;">Location</a-button>
-
+		</a-form-item>
+		<a-form-item label="Interests" direction="vertical">
+			<a-select
+			v-model:value="profile.interests"
+			:options="interests"
+			mode="tags"
+			size="middle"
+			placeholder="Please select"
+			></a-select>
 		</a-form-item>
 		<a-form-item label="Biography">
 			<a-textarea v-model:value="profile.biography" placeholder="Biography" :rows="4" />
@@ -130,7 +152,7 @@ const getLocation = async () => {
 			<span> {{errorMsg}} </span>
 		</div>
 		<a-form-item label="Avatar" style="position: absolute ;top: 20vh; left: 5vw">
-			<a-upload :action="uploadUrl + '?id=1'" list-type="picture-card" :maxCount="1" accept=".jpg, .jpeg, .png">
+			<a-upload :action="uploadUrl + '?isMain=true'" list-type="picture-card" :maxCount="1" accept=".jpg, .jpeg, .png">
 				<div>
 					<PlusOutlined style="color:grey"/>
 					<div style="margin-top: 8px; color:grey">Upload</div>
@@ -138,7 +160,7 @@ const getLocation = async () => {
 			</a-upload>
 		</a-form-item>
 		<a-form-item label="Photos" style="position: absolute ;top: 20vh; right: 5vw; max-width: 25vw;">
-			<a-upload :action="uploadUrl + '?id=2'" list-type="picture-card" :maxCount="6" accept=".jpg, .jpeg, .png">
+			<a-upload :action="uploadUrl + '?isMain=false'" list-type="picture-card" :maxCount="6" accept=".jpg, .jpeg, .png">
 				<div>
 					<PlusOutlined style="color:grey"/>
 				<div style="margin-top: 8px; color:grey" >Upload</div>
@@ -156,5 +178,6 @@ const getLocation = async () => {
 	cursor: pointer;
 	border-radius: 6px
 }
+
 
 </style>
