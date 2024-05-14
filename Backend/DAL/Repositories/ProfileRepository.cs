@@ -112,31 +112,47 @@ public class ProfileRepository(
     {
         /*try
         {*/
-            await using var connection = new SqliteConnection(_connectionString);
-            await connection.OpenAsync();
-            var command = connection.CreateCommand();
-            queryBuilder.Select(
-                " users.user_id as user_id, users.*, profiles.* ");
-            queryBuilder.From(" users \n JOIN profiles ON users.user_id = profiles.profile_id ");
-            queryBuilder.From(" LEFT JOIN user_interests ON user_interests.user_id = users.user_id ");
-            queryBuilder.From(" LEFT JOIN interests ON user_interests.interest_id = interests.interest_id ");
-            if (searchParams != null)
-            {
-                 
-            }
-            if (sortParams?.MainParameter != null)
-            {
-                
-            }
+        await using var connection = new SqliteConnection(_connectionString);
+        await connection.OpenAsync();
+        var command = connection.CreateCommand();
+        queryBuilder.Select(
+            " users.user_id as user_id, users.*, profiles.* ");
+        queryBuilder.From(" users \n JOIN profiles ON users.user_id = profiles.profile_id ");
+        queryBuilder.From(" LEFT JOIN user_interests ON user_interests.user_id = users.user_id ");
+        queryBuilder.From(" LEFT JOIN interests ON user_interests.interest_id = interests.interest_id ");
+        //add filters
+        if (searchParams != null)
+        {
+        }
 
-            queryBuilder.GroupBy(" users.user_id ");
-            queryBuilder.OrderBy(" fame_rating ASC, count(interests.name) DESC, age, fame_rating DESC ");
-            
-            command.CommandText = queryBuilder.Build();
-            var dataTable = new DataTable();
-            var reader = await command.ExecuteReaderAsync();
-            dataTable.Load(reader);
-            return dataTable.Rows.Count > 0 ? entityCreator.CreateUsers(dataTable) : null;            
+        queryBuilder.GroupBy(" users.user_id ");
+        //add sorting
+        var parameters = new List<string> { "fame_rating", "fame_rating", "age", "count(interests.name)" };
+        var sortType = sortParams.ToList();
+        queryBuilder.OrderBy($" {parameters[sortParams.SortingMainParameter]} {sortType[sortParams.SortingMainParameter]}, ");
+        parameters.RemoveAt(sortParams.SortingMainParameter);
+        sortType.RemoveAt(sortParams.SortingMainParameter);
+        for (var i = 0; i < parameters.Count; i++)
+        {
+            queryBuilder.OrderBy($" {parameters[i]} {sortType[i]} ");
+            if (i != parameters.Count - 1)
+            {
+                queryBuilder.OrderBy(", ");
+            }
+        }
+
+        //add pagination
+        queryBuilder.Limit(" @pageSize ");
+        queryBuilder.Offset(" @offset ");
+
+
+        command.CommandText = queryBuilder.Build();
+        command.Parameters.AddWithValue("@pageSize", pagination.PageSize);
+        command.Parameters.AddWithValue("@offset", (pagination.PageNumber -1) * pagination.PageSize);
+        var dataTable = new DataTable();
+        var reader = await command.ExecuteReaderAsync();
+        dataTable.Load(reader);
+        return dataTable.Rows.Count > 0 ? entityCreator.CreateUsers(dataTable) : null;
         /*}
         catch (Exception e)
         {

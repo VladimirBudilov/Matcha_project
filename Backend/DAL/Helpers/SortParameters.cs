@@ -2,9 +2,16 @@
 
 public record SortParameters
 {
-    public string? Location { get; set; } = "ASC";
-    public string? FameRating { get; set; } = "DESC";
-    public string? Age { get; set; } = "DESC";
-    public string? CommonTags { get; set; } = "DESC";
-    public int? MainParameter { get; set; }
+    public string SortLocation { get; set; } = "ASC";
+    public string SortFameRating { get; set; } = "DESC";
+    public string SortAge { get; set; } = "DESC";
+    public string SortCommonTags { get; set; } = "DESC";
+    public int SortingMainParameter { get; set; } = 0;
+    
+
+
+    public List<string> ToList()
+    {
+        return new List<string> {SortLocation, SortFameRating, SortAge, SortCommonTags};
+    }
 }

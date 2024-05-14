@@ -28,10 +28,11 @@ public class ProfileService(
         return builder.Build();
     }
 
-    public async Task<IEnumerable<User>> GetFullProfilesAsync(SearchParameters search, SortParameters sort,
+    public async Task<List<User>> GetFullProfilesAsync(SearchParameters search, SortParameters sort,
         PaginationParameters pagination)
     {
         var users = await profileRepository.GetFullProfilesAsync(search, sort, pagination);
+        if (users == null) return new List<User>();
         var builder = new ProfileBuilder();
         var usersList = new List<User>();
         foreach (var user in users)

@@ -19,7 +19,7 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
 {
     // GET: api/<UsersController>
     [HttpGet]
-    public async Task<IEnumerable<ProfileForOtherUsers>> GetAllProfilesInfo([FromQuery]SearchParameters search,
+    public async Task<ProfilesData> GetAllProfilesInfo([FromQuery]SearchParameters search,
         [FromQuery] SortParameters sort,[FromQuery] PaginationParameters pagination)
     {
         /*validator.CheckSearchParameters(search);
@@ -27,8 +27,14 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
         validator.CheckPaginationParameters(pagination);*/
         
         var output = await profileService.GetFullProfilesAsync(search, sort, pagination);
-        var profiles = mapper.Map<IEnumerable<ProfileForOtherUsers>>(output);
-        return profiles;
+        var profiles = mapper.Map<List<ProfileForOtherUsers>>(output);
+        return new ProfilesData()
+        {
+            Profiles = profiles,
+            ProfilesCount = profiles.Count,
+            PageSize = pagination.PageSize,
+            PageNumber = pagination.PageNumber
+        };
     }
     
     // GET api/<UsersController>/5

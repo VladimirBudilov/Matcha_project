@@ -70,8 +70,8 @@ public class QueryBuilder
         query.Append(_groupByPart);
         query.Append(_orderByPart);
         if(_havingPart.ToString() != "Having ") query.Append(_havingPart);
-        /*query.Append(_limitPart);
-        query.Append(_offsetPart);*/
+        query.Append(_limitPart);
+        query.Append(_offsetPart);
         return query.ToString();
     }
 }
