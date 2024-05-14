@@ -16,7 +16,7 @@ public record ProfileFullDataForOtherUsersDto
     
     public double Latitude { get; init; }
     public double Longitude { get; init; }
-    public string ProfilePicture { get; init; } = "";
+    public PictureDto ProfilePicture { get; init; }
     public List<string> Interests { get; init; } = new();
-    public List<string> Pictures { get; init; } = new();
+    public List<PictureDto> Pictures { get; init; } = new();
 }

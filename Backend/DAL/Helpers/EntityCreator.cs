@@ -54,7 +54,7 @@ public class EntityCreator(DataParser dataParser)
         {
             PictureId = row.Field<long>("picture_id"),
             UserId = row.Field<long>("user_id"),
-            PicturePath = row.Field<string>("picture_path"),
+            PicturePath = row.Field<byte[]>("picture_path"),
             IsProfilePicture = row.Field<long>("is_profile_picture") == 1,
             CreatedAt = _dataParser.TryParseDateTime(row.Field<string>("created_at")),
             UpdatedAt = _dataParser.TryParseDateTime(row.Field<string>("updated_at")),
