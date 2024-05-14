@@ -62,4 +62,11 @@ public class ProfileService(
         var isProfilePicture = isMain ? 1 : 0;
         picturesRepository.UploadPhoto(id, filePicture, isProfilePicture);
     }
+
+    public void DeletePhoto(long userId, long photoId)
+    {
+        //TODO add validation
+        
+        picturesRepository.DeletePhoto(userId, photoId);
+    }
 }

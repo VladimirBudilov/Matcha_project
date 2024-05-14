@@ -34,12 +34,13 @@ public class FileManagerController(DtoValidator validator,
     }
     
     [HttpPost("deletePhoto/{userId:long}")]
-    public async Task<IActionResult> DeletePhoto([FromRoute]long userId, long photoId, [FromQuery] bool isMain = false)
+    public async Task<IActionResult> DeletePhoto([FromRoute]long userId, long photoId)
     {
         //validator.CheckUserAuth(userId, User.Claims);
         //TODO implement deleting photo from database
-
-        return Ok();
+        
+        profileService.DeletePhoto(userId, photoId);
+        return Ok("Photo deleted successfully");
     }
     
 }

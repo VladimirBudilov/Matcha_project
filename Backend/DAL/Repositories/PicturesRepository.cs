@@ -57,4 +57,16 @@ public class PicturesRepository(
         command.CommandText = query.ToString();
         command.ExecuteNonQuery();
     }
+
+    public void DeletePhoto(long userId, long photoId)
+    {
+        var query = new StringBuilder("DELETE FROM pictures WHERE user_id = @userId AND picture_id = @photoId");
+        using var connection = new SqliteConnection(_connectionString);
+        connection.Open();
+        var command = connection.CreateCommand();
+        command.Parameters.AddWithValue("@userId", userId);
+        command.Parameters.AddWithValue("@photoId", photoId);
+        command.CommandText = query.ToString();
+        command.ExecuteNonQuery();
+    }
 }
