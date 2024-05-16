@@ -15,7 +15,7 @@ public class ProfileService(
     LikesRepository likesRepository,
     IMapper mapper)
 {
-    public async Task<User> GetFullProfileByIdAsync(long id)
+    public async Task<User> GetFullProfileByIdAsync(int id)
     {
         var user = await profileRepository.GetFullProfileAsync(id);
         if (user == null) throw new ObjectNotFoundException("User not found");

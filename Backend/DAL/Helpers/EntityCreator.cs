@@ -19,8 +19,8 @@ public class EntityCreator(DataParser dataParser)
                 ? null
                 : userInfoRow.Field<int>("profile_picture_id"),
             FameRating = userInfoRow.IsNull("fame_rating") ? null : userInfoRow.Field<int>("fame_rating"),
-            Latitude = userInfoRow.IsNull("latitude") ? null : userInfoRow.Field<double>("latitude"),
-            Longitude = userInfoRow.IsNull("longitude") ? null : userInfoRow.Field<double>("longitude"),
+            Latitude = userInfoRow.IsNull("latitude") ? null : userInfoRow.Field<float>("latitude"),
+            Longitude = userInfoRow.IsNull("longitude") ? null : userInfoRow.Field<float>("longitude"),
             Age = userInfoRow.Field<int>("age"),
         };
     }
@@ -68,6 +68,7 @@ public class EntityCreator(DataParser dataParser)
     {
         return new Interests
         {
+            InterestId = row.Field<int>("interest_id"),
             Interest = row.Field<string>("name"),
         };
     }

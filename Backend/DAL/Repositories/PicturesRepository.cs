@@ -33,6 +33,7 @@ public class PicturesRepository(
         var output = new List<Picture>();
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
+        
         connection.CreateCommand();
         var table = await fetcher.GetTableByParameter((NpgsqlConnection)connection, "SELECT * FROM pictures" +
             " WHERE user_id = @id", "@id", id);

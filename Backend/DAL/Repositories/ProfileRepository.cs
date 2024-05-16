@@ -7,6 +7,7 @@ namespace DAL.Repositories;
 
 public class ProfileRepository(
     DatabaseSettings configuration,
+    InterestsRepository interestsRepository,
     EntityCreator entityCreator,
     TableFetcher fetcher,
     QueryBuilder queryBuilder)
@@ -15,12 +16,12 @@ public class ProfileRepository(
                                                 ?? throw new ArgumentNullException(nameof(configuration),
                                                     "Connection string not found in configuration");
 
-    public async Task<User?> GetFullProfileAsync(long id)
+    public async Task<User?> GetFullProfileAsync(int id)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
         connection.CreateCommand();
-        var userInfo = await fetcher.GetTableByParameter((NpgsqlConnection)connection, "SELECT * FROM users" +
+        var userInfo = await fetcher.GetTableByParameter(connection, "SELECT * FROM users" +
                                                                      " LEFT JOIN profiles ON users.user_id = profiles.profile_id" +
                                                                      " WHERE user_id = @id", "@id", id);
         if (userInfo.Rows.Count > 0)
@@ -40,7 +41,7 @@ public class ProfileRepository(
         {
             await using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
-            var dataTable = await fetcher.GetTableByParameter((NpgsqlConnection)connection,
+            var dataTable = await fetcher.GetTableByParameter(connection,
                 "SELECT * FROM profiles WHERE profile_id = @id", "@id", id);
             return dataTable.Rows.Count > 0 ? entityCreator.CreateUserProfile(dataTable.Rows[0]) : null;
         }
@@ -104,23 +105,29 @@ public class ProfileRepository(
     public async Task<IEnumerable<User>> GetFullProfilesAsync(SearchParameters searchParams, SortParameters sortParams,
         PaginationParameters pagination)
     {
+        var profile = (await GetFullProfileAsync(searchParams.UserId))!.Profile;
         /*try
         {*/
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
         var command = connection.CreateCommand();
-        queryBuilder.Select(
-            " users.user_id as user_id, users.*, profiles.* ");
+        var userInterests = await interestsRepository.GetUserInterestsByUserIdAsync(searchParams.UserId);
+        var userInterestsIds = userInterests.Select(interest => interest.InterestId).ToArray();
+        queryBuilder.Select($" users.user_id as user_id, users.*, profiles.*, count_common_elements(@userInterests, ARRAY_AGG(interests.interest_id)) AS common_interests ");
         queryBuilder.From(" users \n JOIN profiles ON users.user_id = profiles.profile_id ");
         queryBuilder.From(" LEFT JOIN user_interests ON user_interests.user_id = users.user_id ");
         queryBuilder.From(" LEFT JOIN interests ON user_interests.interest_id = interests.interest_id ");
         //add filters
-        ApplyFilters(searchParams);
-
+        ApplyFilters(searchParams, profile, command);
+        //add group by
         queryBuilder.GroupBy(" users.user_id, profiles.profile_id ");
         //add sorting
-        //TODO fix sorting by tags
-        var parameters = new List<string> { "fame_rating", "fame_rating", "age", "count(interests.name)" };
+        var parameters = new List<string> { 
+            $"calculate_distance(latitude,longitude,{profile.Latitude},{profile.Longitude})",
+            "fame_rating",
+            "age",
+            $"common_interests" 
+        };
         var sortType = sortParams.ToList();
         queryBuilder.OrderBy($" {parameters[sortParams.SortingMainParameter]} {sortType[sortParams.SortingMainParameter]}, ");
         parameters.RemoveAt(sortParams.SortingMainParameter);
@@ -133,15 +140,12 @@ public class ProfileRepository(
                 queryBuilder.OrderBy(", ");
             }
         }
-
         //add pagination
-        queryBuilder.Limit(" @pageSize ");
-        queryBuilder.Offset(" @offset ");
-
+        queryBuilder.Limit($" {pagination.PageSize} ");
+        queryBuilder.Offset($" {(pagination.PageNumber -1) * pagination.PageSize} ");
 
         command.CommandText = queryBuilder.Build();
-        command.Parameters.AddWithValue("@pageSize", pagination.PageSize);
-        command.Parameters.AddWithValue("@offset", (pagination.PageNumber -1) * pagination.PageSize);
+        command.Parameters.AddWithValue("@userInterests", userInterestsIds);
         var dataTable = new DataTable();
         var reader = await command.ExecuteReaderAsync();
         dataTable.Load(reader);
@@ -151,36 +155,47 @@ public class ProfileRepository(
         {
             throw new DataAccessErrorException("Error while getting full profiles", e);
         }*/
-
-        return null;
     }
 
-    private void ApplyFilters(SearchParameters searchParams)
+    private void ApplyFilters(SearchParameters searchParams, Profile profile, NpgsqlCommand command)
     {
+        queryBuilder.Where($" users.user_id != {profile.ProfileId} ");
         if(searchParams.MaxDistance!= null)
         {
-            //calculate location of current user
-            //queryBuilder.Where(" calculateDIstance(@) < ");
+            queryBuilder.Where($" AND calculate_distance(latitude,longitude,{profile.Latitude},{profile.Longitude} < {searchParams.MaxDistance} ");
         }
 
         if (searchParams.SexualPreferences != null)
         {
-            queryBuilder.Where($" sexual_preferences = {searchParams.SexualPreferences} ");
+            queryBuilder.Where($" AND sexual_preferences != {searchParams.SexualPreferences} ");
         }
 
         if (searchParams.CommonTags.Count != 0)
         {
-            queryBuilder.Where($"  ");
+            queryBuilder.Where($" AND count_shared_elements(@filterTags, ARRAY_AGG(interests.name)) >= {searchParams.CommonTags.Count}");
+            command.Parameters.AddWithValue("@filterTags", searchParams.CommonTags);
         }
         
         if (searchParams.MinAge != null && searchParams.MaxAge != null)
         {
-            queryBuilder.Where($" age >= {searchParams.MinAge} AND age <= {searchParams.MaxAge} ");
+            queryBuilder.Where($" AND age BETWEEN {searchParams.MinAge} AND {searchParams.MaxAge} ");
         }
         
         if (searchParams.MinFameRating != null && searchParams.MaxFameRating != null)
         {
-            queryBuilder.Where($" fame_rating >= {searchParams.MinFameRating} AND fame_rating <= {searchParams.MaxFameRating} ");
+            queryBuilder.Where($" AND fame_rating BETWEEN {searchParams.MinFameRating} AND {searchParams.MaxFameRating} ");
         }
+
+        if (searchParams.IsLikedUser != null)
+        {
+            queryBuilder.Where(searchParams.IsLikedUser == true
+                ? $" AND has_user_liked(users.user_id, {profile.ProfileId})"
+                : $" AND NOT has_user_liked(users.user_id, {profile.ProfileId})");
+        }
+
+        if (searchParams.IsMatched == null) return;
+        queryBuilder.Where(searchParams.IsMatched == true
+            ? $" AND users_matched(users.user_id, {profile.ProfileId})"
+            : $" AND NOT users_matched(users.user_id, {profile.ProfileId})");
     }
 }
