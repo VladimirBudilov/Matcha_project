@@ -63,7 +63,7 @@ public class AuthController(UserService userService, AuthService authService,
     }
 
     [HttpPost("registration")]
-    public async Task<IActionResult> Register([FromBody] UserRegestrationDto value)
+    public async Task<IActionResult> Register([FromBody] UserRegistrationDto value)
     {
         validator.UserRegistrationDto(value);
         try

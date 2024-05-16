@@ -64,16 +64,17 @@ public class EntityCreator(DataParser dataParser)
         };
     }
 
-    public Interests CreateInterests(DataRow row)
+    public Interest CreateInterests(DataRow row)
     {
-        return new Interests
+        return new Interest
         {
+            UserId = row.Field<int>("user_id"),
             InterestId = row.Field<int>("interest_id"),
-            Interest = row.Field<string>("name"),
+            Name = row.Field<string>("name"),
         };
     }
 
-    public IEnumerable<User> CreateUsers(DataTable dataTable)
+    public IEnumerable<User>? CreateUsers(DataTable dataTable)
     {
         var users = new List<User>();
         foreach (DataRow row in dataTable.Rows)

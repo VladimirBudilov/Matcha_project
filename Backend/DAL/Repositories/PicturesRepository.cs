@@ -45,10 +45,12 @@ public class PicturesRepository(
         return output;
     }
 
-    public void UploadPhoto(long id, byte[] filePicture, long isMain)
+    public int UploadPhoto(long id, byte[] filePicture, long isMain)
     {
         var query = new StringBuilder(
-            "INSERT INTO pictures (user_id, picture_path, is_profile_picture) VALUES (@userId, @picture, @isMain)");
+            "INSERT INTO pictures (user_id, picture_path, is_profile_picture)" +
+            " VALUES (@userId, @picture, @isMain)" +
+            "RETURNING picture_id;");
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
         var command = connection.CreateCommand();
@@ -56,7 +58,7 @@ public class PicturesRepository(
         command.Parameters.AddWithValue("@picture", filePicture);
         command.Parameters.AddWithValue("@isMain", isMain);
         command.CommandText = query.ToString();
-        command.ExecuteNonQuery();
+        return (int)command.ExecuteScalar()!;
     }
 
     public void DeletePhoto(long userId, long photoId)

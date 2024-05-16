@@ -73,6 +73,27 @@ public class ProfileRepository(
         }
     }
 
+    public async Task<int> UpdateProfilePicture(int pictureId)
+    {
+        try
+        {
+            await using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+            var command = connection.CreateCommand();
+            command.CommandText =
+                "UPDATE profiles SET " +
+                "profile_picture_id = @profile_picture_id " +
+                " WHERE profile_id = @profile_id";
+            
+            command.Parameters.AddWithValue("@profile_picture_id", pictureId);
+            var res = await command.ExecuteNonQueryAsync();
+            return res;
+        }
+        catch (Exception e)
+        {
+            throw new DataAccessErrorException("Error while updating profile photo", e);
+        }
+    }
     public async Task<Profile> UpdateProfileAsync(Profile entity)
     {
         try
@@ -81,7 +102,10 @@ public class ProfileRepository(
             await connection.OpenAsync();
             var command = connection.CreateCommand();
             command.CommandText =
-                "UPDATE profiles SET gender = @gender, sexual_preferences = @sexual_preferences, biography = @biography, age = @age, " +
+                "UPDATE profiles SET gender = @gender," +
+                " sexual_preferences = @sexual_preferences, " +
+                "biography = @biography, age = @age, " +
+                "profile_picture_id = @profile_picture_id " +
                 "latitude = @latitude, longitude = @longitude" +
                 " WHERE profile_id = @profile_id";
 
@@ -92,8 +116,18 @@ public class ProfileRepository(
             command.Parameters.AddWithValue("@age", entity.Age);
             command.Parameters.AddWithValue("@latitude", entity.Latitude);
             command.Parameters.AddWithValue("@longitude", entity.Longitude);
+            command.Parameters.AddWithValue("@profile_picture_id", entity.ProfilePictureId);
 
             var res = await command.ExecuteNonQueryAsync();
+            //get full data about user and check that it does nor contain nulls
+            if (!(await GetProfileByIdAsync(entity.ProfileId)).HasEmptyFields())
+            {
+                command.CommandText =
+                    "UPDATE profiles SET is_active = TRUE " +
+                    " WHERE profile_id = @profile_id";
+                await command.ExecuteNonQueryAsync();
+            }
+            // Deconstruct profile
             return res > 0 ? entity : null;
         }
         catch (Exception e)
@@ -102,7 +136,7 @@ public class ProfileRepository(
         }
     }
 
-    public async Task<IEnumerable<User>> GetFullProfilesAsync(SearchParameters searchParams, SortParameters sortParams,
+    public async Task<IEnumerable<User>?> GetFullProfilesAsync(SearchParameters searchParams, SortParameters sortParams,
         PaginationParameters pagination)
     {
         var profile = (await GetFullProfileAsync(searchParams.UserId))!.Profile;
@@ -159,7 +193,7 @@ public class ProfileRepository(
 
     private void ApplyFilters(SearchParameters searchParams, Profile profile, NpgsqlCommand command)
     {
-        queryBuilder.Where($" users.user_id != {profile.ProfileId} ");
+        queryBuilder.Where($" users.user_id != {profile.ProfileId} AND profiles.is_active = TRUE AND users.is_verified = TRUE ");
         if(searchParams.MaxDistance!= null)
         {
             queryBuilder.Where($" AND calculate_distance(latitude,longitude,{profile.Latitude},{profile.Longitude} < {searchParams.MaxDistance} ");

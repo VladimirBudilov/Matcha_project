@@ -37,7 +37,7 @@ public class TableFetcher
         return table;
     }
 
-    public async Task<DataTable> GetTable(NpgsqlConnection connection, string selectFromUsers)
+    public async Task<DataTable> GetTableAsync(NpgsqlConnection connection, string selectFromUsers)
     {
         var command = connection.CreateCommand();
         command.CommandText = selectFromUsers;

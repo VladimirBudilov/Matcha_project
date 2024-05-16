@@ -15,7 +15,11 @@ public class Profile
     
     public Picture? ProfilePicture { get; set; }
     public List<Picture> Pictures { get; set; } = new List<Picture>();
-    public List<Interests> Interests { get; set; } = new List<Interests>();
+    public List<Interest> Interests { get; set; } = new List<Interest>();
     public List<Like> Likes { get; set; } = new List<Like>();
-    
+
+    public bool HasEmptyFields()
+    {
+        return GetType().GetProperties().Any(prop => prop.GetValue(this) == null);
+    }
 }

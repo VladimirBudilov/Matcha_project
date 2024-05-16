@@ -2,7 +2,7 @@
 
 namespace Web_API.DTOs;
 
-public record ProfileFullDataForOtherUsersDto
+public record    ProfileFullDataForOtherUsersDto
 {
     public long ProfileId { get; init; } = 0;
     public string UserName { get; init; } = "";

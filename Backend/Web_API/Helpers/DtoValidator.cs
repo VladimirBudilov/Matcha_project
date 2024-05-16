@@ -40,18 +40,18 @@ public class DtoValidator
         ValidateSurname(userDto.LastName);
     }
 
-    public void UserRegistrationDto(UserRegestrationDto userRegestrationDto)
+    public void UserRegistrationDto(UserRegistrationDto userRegistrationDto)
     {
-        if (userRegestrationDto == null)
+        if (userRegistrationDto == null)
         {
             throw new DataValidationException("UserRegestrationDto is null.");
         }
 
-        ValidateEmail(userRegestrationDto.Email);
-        ValidateUsername(userRegestrationDto.UserName);
-        ValidateName(userRegestrationDto.FirstName);
-        ValidateSurname(userRegestrationDto.LastName);
-        ValidatePassword(userRegestrationDto.Password);
+        ValidateEmail(userRegistrationDto.Email);
+        ValidateUsername(userRegistrationDto.UserName);
+        ValidateName(userRegistrationDto.FirstName);
+        ValidateSurname(userRegistrationDto.LastName);
+        ValidatePassword(userRegistrationDto.Password);
     }
 
     public void UserAuthRequestDto(UserAuthRequestDto userAuthRequestDto)

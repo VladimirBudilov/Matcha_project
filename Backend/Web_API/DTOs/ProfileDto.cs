@@ -9,4 +9,5 @@ public record ProfileDto
     
     public double? Latitude { get; init; }
     public double? Longitude { get; init; }
+    public List<string> Interests { get; init; } = new();
 }

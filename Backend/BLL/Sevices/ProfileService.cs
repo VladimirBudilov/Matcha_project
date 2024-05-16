@@ -54,13 +54,23 @@ public class ProfileService(
         profile.ProfileId = id;
         var res = await profileRepository.UpdateProfileAsync(profile);
         if (res == null) throw new ObjectNotFoundException("Profile not found");
+        //add/update interests
+        List<Interest> fullInterests = await interestsRepository.GetProfileInterestsByNamesAsync(id, profile.Interests.Select(i => i.Name));
+        await interestsRepository.UpdateUserInterestsAsync(id, fullInterests);
     }
 
-    public void UploadPhoto(long id, byte[] filePicture, bool isMain)
+    public async  void UploadPhoto(long id, byte[] filePicture, bool isMain)
     {
         //TODO add validation
+        
         var isProfilePicture = isMain ? 1 : 0;
-        picturesRepository.UploadPhoto(id, filePicture, isProfilePicture);
+        var pictureId = picturesRepository.UploadPhoto(id, filePicture, isProfilePicture);
+        if (isMain)
+        {
+            var profile = await profileRepository.GetProfileByIdAsync(id);
+            profile.ProfilePictureId = pictureId;
+            await profileRepository.UpdateProfilePicture(pictureId);
+        }
     }
 
     public void DeletePhoto(long userId, long photoId)

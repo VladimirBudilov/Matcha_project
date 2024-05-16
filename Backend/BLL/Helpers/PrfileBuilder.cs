@@ -24,7 +24,7 @@ public class ProfileBuilder
         _user.Profile.Pictures.AddRange(getPictureByUserIdAsync);
     }
 
-    public void AddUserInterests(IEnumerable<Interests> getUserInterestsByUserIdAsync)
+    public void AddUserInterests(IEnumerable<Interest> getUserInterestsByUserIdAsync)
     {
         _user.Profile.Interests.AddRange(getUserInterestsByUserIdAsync);
     }

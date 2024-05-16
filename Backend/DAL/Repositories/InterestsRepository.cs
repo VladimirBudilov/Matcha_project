@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Text;
 using DAL.Entities;
 using DAL.Helpers;
 using Npgsql;
@@ -16,25 +17,44 @@ public sealed class InterestsRepository(
                                                 ?? throw new ArgumentNullException(nameof(configuration),
                                                     "Connection string not found in configuration");
 
-    public async Task<Interests> GetInterestsAsync()
+    public async Task<List<Interest>> GetInterestsAsync()
     {
-        throw new NotImplementedException();
-        
+        var output = new List<Interest>();
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
+        connection.CreateCommand();
+        var table = await fetcher.GetTableAsync(connection, "SELECT * FROM interests");
+        foreach (DataRow row in table.Rows)
+        {
+            var interest = entityCreator.CreateInterests(row);
+            output.Add(interest);
+        }
+
+        return output;
     }
     
-    public async Task<Interests> CreateInterestsAsync(Interests entity)
+    public async Task<Interest> CreateInterestAsync(Interest entity)
     {
-        throw new NotImplementedException();
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
+        connection.CreateCommand();
+        var query = new StringBuilder().Append("INSERT INTO interests (name) VALUES (@name) RETURNING interest_id");
+        injector.InjectParameters( query,
+            new Dictionary<string, object>
+            {
+                {"@name", entity.Name}
+            });
+        var command = connection.CreateCommand();
+        command.CommandText = query.ToString();
+        var id = await command.ExecuteScalarAsync();
+        entity.InterestId = (int)id;
+        return entity;
     }
     
-    public async Task<Interests> UpdateInterestsAsync(Interests entity)
+
+    public async Task<IEnumerable<Interest>> GetUserInterestsByUserIdAsync(long id)
     {
-        throw new NotImplementedException();
-    }
-    
-    public async Task<IEnumerable<Interests>> GetUserInterestsByUserIdAsync(long id)
-    {
-        var output = new List<Interests>();
+        var output = new List<Interest>();
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
         connection.CreateCommand();
@@ -48,5 +68,48 @@ public sealed class InterestsRepository(
         }
         
         return output;
+    }
+
+    public async Task UpdateUserInterestsAsync(int id, List<Interest> profileInterests)
+    {
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
+        connection.CreateCommand();
+        var query = new StringBuilder().Append("DELETE FROM user_interests WHERE user_id = @id");
+        var command = connection.CreateCommand();
+        command.CommandText = query.ToString();
+        command.Parameters.AddWithValue("@id", id);
+        await command.ExecuteNonQueryAsync();
+        foreach (var interest in profileInterests)
+        {
+            query = new StringBuilder().Append("INSERT INTO user_interests (user_id, interest_id) VALUES (@userId, @interestId)");
+            injector.InjectParameters(query,
+                new Dictionary<string, object>
+                {
+                    {"@userId", id},
+                    {"@interestId", interest.InterestId}
+                });
+            command.CommandText = query.ToString();
+            await command.ExecuteNonQueryAsync();
+        }
+    }
+
+    public async Task<List<Interest>> GetProfileInterestsByNamesAsync(int userId, IEnumerable<string> select)
+    {
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
+        connection.CreateCommand();
+        var query = new StringBuilder().Append("SELECT * FROM interests WHERE name IN (");
+        foreach (var interest in select)
+        {
+            query.Append($"'{interest}',");
+        }
+
+        query.Remove(query.Length - 1, 1);
+        query.Append(")");
+        query.Append($" AND {userId} = user_id");
+        var table = await fetcher.GetTableAsync(connection, query.ToString());
+
+        return (from DataRow row in table.Rows select entityCreator.CreateInterests(row)).ToList();
     }
 }
