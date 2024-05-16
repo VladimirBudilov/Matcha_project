@@ -8,17 +8,15 @@ namespace DAL.Entities
 {
     public class User
     {
-        public long UserId { get; set; }
+        public int UserId { get; set; }
         public string UserName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        public DateTime? LastLoginAt { get; set; }
-        public DateTime? ResetTokenExpiry { get; set; }
-        public string? ResetToken { get; set; }
+        
+        public string? EmailResetToken { get; set; }
+        public string? JwtResetToken { get; set; }
         public bool? IsVerified { get; set; }
         
         public Profile? Profile { get; set; }

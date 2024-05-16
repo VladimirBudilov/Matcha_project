@@ -1,11 +1,11 @@
 ﻿using System.Data;
-using Microsoft.Data.Sqlite;
+using Npgsql;
 
 namespace DAL.Helpers;
 
 public class TableFetcher
 {
-    public async Task<DataTable> GetTableByParameter(SqliteConnection connection, string sqlQuery,
+    public async Task<DataTable> GetTableByParameter(NpgsqlConnection connection, string sqlQuery,
         string parameterName,
         long parameter)
     {
@@ -21,7 +21,7 @@ public class TableFetcher
         return table;
     }
         
-    public  async Task<DataTable> GetTableByParameter(SqliteConnection connection, string sqlQuery,
+    public  async Task<DataTable> GetTableByParameter(NpgsqlConnection connection, string sqlQuery,
         string parameterName,
         string parameter)
     {
@@ -37,7 +37,7 @@ public class TableFetcher
         return table;
     }
 
-    public async Task<DataTable> GetTable(SqliteConnection connection, string selectFromUsers)
+    public async Task<DataTable> GetTable(NpgsqlConnection connection, string selectFromUsers)
     {
         var command = connection.CreateCommand();
         command.CommandText = selectFromUsers;

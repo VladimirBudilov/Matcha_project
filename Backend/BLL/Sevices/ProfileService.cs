@@ -47,12 +47,11 @@ public class ProfileService(
         return usersList;
     }
 
-    public async Task UpdateProfileAsync(long id, Profile profile)
+    public async Task UpdateProfileAsync(int id, Profile profile)
     {
         var currentProfile = await profileRepository.GetProfileByIdAsync(id);
         if (currentProfile == null) throw new ObjectNotFoundException("Profile not found");
         profile.ProfileId = id;
-        profile.UpdatedAt = DateTime.Now;
         var res = await profileRepository.UpdateProfileAsync(profile);
         if (res == null) throw new ObjectNotFoundException("Profile not found");
     }

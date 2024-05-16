@@ -38,8 +38,8 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
     }
     
     // GET api/<UsersController>/5
-    [HttpGet("{id:long}")]
-    public async Task<ProfileFullDataForOtherUsersDto> GetProfileFullDataById([FromRoute]long id)
+    [HttpGet("{id:int}")]
+    public async Task<ProfileFullDataForOtherUsersDto> GetProfileFullDataById([FromRoute]int id)
     {
         validator.CheckId(id);
         //TODO change fem rating if check somebody else's profile
@@ -50,8 +50,8 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
     }
 
     // PUT api/<UsersController>/5
-    [HttpPut("{id:long}")]
-    public async Task UpdateProfile([FromRoute]long id, [FromBody] ProfileDto profileCreation)
+    [HttpPut("{id:int}")]
+    public async Task UpdateProfile([FromRoute]int id, [FromBody] ProfileDto profileCreation)
     {
         validator.CheckUserAuth(id, User.Claims);
         validator.CheckId(id);

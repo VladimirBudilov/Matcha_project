@@ -1,8 +1,8 @@
 ﻿using System.Data;
 using DAL.Entities;
 using DAL.Helpers;
-using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Configuration;
+using Npgsql;
+
 
 namespace DAL.Repositories;
 
@@ -15,13 +15,11 @@ public sealed class InterestsRepository(
     private readonly string _connectionString = configuration.ConnectionString
                                                 ?? throw new ArgumentNullException(nameof(configuration),
                                                     "Connection string not found in configuration");
-    private readonly EntityCreator _entityCreator = entityCreator;
-    private readonly TableFetcher _fetcher = fetcher;
-    private readonly ParameterInjector _injector = injector;
 
     public async Task<Interests> GetInterestsAsync()
     {
         throw new NotImplementedException();
+        
     }
     
     public async Task<Interests> CreateInterestsAsync(Interests entity)
@@ -37,7 +35,7 @@ public sealed class InterestsRepository(
     public async Task<IEnumerable<Interests>> GetUserInterestsByUserIdAsync(long id)
     {
         var output = new List<Interests>();
-        await using var connection = new SqliteConnection(_connectionString);
+        await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
         connection.CreateCommand();
         var table = await fetcher.GetTableByParameter(connection, "SELECT interests.name FROM interests"+
@@ -45,7 +43,7 @@ public sealed class InterestsRepository(
                                                                   " WHERE user_interests.user_id = @id", "@id", id);
         foreach (DataRow row in table.Rows)
         {
-            var interest = _entityCreator.CreateInterests(row);
+            var interest = entityCreator.CreateInterests(row);
             output.Add(interest);
         }
         

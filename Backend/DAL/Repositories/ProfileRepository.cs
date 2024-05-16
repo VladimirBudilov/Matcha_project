@@ -1,10 +1,7 @@
 ﻿using System.Data;
-using System.Data.SQLite;
-using System.Text;
 using DAL.Entities;
 using DAL.Helpers;
-using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Configuration;
+using Npgsql;
 
 namespace DAL.Repositories;
 
@@ -20,10 +17,10 @@ public class ProfileRepository(
 
     public async Task<User?> GetFullProfileAsync(long id)
     {
-        await using var connection = new SqliteConnection(_connectionString);
+        await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
         connection.CreateCommand();
-        var userInfo = await fetcher.GetTableByParameter(connection, "SELECT * FROM users" +
+        var userInfo = await fetcher.GetTableByParameter((NpgsqlConnection)connection, "SELECT * FROM users" +
                                                                      " LEFT JOIN profiles ON users.user_id = profiles.profile_id" +
                                                                      " WHERE user_id = @id", "@id", id);
         if (userInfo.Rows.Count > 0)
@@ -41,9 +38,9 @@ public class ProfileRepository(
     {
         try
         {
-            await using var connection = new SqliteConnection(_connectionString);
+            await using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
-            var dataTable = await fetcher.GetTableByParameter(connection,
+            var dataTable = await fetcher.GetTableByParameter((NpgsqlConnection)connection,
                 "SELECT * FROM profiles WHERE profile_id = @id", "@id", id);
             return dataTable.Rows.Count > 0 ? entityCreator.CreateUserProfile(dataTable.Rows[0]) : null;
         }
@@ -57,15 +54,13 @@ public class ProfileRepository(
     {
         try
         {
-            await using var connection = new SqliteConnection(_connectionString);
+            await using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
             var command = connection.CreateCommand();
             command.CommandText =
-                "INSERT INTO profiles (profile_id, created_at, updated_at, gender, age) " +
-                " VALUES (@profile_id, @created_at, @updated_at, @gender, @age)";
+                "INSERT INTO profiles (profile_id, gender, age) " +
+                " VALUES (@profile_id, @gender, @age)";
             command.Parameters.AddWithValue("@profile_id", entity.ProfileId);
-            command.Parameters.AddWithValue("@created_at", entity.CreatedAt.ToString());
-            command.Parameters.AddWithValue("@updated_at", entity.UpdatedAt.ToString());
             command.Parameters.AddWithValue("@gender", entity.Gender);
             command.Parameters.AddWithValue("@age", entity.Age);
             var res = await command.ExecuteNonQueryAsync();
@@ -81,11 +76,11 @@ public class ProfileRepository(
     {
         try
         {
-            await using var connection = new SqliteConnection(_connectionString);
+            await using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
             var command = connection.CreateCommand();
             command.CommandText =
-                "UPDATE profiles SET gender = @gender, sexual_preferences = @sexual_preferences, biography = @biography,  updated_at = @updated_at, age = @age, " +
+                "UPDATE profiles SET gender = @gender, sexual_preferences = @sexual_preferences, biography = @biography, age = @age, " +
                 "latitude = @latitude, longitude = @longitude" +
                 " WHERE profile_id = @profile_id";
 
@@ -93,7 +88,6 @@ public class ProfileRepository(
             command.Parameters.AddWithValue("@gender", entity.Gender);
             command.Parameters.AddWithValue("@sexual_preferences", entity.SexualPreferences);
             command.Parameters.AddWithValue("@biography", entity.Biography);
-            command.Parameters.AddWithValue("@updated_at", entity.UpdatedAt.ToString());
             command.Parameters.AddWithValue("@age", entity.Age);
             command.Parameters.AddWithValue("@latitude", entity.Latitude);
             command.Parameters.AddWithValue("@longitude", entity.Longitude);
@@ -112,7 +106,7 @@ public class ProfileRepository(
     {
         /*try
         {*/
-        await using var connection = new SqliteConnection(_connectionString);
+        await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
         var command = connection.CreateCommand();
         queryBuilder.Select(
@@ -121,33 +115,9 @@ public class ProfileRepository(
         queryBuilder.From(" LEFT JOIN user_interests ON user_interests.user_id = users.user_id ");
         queryBuilder.From(" LEFT JOIN interests ON user_interests.interest_id = interests.interest_id ");
         //add filters
-        if(searchParams.MaxDistance!= null)
-        {
-            //calculate location of current user
-            //queryBuilder.Where(" calculateDIstance(@) < ");
-        }
+        ApplyFilters(searchParams);
 
-        if (searchParams.SexualPreferences != null)
-        {
-            queryBuilder.Where($" sexual_preferences = {searchParams.SexualPreferences} ");
-        }
-
-        if (searchParams.CommonTags.Count != 0)
-        {
-            queryBuilder.Where($"  ");
-        }
-        
-        if (searchParams.MinAge != null && searchParams.MaxAge != null)
-        {
-            queryBuilder.Where($" age >= {searchParams.MinAge} AND age <= {searchParams.MaxAge} ");
-        }
-        
-        if (searchParams.MinFameRating != null && searchParams.MaxFameRating != null)
-        {
-            queryBuilder.Where($" fame_rating >= {searchParams.MinFameRating} AND fame_rating <= {searchParams.MaxFameRating} ");
-        }
-
-        queryBuilder.GroupBy(" users.user_id ");
+        queryBuilder.GroupBy(" users.user_id, profiles.profile_id ");
         //add sorting
         //TODO fix sorting by tags
         var parameters = new List<string> { "fame_rating", "fame_rating", "age", "count(interests.name)" };
@@ -183,5 +153,34 @@ public class ProfileRepository(
         }*/
 
         return null;
+    }
+
+    private void ApplyFilters(SearchParameters searchParams)
+    {
+        if(searchParams.MaxDistance!= null)
+        {
+            //calculate location of current user
+            //queryBuilder.Where(" calculateDIstance(@) < ");
+        }
+
+        if (searchParams.SexualPreferences != null)
+        {
+            queryBuilder.Where($" sexual_preferences = {searchParams.SexualPreferences} ");
+        }
+
+        if (searchParams.CommonTags.Count != 0)
+        {
+            queryBuilder.Where($"  ");
+        }
+        
+        if (searchParams.MinAge != null && searchParams.MaxAge != null)
+        {
+            queryBuilder.Where($" age >= {searchParams.MinAge} AND age <= {searchParams.MaxAge} ");
+        }
+        
+        if (searchParams.MinFameRating != null && searchParams.MaxFameRating != null)
+        {
+            queryBuilder.Where($" fame_rating >= {searchParams.MinFameRating} AND fame_rating <= {searchParams.MaxFameRating} ");
+        }
     }
 }

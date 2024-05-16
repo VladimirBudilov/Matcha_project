@@ -32,7 +32,6 @@ public class UserService(
     {
         var user = await userRepository.GetUserByIdAsync(id);
         if (user == null) throw new ObjectNotFoundException("User not found. You can't update user that doesn't exist");
-        user.UpdatedAt = DateTime.Now;
         user.UserName = userModel.UserName;
         user.FirstName = userModel.FirstName;
         user.LastName = userModel.LastName;

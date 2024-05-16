@@ -4,5 +4,5 @@ namespace DAL.Helpers;
 
 public class DatabaseSettings(IConfiguration configuration)
 {
-    public readonly string ConnectionString = configuration.GetConnectionString("UserDbConnection");
+    public readonly string ConnectionString = configuration.GetConnectionString("PostgreSQLUserDbConnection");
 }

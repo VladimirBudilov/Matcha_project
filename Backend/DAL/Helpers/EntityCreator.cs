@@ -5,13 +5,11 @@ namespace DAL.Helpers;
 
 public class EntityCreator(DataParser dataParser)
 {
-    private readonly DataParser _dataParser = dataParser;
-
     public Profile CreateUserProfile(DataRow userInfoRow)
     {
         return new Profile
         {
-            ProfileId = userInfoRow.Field<long>("profile_id"),
+            ProfileId = userInfoRow.Field<int>("profile_id"),
             Gender = userInfoRow.IsNull("gender") ? null : userInfoRow.Field<string>("gender"),
             SexualPreferences = userInfoRow.IsNull("sexual_preferences")
                 ? null
@@ -19,11 +17,11 @@ public class EntityCreator(DataParser dataParser)
             Biography = userInfoRow.IsNull("biography") ? null : userInfoRow.Field<string>("biography"),
             ProfilePictureId = userInfoRow.IsNull("profile_picture_id")
                 ? null
-                : userInfoRow.Field<long>("profile_picture_id"),
-            FameRating = userInfoRow.IsNull("fame_rating") ? null : userInfoRow.Field<long>("fame_rating"),
+                : userInfoRow.Field<int>("profile_picture_id"),
+            FameRating = userInfoRow.IsNull("fame_rating") ? null : userInfoRow.Field<int>("fame_rating"),
             Latitude = userInfoRow.IsNull("latitude") ? null : userInfoRow.Field<double>("latitude"),
             Longitude = userInfoRow.IsNull("longitude") ? null : userInfoRow.Field<double>("longitude"),
-            Age = userInfoRow.Field<long>("age"),
+            Age = userInfoRow.Field<int>("age"),
         };
     }
 
@@ -31,20 +29,17 @@ public class EntityCreator(DataParser dataParser)
     {
         return new User
         {
-            UserId = row.Field<long>("user_id"),
+            UserId = row.Field<int>("user_id"),
             IsVerified = row.IsNull("is_verified")
                 ? null
-                : _dataParser.ConvertLongToBool(row.Field<long>("is_verified")),
+                : row.Field<bool>("is_verified"),
             UserName = row.Field<string>("user_name"),
             FirstName = row.Field<string>("first_name"),
             LastName = row.Field<string>("last_name"),
             Email = row.Field<string>("email"),
             Password = row.Field<string>("password"),
-            UpdatedAt = _dataParser.TryParseDateTime(row.Field<string>("updated_at")),
-            CreatedAt = _dataParser.TryParseDateTime(row.Field<string>("created_at")),
-            LastLoginAt = _dataParser.TryParseDateTime(row.Field<string>("last_login_at")),
-            ResetTokenExpiry = _dataParser.TryParseDateTime(row.Field<string>("reset_token_expiry")),
-            ResetToken = row.Field<string?>("reset_token"),
+            EmailResetToken = row.Field<string?>("email_reset_token"),
+            JwtResetToken = row.Field<string?>("jwt_reset_token"),
         };
     }
 
@@ -52,12 +47,10 @@ public class EntityCreator(DataParser dataParser)
     {
         return new Picture
         {
-            PictureId = row.Field<long>("picture_id"),
-            UserId = row.Field<long>("user_id"),
+            PictureId = row.Field<int>("picture_id"),
+            UserId = row.Field<int>("user_id"),
             PicturePath = row.Field<byte[]>("picture_path"),
             IsProfilePicture = row.Field<long>("is_profile_picture") == 1,
-            CreatedAt = _dataParser.TryParseDateTime(row.Field<string>("created_at")),
-            UpdatedAt = _dataParser.TryParseDateTime(row.Field<string>("updated_at")),
         };
     }
 
@@ -65,10 +58,9 @@ public class EntityCreator(DataParser dataParser)
     {
         return new Like
         {
-            LikerId = row.Field<long>("liker_user_id"),
-            LikedId = row.Field<long>("liked_user_id"),
-            LikerUserName = row.Field<string>("liker_user_name"),
-            LakedAt = _dataParser.TryParseDateTime(row.Field<string>("liked_at")),
+            LikerId = row.Field<int>("liker_user_id"),
+            LikedId = row.Field<int>("liked_user_id"),
+            LikerUserName = row.Field<string>("liker_user_name")
         };
     }
 

@@ -1,8 +1,7 @@
 ﻿using System.Data;
 using DAL.Entities;
 using DAL.Helpers;
-using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Configuration;
+using Npgsql;
 
 namespace DAL.Repositories;
 
@@ -35,12 +34,12 @@ public class LikesRepository(
     public async Task<IEnumerable<Like>> GetLikesByUserIdAsync(long id)
     {
         var output = new List<Like>();
-        await using var connection = new SqliteConnection(_connectionString);
+        await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
         connection.CreateCommand();
-        var table = await fetcher.GetTableByParameter(connection, "SELECT likes.*, users.user_name FROM likes"+
-                                                                  " JOIN users ON likes.liked_user_id = users.user_id"+
-                                                                  " WHERE liked_user_id = @id", "@id", id);
+        var table = await fetcher.GetTableByParameter((NpgsqlConnection)connection, "SELECT likes.*, users.user_name FROM likes"+
+                                                                              " JOIN users ON likes.liked_user_id = users.user_id"+
+                                                                              " WHERE liked_user_id = @id", "@id", id);
         foreach (DataRow row in table.Rows)
         {
             var like = entityCreator.CreateLikes(row);

@@ -17,22 +17,18 @@ public class AuthService(UserRepository userRepository,
         var userByUserName = await userRepository.GetUserByUserNameAsync(user.UserName);
         if (userByEmail != null || userByUserName != null) return null;
         user.Password = passwordManager.HashPassword(user.Password);
-        user.ResetToken = emailService.GenerateEmailConfirmationToken();
+        user.EmailResetToken = emailService.GenerateEmailConfirmationToken();
         user.IsVerified = false;
-        user.CreatedAt = DateTime.Now;
-        user.UpdatedAt = DateTime.Now;
         var res = await userRepository.CreateUserAsync(user);
         userByUserName = await userRepository.GetUserByUserNameAsync(user.UserName);
         var profile = new Profile()
         {
             ProfileId = userByUserName.UserId,
-            CreatedAt = DateTime.Now,
-            UpdatedAt = DateTime.Now,
             Gender = "male",
             Age = 18,
         };
         await profileRepository.CreateProfileAsync(profile);
-        return res == null ? null : user.ResetToken;
+        return res == null ? null : user.EmailResetToken;
     }
     
     public async Task<bool> AuthenticateUser(string username, string password)

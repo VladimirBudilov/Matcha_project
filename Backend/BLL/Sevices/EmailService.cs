@@ -54,7 +54,7 @@ public class EmailService(IOptions<SmtpConfig> smtpConfig)
             throw new DataValidationException("Invalid email");
         }
 
-        if (user.ResetToken != token)
+        if (user.EmailResetToken != token)
         {
             throw new DataValidationException("Invalid token");
         }
