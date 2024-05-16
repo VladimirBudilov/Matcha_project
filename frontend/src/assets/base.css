@@ -78,3 +78,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+:where(.css-dev-only-do-not-override-16pw25h).ant-form-item .ant-form-item-label >label {
+  color: var(--color-text);
+}

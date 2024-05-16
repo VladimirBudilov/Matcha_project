@@ -58,12 +58,12 @@ const onFinishFailed = (errorInfo: any) => {
 	<a-form
 		:model="formState"
 		name="basic"
-		:label-col="{ span: 8 }"
-		:wrapper-col="{ span: 16 }"
+		:label-col="{ span: 9 }"
+		:wrapper-col="{ span: 7 }"
 		autocomplete="on"
 		@finish="onFinish"
 		>
-		<a-form-item style="color: var(--color-text);"
+		<a-form-item
 			label="Username"
 			name="username"
 			:rules="[{ required: true, message: 'Please input your username!' }]"
@@ -79,7 +79,7 @@ const onFinishFailed = (errorInfo: any) => {
 			<a-input-password v-model:value="formState.password" />
 		</a-form-item>
 
-		<a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+		<a-form-item :wrapper-col="{ offset: 9, span: 7 }">
 			<a-button type="primary" html-type="submit">Submit</a-button>
 			<p style='color: red;'>
 				{{ errorMsg }}
@@ -88,20 +88,8 @@ const onFinishFailed = (errorInfo: any) => {
 		</a-form-item>
 	</a-form>
 
-
-
 </template>
 
 <style>
-:where(.css-dev-only-do-not-override-1hsjdkk).ant-form {
-    margin-left: 10%;
-	margin-right: 10%;
-    padding-left: 10%;
-	padding-right: 10%;
-}
-
-:where(.css-dev-only-do-not-override-1hsjdkk).ant-form-item .ant-form-item-label >label {
-	color: var(--color-text);
-}
 
 </style>
