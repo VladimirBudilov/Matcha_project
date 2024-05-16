@@ -1,4 +1,3 @@
-using System.Data.SQLite;
 using System.Text;
 using BLL.Helpers;
 using BLL.Sevices;
@@ -55,7 +54,7 @@ builder.Services.AddCors(options =>
         corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
-SQLiteFunction.RegisterFunction(typeof(HaversineFunction));
+builder.Services.AddSingleton<DatabaseSettings>();
 
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<ProfileRepository>();

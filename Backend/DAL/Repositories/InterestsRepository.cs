@@ -7,12 +7,12 @@ using Microsoft.Extensions.Configuration;
 namespace DAL.Repositories;
 
 public sealed class InterestsRepository(
-    IConfiguration configuration,
+    DatabaseSettings configuration,
     EntityCreator entityCreator,
     TableFetcher fetcher,
     ParameterInjector injector)
 {
-    private readonly string _connectionString = configuration.GetConnectionString("UserDbConnection")
+    private readonly string _connectionString = configuration.ConnectionString
                                                 ?? throw new ArgumentNullException(nameof(configuration),
                                                     "Connection string not found in configuration");
     private readonly EntityCreator _entityCreator = entityCreator;

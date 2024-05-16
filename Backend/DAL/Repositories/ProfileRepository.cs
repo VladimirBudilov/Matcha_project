@@ -9,12 +9,12 @@ using Microsoft.Extensions.Configuration;
 namespace DAL.Repositories;
 
 public class ProfileRepository(
-    IConfiguration configuration,
+    DatabaseSettings configuration,
     EntityCreator entityCreator,
     TableFetcher fetcher,
     QueryBuilder queryBuilder)
 {
-    private readonly string _connectionString = configuration.GetConnectionString("UserDbConnection")
+    private readonly string _connectionString = configuration.ConnectionString
                                                 ?? throw new ArgumentNullException(nameof(configuration),
                                                     "Connection string not found in configuration");
 
@@ -121,12 +121,35 @@ public class ProfileRepository(
         queryBuilder.From(" LEFT JOIN user_interests ON user_interests.user_id = users.user_id ");
         queryBuilder.From(" LEFT JOIN interests ON user_interests.interest_id = interests.interest_id ");
         //add filters
-        if (searchParams != null)
+        if(searchParams.MaxDistance!= null)
         {
+            //calculate location of current user
+            //queryBuilder.Where(" calculateDIstance(@) < ");
+        }
+
+        if (searchParams.SexualPreferences != null)
+        {
+            queryBuilder.Where($" sexual_preferences = {searchParams.SexualPreferences} ");
+        }
+
+        if (searchParams.CommonTags.Count != 0)
+        {
+            queryBuilder.Where($"  ");
+        }
+        
+        if (searchParams.MinAge != null && searchParams.MaxAge != null)
+        {
+            queryBuilder.Where($" age >= {searchParams.MinAge} AND age <= {searchParams.MaxAge} ");
+        }
+        
+        if (searchParams.MinFameRating != null && searchParams.MaxFameRating != null)
+        {
+            queryBuilder.Where($" fame_rating >= {searchParams.MinFameRating} AND fame_rating <= {searchParams.MaxFameRating} ");
         }
 
         queryBuilder.GroupBy(" users.user_id ");
         //add sorting
+        //TODO fix sorting by tags
         var parameters = new List<string> { "fame_rating", "fame_rating", "age", "count(interests.name)" };
         var sortType = sortParams.ToList();
         queryBuilder.OrderBy($" {parameters[sortParams.SortingMainParameter]} {sortType[sortParams.SortingMainParameter]}, ");

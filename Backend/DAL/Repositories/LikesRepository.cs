@@ -7,18 +7,15 @@ using Microsoft.Extensions.Configuration;
 namespace DAL.Repositories;
 
 public class LikesRepository(
-    IConfiguration configuration,
+    DatabaseSettings configuration,
     EntityCreator entityCreator,
     TableFetcher fetcher,
     ParameterInjector injector)
 {
-    private readonly string _connectionString = configuration.GetConnectionString("UserDbConnection")
+    private readonly string _connectionString = configuration.ConnectionString
                                                 ?? throw new ArgumentNullException(nameof(configuration),
                                                     "Connection string not found in configuration");
-    private readonly EntityCreator _entityCreator = entityCreator;
-    private readonly TableFetcher _fetcher = fetcher;
-    private readonly ParameterInjector _injector = injector;
-   
+
     public async Task<Like> GetLikesByIdAsync(int id)
     {
         throw new NotImplementedException();
@@ -46,7 +43,7 @@ public class LikesRepository(
                                                                   " WHERE liked_user_id = @id", "@id", id);
         foreach (DataRow row in table.Rows)
         {
-            var like = _entityCreator.CreateLikes(row);
+            var like = entityCreator.CreateLikes(row);
             output.Add(like);
         }
         

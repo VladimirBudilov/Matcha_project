@@ -7,18 +7,14 @@ using Microsoft.Data.Sqlite;
 namespace DAL.Repositories;
 
 public class UserRepository(
-    IConfiguration configuration,
+    DatabaseSettings configuration,
     EntityCreator entityCreator,
     TableFetcher fetcher,
     ParameterInjector injector)
 {
-    private readonly string _connectionString = configuration.GetConnectionString("UserDbConnection")
+    private readonly string _connectionString = configuration.ConnectionString
                                                 ?? throw new ArgumentNullException(nameof(configuration),
                                                     "Connection string not found in configuration");
-
-    private readonly EntityCreator _entityCreator = entityCreator;
-    private readonly TableFetcher _fetcher = fetcher;
-    private readonly ParameterInjector _injector = injector;
 
     #region GettingData
 
@@ -28,9 +24,9 @@ public class UserRepository(
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
-            var dataTable = await _fetcher.GetTableByParameter(connection,
+            var dataTable = await fetcher.GetTableByParameter(connection,
                 "SELECT * FROM users WHERE user_id = @id", "@id", id);
-            return dataTable.Rows.Count > 0 ? _entityCreator.CreateUser(dataTable.Rows[0]) : null;
+            return dataTable.Rows.Count > 0 ? entityCreator.CreateUser(dataTable.Rows[0]) : null;
         }
         catch (Exception e)
         {
@@ -44,10 +40,10 @@ public class UserRepository(
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
-            var dataTable = await _fetcher.GetTableByParameter(connection,
+            var dataTable = await fetcher.GetTableByParameter(connection,
                 "SELECT * FROM users WHERE email = @email", "@email",
                 email);
-            return dataTable.Rows.Count > 0 ? _entityCreator.CreateUser(dataTable.Rows[0]) : null;
+            return dataTable.Rows.Count > 0 ? entityCreator.CreateUser(dataTable.Rows[0]) : null;
         }
         catch (Exception e)
         {
@@ -61,10 +57,10 @@ public class UserRepository(
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
-            var dataTable = await _fetcher.GetTableByParameter(connection,
+            var dataTable = await fetcher.GetTableByParameter(connection,
                 "SELECT * FROM users WHERE user_name = @userName",
                 "@userName", userName);
-            return dataTable.Rows.Count > 0 ? _entityCreator.CreateUser(dataTable.Rows[0]) : null;
+            return dataTable.Rows.Count > 0 ? entityCreator.CreateUser(dataTable.Rows[0]) : null;
         }
         catch (Exception e)
         {
@@ -78,8 +74,8 @@ public class UserRepository(
         {
             await using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
-            var dataTable = await _fetcher.GetTable(connection, "SELECT * FROM users");
-            return (from DataRow row in dataTable.Rows select _entityCreator.CreateUser(row)).ToList();
+            var dataTable = await fetcher.GetTable(connection, "SELECT * FROM users");
+            return (from DataRow row in dataTable.Rows select entityCreator.CreateUser(row)).ToList();
         }
         catch (Exception e)
         {
@@ -99,7 +95,7 @@ public class UserRepository(
             command.CommandText =
                 "INSERT INTO users (user_name, first_name, last_name, email, password, updated_at, created_at, last_login_at, reset_token_expiry, reset_token, is_verified)" +
                 "VALUES (@userName, @firstName, @lastName, @email, @password, @updatedAt, @createdAt, @lastLoginAt, @resetTokenExpiry, @resetToken, @isVerified)";
-            _injector.FillUserEntityParameters(user, command);
+            injector.FillUserEntityParameters(user, command);
             var res = await command.ExecuteNonQueryAsync();
             return res > 0 ? user : null;
         }
@@ -118,7 +114,7 @@ public class UserRepository(
             var command = connection.CreateCommand();
             command.CommandText =
                 "UPDATE users SET user_name = @userName, first_name = @firstName, last_name = @lastName, email = @email, password = @password, updated_at = @updatedAt, last_login_at = @lastLoginAt, reset_token_expiry = @resetTokenExpiry, reset_token = @resetToken, is_verified = @isVerified WHERE user_id = @id";
-            _injector.FillUserEntityParameters(user, command);
+            injector.FillUserEntityParameters(user, command);
             command.Parameters.AddWithValue("@id", id);
             var res = await command.ExecuteNonQueryAsync();
             return res > 0 ? user : null;
