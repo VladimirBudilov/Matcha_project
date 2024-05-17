@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  db:
+    container_name: ${DB_CONNECTION}
+    image: postgres:alpine
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      TZ: GMT-4
+      PGTZ: GMT-4
+    volumes:
+      - ./PostgeSQL/data:/var/lib/postgresql/data
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    restart: unless-stopped
+    networks:
+      - ft_matcha
+
+networks:
+  ft_matcha:
+    driver: bridge
