@@ -1,38 +1,29 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using BLL.Sevices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web_API.DTOs;
+using Web_API.Helpers;
 
 namespace Web_API.Controllers;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route("api/[controller]")]
 [ApiController]
-public class ActionsController : ControllerBase
+public class ActionsController(
+    ActionService actionService,
+    DtoValidator validator
+    ) : ControllerBase
 {
-[HttpPost("like/{userId:long}")]
-    public async Task<IActionResult> LikeUser(long userId)
+    [HttpPost("like/{likerId:int}")]
+    public async Task<IActionResult> LikeUser([FromQuery]int likerId, [FromQuery]int likedId)
     {
-        //TODO implement liking user
-
-        return Ok();
+        //TODO add validation
+        validator.CheckId(likedId);
+        validator.CheckId(likerId);
+        validator.CheckUserAuth(likerId, User.Claims);
+        
+        var output = await actionService.LikeUser(likerId, likedId);
+        return Ok(output);
     }
-    
-    [HttpPost("block/{userId:long}")]
-    public async Task<IActionResult> BlockUser(long userId)
-    {
-        //TODO implement blocking user
-
-        return Ok();
-    }
-    
-    [HttpPost("viewed/{userId:long}")]
-    public async Task<IActionResult> ViewedUser(long userId)
-    {
-        //TODO implement viewing user
-
-        return Ok();
-    }
-    
-
 }

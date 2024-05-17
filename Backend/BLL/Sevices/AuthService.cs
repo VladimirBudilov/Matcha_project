@@ -39,7 +39,7 @@ public class AuthService(UserRepository userRepository,
         return isValidPassword;
     }
     
-    public async Task<bool> ConfirmEmailAsync(long id)
+    public async Task<bool> ConfirmEmailAsync(int id)
     {
         //TODO add validation
         

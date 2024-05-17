@@ -35,7 +35,7 @@ public class ProfileRepository(
         return null;
     }
 
-    public async Task<Profile> GetProfileByIdAsync(long id)
+    public async Task<Profile> GetProfileByIdAsync(int id)
     {
         try
         {
@@ -73,7 +73,7 @@ public class ProfileRepository(
         }
     }
 
-    public async Task<int> UpdateProfilePicture(int pictureId)
+    public async Task<int> UpdateProfilePicture(int? pictureId)
     {
         try
         {

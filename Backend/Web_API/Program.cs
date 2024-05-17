@@ -67,9 +67,10 @@ builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<PasswordManager>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<ActionService>();
     
 builder.Services.AddScoped<QueryBuilder>();
-builder.Services.AddScoped<DataParser>();
+builder.Services.AddScoped<FameRatingCalculator>();
 builder.Services.AddScoped<EntityCreator>();
 builder.Services.AddScoped<TableFetcher>();
 builder.Services.AddScoped<ParameterInjector>();

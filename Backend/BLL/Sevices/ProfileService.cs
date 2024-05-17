@@ -73,11 +73,19 @@ public class ProfileService(
         }
     }
 
-    public void DeletePhoto(int userId, int photoId)
+    public void DeletePhoto(int userId, int photoId, bool isMain)
     {
         //TODO add validation
         
         picturesRepository.DeletePhoto(userId, photoId);
+        if (isMain)
+        {
+            var profile = profileRepository.GetProfileByIdAsync(userId).Result;
+            if (profile.ProfilePictureId == photoId)
+            {
+                profileRepository.UpdateProfilePicture(null);
+            }
+        }
     }
 
     public async Task<List<Interest>> GetInterestsAsync()

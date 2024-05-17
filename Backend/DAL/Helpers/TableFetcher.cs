@@ -7,7 +7,7 @@ public class TableFetcher
 {
     public async Task<DataTable> GetTableByParameter(NpgsqlConnection connection, string sqlQuery,
         string parameterName,
-        long parameter)
+        int parameter)
     {
         var command = connection.CreateCommand();
         command.CommandText = sqlQuery;
@@ -37,10 +37,10 @@ public class TableFetcher
         return table;
     }
 
-    public async Task<DataTable> GetTableAsync(NpgsqlConnection connection, string selectFromUsers)
+    public async Task<DataTable> GetTableAsync(NpgsqlConnection connection, string query)
     {
         var command = connection.CreateCommand();
-        command.CommandText = selectFromUsers;
+        command.CommandText = query;
         var readerAsync = await command.ExecuteReaderAsync();
         var table = new DataTable();
         if (readerAsync.HasRows)

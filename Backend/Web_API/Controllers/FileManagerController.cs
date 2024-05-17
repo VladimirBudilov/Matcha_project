@@ -33,13 +33,13 @@ public class FileManagerController(DtoValidator validator,
     return Ok("File uploaded successfully");
     }
     
-    [HttpPost("deletePhoto/{userId:long}")]
-    public async Task<IActionResult> DeletePhoto([FromRoute]int userId, int photoId)
+    [HttpDelete("deletePhoto/{userId:long}")]
+    public async Task<IActionResult> DeletePhoto([FromRoute]int userId, [FromQuery]int photoId, [FromQuery] bool isMain = false)
     {
         //validator.CheckUserAuth(userId, User.Claims);
         //TODO implement deleting photo from database
         
-        profileService.DeletePhoto(userId, photoId);
+        profileService.DeletePhoto(userId, photoId, isMain);
         return Ok("Photo deleted successfully");
     }
     

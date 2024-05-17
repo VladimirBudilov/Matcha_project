@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BLL.Sevices;
-using DAL.Entities;
 using DAL.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +13,10 @@ namespace Web_API.Controllers;
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route("api/[controller]")]
 [ApiController]
-public class ProfileController(ProfileService profileService, IMapper mapper,
+public class ProfileController(
+    ProfileService profileService,
+    ActionService actionService,
+    IMapper mapper,
     DtoValidator validator
     ) : ControllerBase
 {
@@ -25,9 +27,11 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
         [FromQuery] SortParameters sort,
         [FromQuery] PaginationParameters pagination)
     {
+        //TODO implement DTO validation
         /*validator.CheckSearchParameters(search);
         validator.CheckSortParameters(sort);
         validator.CheckPaginationParameters(pagination);*/
+        
         int.TryParse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value, out var id );
         search.UserId = id;
         var output = await profileService.GetFullProfilesAsync(search, sort, pagination);
@@ -46,7 +50,9 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
     public async Task<ProfileFullDataForOtherUsersDto> GetProfileFullDataById([FromRoute]int id)
     {
         validator.CheckId(id);
-        //TODO change fem rating if check somebody else's profile
+
+        int.TryParse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value, out var viewerId);
+        actionService.ViewedUser(viewerId, id);
         
         var model =  await profileService.GetFullProfileByIdAsync(id);
         var output = mapper.Map<ProfileFullDataForOtherUsersDto>(model);

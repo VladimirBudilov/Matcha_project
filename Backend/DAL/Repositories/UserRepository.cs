@@ -18,7 +18,7 @@ public class UserRepository(
 
     #region GettingData
 
-    public async Task<User?> GetUserByIdAsync(long id)
+    public async Task<User?> GetUserByIdAsync(int id)
     {
         try
         {

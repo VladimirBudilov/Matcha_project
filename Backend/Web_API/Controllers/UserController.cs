@@ -15,8 +15,8 @@ namespace Web_API.Controllers
     public class UserController(UserService userService, IMapper mapper, DtoValidator validator) : ControllerBase
     {
         // GET api/<UsersController>/5
-        [HttpGet("{id:long}")]
-        public async Task<UserDto> GetUserById([FromRoute]long id)
+        [HttpGet("{id:int}")]
+        public async Task<UserDto> GetUserById([FromRoute]int id)
         {
             validator.CheckId(id);
             validator.CheckUserAuth(id,User.Claims);
@@ -27,7 +27,7 @@ namespace Web_API.Controllers
         
         // PUT api/<UsersController>/5
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateUser([FromRoute]long id, [FromBody] UserDto value)
+        public async Task<IActionResult> UpdateUser([FromRoute]int id, [FromBody] UserDto value)
         {
             validator.CheckId(id);
             validator.CheckUserAuth(id, User.Claims);
@@ -48,8 +48,8 @@ namespace Web_API.Controllers
         }
 
         // DELETE api/<UsersController>/5
-        [HttpDelete("{id:long}")]
-        public async Task<IActionResult> DeleteUser([FromRoute]long id)
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteUser([FromRoute]int id)
         {
             validator.CheckId(id);
             validator.CheckUserAuth(id, User.Claims);

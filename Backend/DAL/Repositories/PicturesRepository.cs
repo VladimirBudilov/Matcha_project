@@ -28,7 +28,7 @@ public class PicturesRepository(
         return entityCreator.CreatePicture(table.Rows[0]);
     }
 
-    public async Task<IEnumerable<Picture>> GetPicturesByUserIdAsync(long id)
+    public async Task<IEnumerable<Picture>> GetPicturesByUserIdAsync(int id)
     {
         var output = new List<Picture>();
         await using var connection = new NpgsqlConnection(_connectionString);

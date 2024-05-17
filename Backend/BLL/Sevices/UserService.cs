@@ -12,7 +12,7 @@ public class UserService(
     IMapper mapper,
     PasswordManager passwordManager)
 {
-    public async Task<User?> GetUserByIdAsync(long userId)
+    public async Task<User?> GetUserByIdAsync(int userId)
     {
         var output = await userRepository.GetUserByIdAsync(userId);
         if (output == null) throw new ObjectNotFoundException("User not found. You can't get user that doesn't exist");
@@ -28,7 +28,7 @@ public class UserService(
         return output;
     }
     
-    public async Task<User?> UpdateUserAsync(long id, User userModel)
+    public async Task<User?> UpdateUserAsync(int id, User userModel)
     {
         var user = await userRepository.GetUserByIdAsync(id);
         if (user == null) throw new ObjectNotFoundException("User not found. You can't update user that doesn't exist");
@@ -44,7 +44,7 @@ public class UserService(
         return output;
     }
 
-    public async Task<User?> DeleteUserAsync(long id)
+    public async Task<User?> DeleteUserAsync(int id)
     {
         var user = await userRepository.GetUserByIdAsync(id);
         if (user == null) throw new ObjectNotFoundException("User not found. You can't delete user that doesn't exist");

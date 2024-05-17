@@ -3,7 +3,7 @@ using DAL.Entities;
 
 namespace DAL.Helpers;
 
-public class EntityCreator(DataParser dataParser)
+public class EntityCreator
 {
     public Profile CreateUserProfile(DataRow userInfoRow)
     {
@@ -85,5 +85,14 @@ public class EntityCreator(DataParser dataParser)
         }
 
         return users;
+    }
+
+    public ProfileView CreateProfileViews(DataRow row)
+    {
+        return new ProfileView
+        {
+            ViewedId = row.Field<int>("profile_user_id"),
+            ViewerId = row.Field<int>("viewer_user_id"),
+        };
     }
 }
