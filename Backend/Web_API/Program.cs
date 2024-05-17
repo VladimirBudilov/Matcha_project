@@ -61,6 +61,7 @@ builder.Services.AddScoped<ProfileRepository>();
 builder.Services.AddScoped<InterestsRepository>();
 builder.Services.AddScoped<PicturesRepository>();
 builder.Services.AddScoped<LikesRepository>();
+builder.Services.AddScoped<ProfileViewsRepository>();
 
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProfileService>();

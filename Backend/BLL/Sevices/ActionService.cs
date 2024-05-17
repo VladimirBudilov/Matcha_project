@@ -39,7 +39,7 @@ public class ActionService(
         return output;
     }
 
-    public async Task ViewedUser(int viewerId, int viewedId)
+    public async Task ViewUser(int viewerId, int viewedId)
     {
         //Check that user is not viewing himself
         if (viewerId == viewedId) return;

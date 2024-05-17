@@ -1,6 +1,8 @@
 ﻿using System.Data;
+using System.Text;
 using DAL.Entities;
 using DAL.Helpers;
+using Microsoft.Extensions.Primitives;
 using Npgsql;
 
 
@@ -78,10 +80,20 @@ public class UserRepository(
             await using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
             var command = connection.CreateCommand();
-            command.CommandText =
-                "INSERT INTO users (user_name, first_name, last_name, email, password,  is_verified)" +
-                "VALUES            (@userName, @firstName, @lastName, @email, @password,  @isVerified)";
-            injector.FillUserEntityParameters(user, command);
+            var query = new StringBuilder()
+                .Append("INSERT INTO users (user_name, first_name, last_name, email, password,  is_verified) ")
+                .Append("VALUES            (@userName, @firstName, @lastName, @email, @password,  @isVerified)");
+            injector.InjectParameters(query, new Dictionary<string, object>
+            {
+                {"@userName", user.UserName},
+                {"@firstName", user.FirstName},
+                {"@lastName", user.LastName},
+                {"@email", user.Email},
+                {"@password", user.Password},
+                {"@isVerified", user.IsVerified}
+            });
+            
+            command.CommandText = query.ToString();
             var res = await command.ExecuteNonQueryAsync();
             return res > 0 ? user : null;
         }
@@ -91,17 +103,39 @@ public class UserRepository(
         }
     }
 
-    public async Task<User?> UpdateUserAsync(long id, User user)
+    public async Task<User?> UpdateUserAsync(int id, User user)
     {
         try
         {
             await using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
             var command = connection.CreateCommand();
-            command.CommandText =
-                "UPDATE users SET user_name = @userName, first_name = @firstName, last_name = @lastName, email = @email, password = @password, updated_at = @updatedAt, last_login_at = @lastLoginAt, reset_token_expiry = @resetTokenExpiry, reset_token = @resetToken, is_verified = @isVerified WHERE user_id = @id";
-            injector.FillUserEntityParameters(user, command);
-            command.Parameters.AddWithValue("@id", id);
+            var query = new StringBuilder()
+                .Append("UPDATE users SET user_name = @userName, first_name = @firstName, ")
+                .Append("last_name = @lastName, email = @email, is_verified = @isVerified ");
+
+            if (user.Password != null)
+            {
+                query.Append(" ,password = @password");
+                injector.InjectParameters(query, new Dictionary<string, object>
+                {
+                    {"@password", user.Password}
+                });
+                
+            }
+            query.Append("WHERE user_id = @user_id");
+            injector.InjectParameters(query, new Dictionary<string, object>
+            {
+                {"@userName", user.UserName},
+                {"@firstName", user.FirstName},
+                {"@lastName", user.LastName},
+                {"@email", user.Email},
+                {"@isVerified", user.IsVerified},
+                {"@user_id", id}
+            });
+            
+            command.CommandText = query.ToString();
+            
             var res = await command.ExecuteNonQueryAsync();
             return res > 0 ? user : null;
         }
