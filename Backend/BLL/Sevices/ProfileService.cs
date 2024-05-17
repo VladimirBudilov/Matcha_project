@@ -95,6 +95,9 @@ public class ProfileService(
 
     public async Task<Interest> AddInterest(string interest)
     {
+        //TODO check that interest not exist
+        var interests = await interestsRepository.GetInterestsAsync();
+        if (interests.Any(i => i.Name == interest)) return new Interest();
         return await interestsRepository.CreateInterestAsync(interest);
     }
 

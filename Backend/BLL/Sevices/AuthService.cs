@@ -12,13 +12,15 @@ public class AuthService(UserRepository userRepository,
 {
     public async Task<string?> RegisterUserAsync(User user)
     {
-        //TODO add validation
         var userByEmail = await userRepository.GetUserByEmailAsync(user.Email);
         var userByUserName = await userRepository.GetUserByUserNameAsync(user.UserName);
         if (userByEmail != null || userByUserName != null) return null;
         user.Password = passwordManager.HashPassword(user.Password);
         user.EmailResetToken = emailService.GenerateEmailConfirmationToken();
-        user.IsVerified = false;
+        
+        //TODO change when email service is ready
+        user.IsVerified = true;
+        
         var res = await userRepository.CreateUserAsync(user);
         userByUserName = await userRepository.GetUserByUserNameAsync(user.UserName);
         var profile = new Profile()
@@ -44,7 +46,7 @@ public class AuthService(UserRepository userRepository,
         //TODO add validation
         
         var user = await userRepository.GetUserByIdAsync(id);
-        if (user.IsVerified == true) return false;
+        if (user.IsVerified) return false;
         user.IsVerified = false;
         await userRepository.UpdateUserAsync(id, user);
         return true;

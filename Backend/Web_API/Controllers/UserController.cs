@@ -34,7 +34,8 @@ namespace Web_API.Controllers
             validator.UserDto(value);
             var userModel = mapper.Map<User>(value);
             await userService.UpdateUserAsync(id, userModel);
-            return Ok(userModel);
+            var output = mapper.Map<UserDto>(userModel);
+            return Ok(output);
         }
         [HttpPut("{id:int}/update-password")]
         public async Task<IActionResult> UpdateUserPassword([FromRoute]int id, [FromBody] PasswordUpdatingDto value)

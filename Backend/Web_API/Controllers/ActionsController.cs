@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Web_API.DTOs;
 using Web_API.Helpers;
 
 namespace Web_API.Controllers;
@@ -15,10 +14,9 @@ public class ActionsController(
     DtoValidator validator
     ) : ControllerBase
 {
-    [HttpPost("like/{likerId:int}")]
+    [HttpPost("like")]
     public async Task<IActionResult> LikeUser([FromQuery]int likerId, [FromQuery]int likedId)
     {
-        //TODO add validation
         validator.CheckId(likedId);
         validator.CheckId(likerId);
         validator.CheckUserAuth(likerId, User.Claims);

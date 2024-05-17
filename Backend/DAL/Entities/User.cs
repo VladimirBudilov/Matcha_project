@@ -17,7 +17,7 @@ namespace DAL.Entities
         
         public string? EmailResetToken { get; set; }
         public string? JwtResetToken { get; set; }
-        public bool? IsVerified { get; set; }
+        public bool IsVerified { get; set; } = false;
         
         public Profile? Profile { get; set; }
     }

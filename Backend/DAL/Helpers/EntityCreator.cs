@@ -30,9 +30,7 @@ public class EntityCreator
         return new User
         {
             UserId = row.Field<int>("user_id"),
-            IsVerified = row.IsNull("is_verified")
-                ? null
-                : row.Field<bool>("is_verified"),
+            IsVerified = row.Field<bool>("is_verified"),
             UserName = row.Field<string>("user_name"),
             FirstName = row.Field<string>("first_name"),
             LastName = row.Field<string>("last_name"),

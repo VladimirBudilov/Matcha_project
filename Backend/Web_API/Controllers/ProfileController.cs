@@ -52,7 +52,7 @@ public class ProfileController(
         validator.CheckId(id);
 
         int.TryParse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value, out var viewerId);
-        actionService.ViewedUser(viewerId, id);
+        actionService.ViewUser(viewerId, id);
         
         var model =  await profileService.GetFullProfileByIdAsync(id);
         var output = mapper.Map<ProfileFullDataForOtherUsersDto>(model);
