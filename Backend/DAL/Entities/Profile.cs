@@ -9,10 +9,10 @@ public class Profile
     public int? ProfilePictureId { get; set; }
     public int? FameRating { get; set; }
     public int Age { get; set; }
-    
+
     public double? Latitude { get; set; }
     public double? Longitude { get; set; }
-    
+
     public Picture? ProfilePicture { get; set; }
     public List<Picture> Pictures { get; set; } = new List<Picture>();
     public List<Interest> Interests { get; set; } = new List<Interest>();
@@ -20,6 +20,6 @@ public class Profile
 
     public bool HasEmptyFields()
     {
-        return GetType().GetProperties().Any(prop => prop.GetValue(this) == null);
+        return SexualPreferences is null || Biography is null || Latitude is null || Longitude is null; 
     }
 }

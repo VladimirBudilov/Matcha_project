@@ -50,7 +50,7 @@ public class EntityCreator(DataParser dataParser)
             PictureId = row.Field<int>("picture_id"),
             UserId = row.Field<int>("user_id"),
             PicturePath = row.Field<byte[]>("picture_path"),
-            IsProfilePicture = row.Field<long>("is_profile_picture") == 1,
+            IsProfilePicture = row.Field<int>("is_profile_picture") == 1,
         };
     }
 
@@ -68,7 +68,6 @@ public class EntityCreator(DataParser dataParser)
     {
         return new Interest
         {
-            UserId = row.Field<int>("user_id"),
             InterestId = row.Field<int>("interest_id"),
             Name = row.Field<string>("name"),
         };

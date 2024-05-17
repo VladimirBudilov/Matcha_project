@@ -105,9 +105,10 @@ public class ProfileRepository(
                 "UPDATE profiles SET gender = @gender," +
                 " sexual_preferences = @sexual_preferences, " +
                 "biography = @biography, age = @age, " +
-                "profile_picture_id = @profile_picture_id " +
-                "latitude = @latitude, longitude = @longitude" +
-                " WHERE profile_id = @profile_id";
+                "profile_picture_id = @profile_picture_id, " +
+                "latitude = @latitude, longitude = @longitude " +
+                "WHERE profile_id = @profile_id " +
+                "RETURNING is_active";
 
             command.Parameters.AddWithValue("@profile_id", entity.ProfileId);
             command.Parameters.AddWithValue("@gender", entity.Gender);
@@ -116,11 +117,10 @@ public class ProfileRepository(
             command.Parameters.AddWithValue("@age", entity.Age);
             command.Parameters.AddWithValue("@latitude", entity.Latitude);
             command.Parameters.AddWithValue("@longitude", entity.Longitude);
-            command.Parameters.AddWithValue("@profile_picture_id", entity.ProfilePictureId);
 
-            var res = await command.ExecuteNonQueryAsync();
+            var isActive =  (bool)command.ExecuteScalar()!;
             //get full data about user and check that it does nor contain nulls
-            if (!(await GetProfileByIdAsync(entity.ProfileId)).HasEmptyFields())
+            if (!isActive && !(await GetProfileByIdAsync(entity.ProfileId)).HasEmptyFields())
             {
                 command.CommandText =
                     "UPDATE profiles SET is_active = TRUE " +
@@ -128,7 +128,7 @@ public class ProfileRepository(
                 await command.ExecuteNonQueryAsync();
             }
             // Deconstruct profile
-            return res > 0 ? entity : null;
+            return  entity;
         }
         catch (Exception e)
         {

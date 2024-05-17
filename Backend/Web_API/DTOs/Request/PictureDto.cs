@@ -4,5 +4,4 @@ public class PictureDto
 {
     public long PictureId { get; init; }
     public string Picture { get; init; }
-
 }

@@ -16,14 +16,14 @@ public class PicturesRepository(
                                                 ?? throw new ArgumentNullException(nameof(configuration),
                                                     "Connection string not found in configuration");
 
-    public async Task<Picture> GetProfilePictureAsync(long? id)
+    public async Task<Picture> GetProfilePictureAsync(int? id)
     {
         if (id == null) return null;
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
         connection.CreateCommand();
-        var table = await fetcher.GetTableByParameter((NpgsqlConnection)connection, "SELECT * FROM pictures" +
-            " WHERE picture_id = @id", "@id", (long)id);
+        var table = await fetcher.GetTableByParameter(connection, "SELECT * FROM pictures" +
+                                                                  " WHERE picture_id = @id", "@id", (int)id);
         if (table.Rows.Count == 0) return null;
         return entityCreator.CreatePicture(table.Rows[0]);
     }
@@ -36,7 +36,7 @@ public class PicturesRepository(
         
         connection.CreateCommand();
         var table = await fetcher.GetTableByParameter((NpgsqlConnection)connection, "SELECT * FROM pictures" +
-            " WHERE user_id = @id", "@id", id);
+            " WHERE is_profile_picture = 0 AND user_id = @id", "@id", id);
         foreach (DataRow row in table.Rows)
         {
             output.Add(entityCreator.CreatePicture(row));

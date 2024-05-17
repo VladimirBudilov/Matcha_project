@@ -14,7 +14,7 @@ public class FileManagerController(DtoValidator validator,
     ProfileService profileService) : ControllerBase
 {
   [HttpPost("uploadPhoto/{userId:long}")]
-    public async Task<IActionResult> UploadPhoto([FromRoute]long userId, IFormFile file, [FromQuery] bool isMain = false)
+    public async Task<IActionResult> UploadPhoto([FromRoute]int userId, IFormFile file, [FromQuery] bool isMain = false)
     {
         //TODO add validation
         
@@ -34,7 +34,7 @@ public class FileManagerController(DtoValidator validator,
     }
     
     [HttpPost("deletePhoto/{userId:long}")]
-    public async Task<IActionResult> DeletePhoto([FromRoute]long userId, long photoId)
+    public async Task<IActionResult> DeletePhoto([FromRoute]int userId, int photoId)
     {
         //validator.CheckUserAuth(userId, User.Claims);
         //TODO implement deleting photo from database
