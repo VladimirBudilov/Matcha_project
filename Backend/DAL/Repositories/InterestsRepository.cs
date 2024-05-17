@@ -52,7 +52,7 @@ public sealed class InterestsRepository(
     }
     
 
-    public async Task<IEnumerable<Interest>> GetUserInterestsByUserIdAsync(long id)
+    public async Task<IEnumerable<Interest>> GetInterestsByUserIdAsync(long id)
     {
         var output = new List<Interest>();
         await using var connection = new NpgsqlConnection(_connectionString);
@@ -94,7 +94,7 @@ public sealed class InterestsRepository(
         }
     }
 
-    public async Task<List<Interest>> GetProfileInterestsByNamesAsync(int userId, IEnumerable<string> select)
+    public async Task<List<Interest>> GetUserInterestsByNamesAsync(int userId, IEnumerable<string> select)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
@@ -111,5 +111,17 @@ public sealed class InterestsRepository(
         var table = await fetcher.GetTableAsync(connection, query.ToString());
 
         return (from DataRow row in table.Rows select entityCreator.CreateInterests(row)).ToList();
+    }
+
+    public async Task RemoveInterest(string interest)
+    {
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
+        connection.CreateCommand();
+        var query = new StringBuilder().Append("DELETE FROM interests WHERE name = @name");
+        var command = connection.CreateCommand();
+        command.CommandText = query.ToString();
+        command.Parameters.AddWithValue("@name", interest);
+        await command.ExecuteNonQueryAsync();
     }
 }

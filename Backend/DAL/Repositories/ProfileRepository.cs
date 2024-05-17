@@ -145,7 +145,7 @@ public class ProfileRepository(
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
         var command = connection.CreateCommand();
-        var userInterests = await interestsRepository.GetUserInterestsByUserIdAsync(searchParams.UserId);
+        var userInterests = await interestsRepository.GetInterestsByUserIdAsync(searchParams.UserId);
         var userInterestsIds = userInterests.Select(interest => interest.InterestId).ToArray();
         queryBuilder.Select($" users.user_id as user_id, users.*, profiles.*, count_common_elements(@userInterests, ARRAY_AGG(interests.interest_id)) AS common_interests ");
         queryBuilder.From(" users \n JOIN profiles ON users.user_id = profiles.profile_id ");

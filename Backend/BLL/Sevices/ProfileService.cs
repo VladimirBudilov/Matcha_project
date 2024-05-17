@@ -24,7 +24,7 @@ public class ProfileService(
         builder.AddMainData(user);
         builder.AddProfilePictures(await picturesRepository.GetPicturesByUserIdAsync(user.UserId));
         builder.AddMainProfilePicture(await picturesRepository.GetProfilePictureAsync(user.Profile?.ProfilePictureId));
-        builder.AddUserInterests(await interestsRepository.GetUserInterestsByUserIdAsync(id));
+        builder.AddUserInterests(await interestsRepository.GetInterestsByUserIdAsync(id));
         return builder.Build();
     }
 
@@ -40,7 +40,7 @@ public class ProfileService(
             builder.AddMainData(user);
             builder.AddMainProfilePicture(
                 await picturesRepository.GetProfilePictureAsync(user.Profile?.ProfilePictureId));
-            builder.AddUserInterests(await interestsRepository.GetUserInterestsByUserIdAsync(user.UserId));
+            builder.AddUserInterests(await interestsRepository.GetInterestsByUserIdAsync(user.UserId));
             usersList.Add(builder.Build());
         }
 
@@ -55,7 +55,7 @@ public class ProfileService(
         var res = await profileRepository.UpdateProfileAsync(profile);
         if (res == null) throw new ObjectNotFoundException("Profile not found");
         //add/update interests
-        List<Interest> fullInterests = await interestsRepository.GetProfileInterestsByNamesAsync(id, profile.Interests.Select(i => i.Name));
+        List<Interest> fullInterests = await interestsRepository.GetUserInterestsByNamesAsync(id, profile.Interests.Select(i => i.Name));
         await interestsRepository.UpdateUserInterestsAsync(id, fullInterests);
     }
 
@@ -78,5 +78,24 @@ public class ProfileService(
         //TODO add validation
         
         picturesRepository.DeletePhoto(userId, photoId);
+    }
+
+    public async Task<List<Interest>> GetInterestsAsync()
+    {
+        return await interestsRepository.GetInterestsAsync();
+    }
+
+    public async Task<Interest> AddInterest(string interest)
+    {
+        return await interestsRepository.CreateInterestAsync(new Interest {Name = interest});
+    }
+
+    public async Task RemoveInterest(string interest)
+    {
+        //check that nobady use this interst
+        var interests = await interestsRepository.GetInterestsAsync(); 
+        if (interests.All(i => i.Name != interest)) throw new ObjectNotFoundException("Interest not found");
+        //delete interest
+        await interestsRepository.RemoveInterest(interest);
     }
 }

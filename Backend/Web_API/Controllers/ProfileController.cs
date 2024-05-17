@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BLL.Sevices;
+using DAL.Entities;
 using DAL.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -19,8 +20,10 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
 {
     // GET: api/<UsersController>
     [HttpGet]
-    public async Task<ProfilesData> GetAllProfilesInfo([FromQuery]SearchParameters search,
-        [FromQuery] SortParameters sort,[FromQuery] PaginationParameters pagination)
+    public async Task<ProfilesData> GetAllProfilesInfo(
+        [FromQuery]SearchParameters search,
+        [FromQuery] SortParameters sort,
+        [FromQuery] PaginationParameters pagination)
     {
         /*validator.CheckSearchParameters(search);
         validator.CheckSortParameters(sort);
@@ -59,5 +62,27 @@ public class ProfileController(ProfileService profileService, IMapper mapper,
         validator.ProfileRequestDto(profileCreation);
         var model = mapper.Map<Profile>(profileCreation);
         await profileService.UpdateProfileAsync(id, model);
+    }
+    
+    [HttpPost("interest")]
+    public async Task<IActionResult> AddInterest([FromBody] string interest)
+    {
+        var output = await profileService.AddInterest(interest);
+        return Ok(output);
+    }
+    
+    [HttpGet("interests")]
+    public async Task<IActionResult> GetInterests()
+    {
+        var output = await profileService.GetInterestsAsync();
+
+        return Ok(output);
+    }
+    
+    [HttpDelete("interest")]
+    public async Task<IActionResult> RemoveInterest([FromQuery]string interest)
+    {
+        await profileService.RemoveInterest(interest);
+        return Ok();
     }
 }

@@ -34,19 +34,5 @@ public class ActionsController : ControllerBase
         return Ok();
     }
     
-    [HttpPost("add-interest")]
-    public async Task<IActionResult> AddInterest([FromBody] InterestDto interestDto)
-    {
-        //TODO implement adding interest
 
-        return Ok();
-    }
-    
-    [HttpPost("remove-interest")]
-    public async Task<IActionResult> RemoveInterest([FromBody] InterestDto interestDto)
-    {
-        //TODO implement removing interest
-
-        return Ok();
-    }
 }
