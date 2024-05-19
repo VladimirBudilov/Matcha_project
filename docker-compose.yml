@@ -12,6 +12,7 @@ services:
       PGTZ: GMT-4
     volumes:
       - ./PostgeSQL/data:/var/lib/postgresql/data
+      - ./Matcha_Data/matcha_init.sql:/docker-entrypoint-initdb.d/matcha_init.sql
     ports:
       - ${DB_PORT}:${DB_PORT}
     restart: unless-stopped
