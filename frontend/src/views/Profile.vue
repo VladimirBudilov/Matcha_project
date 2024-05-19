@@ -30,6 +30,10 @@ const profile = ref<Profile>({
 
 
 onMounted(async () => {
+	await axios.get('api/auth/get-id').then((res) => {
+		localStorage.setItem('UserId', String(res?.data))
+	})
+
 	await axios.get('api/profile/' + localStorage.getItem('UserId')).then((res) => {
 		profile.value = res?.data
 		uploadUrl.value = 'api/FileManager/uploadPhoto/' + profile.value.profileId
