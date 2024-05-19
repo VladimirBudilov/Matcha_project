@@ -17,8 +17,8 @@ public class ActionsController(
     [HttpPost("like")]
     public async Task<IActionResult> LikeUser([FromQuery]int likerId, [FromQuery]int likedId)
     {
-        validator.CheckId(likedId);
-        validator.CheckId(likerId);
+        validator.CheckPositiveNumber(likedId);
+        validator.CheckPositiveNumber(likerId);
         validator.CheckUserAuth(likerId, User.Claims);
         
         var output = await actionService.LikeUser(likerId, likedId);

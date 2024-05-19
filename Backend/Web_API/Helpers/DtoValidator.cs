@@ -35,9 +35,9 @@ public class DtoValidator
         }
 
         ValidateEmail(userDto.Email);
-        ValidateUsername(userDto.UserName);
+        ValidateName(userDto.UserName);
         ValidateName(userDto.FirstName);
-        ValidateSurname(userDto.LastName);
+        ValidateName(userDto.LastName);
     }
 
     public void UserRegistrationDto(UserRegistrationDto userRegistrationDto)
@@ -48,9 +48,9 @@ public class DtoValidator
         }
 
         ValidateEmail(userRegistrationDto.Email);
-        ValidateUsername(userRegistrationDto.UserName);
+        ValidateName(userRegistrationDto.UserName);
         ValidateName(userRegistrationDto.FirstName);
-        ValidateSurname(userRegistrationDto.LastName);
+        ValidateName(userRegistrationDto.LastName);
         ValidatePassword(userRegistrationDto.Password);
     }
 
@@ -61,7 +61,7 @@ public class DtoValidator
             throw new DataValidationException("UserAuthRequestDto is null.");
         }
 
-        ValidateUsername(userAuthRequestDto.UserName);
+        ValidateName(userAuthRequestDto.UserName);
         ValidatePassword(userAuthRequestDto.Password);
     }
 
@@ -75,12 +75,11 @@ public class DtoValidator
         ValidateGender(profileCreationResponseDto.Gender);
         ValidateSexualPreference(profileCreationResponseDto.SexualPreferences);
         ValidateBio(profileCreationResponseDto.Biography);
-        ValidateLocation(profileCreationResponseDto.Latitude);
-        ValidateLocation(profileCreationResponseDto.Longitude);
+        ValidateLocation(profileCreationResponseDto.Latitude, profileCreationResponseDto.Longitude);
         ValidateAge(profileCreationResponseDto.Age);
     }
 
-    public void CheckId(long id)
+    public void CheckPositiveNumber(int id)
     {
         if (id <= 0)
         {
@@ -108,38 +107,12 @@ public class DtoValidator
         }
     }
 
-    public void ValidateUsername(string username)
+    public void ValidateName(string username)
     {
         if (!(username.Length >= 3 && username.Length <= 20 &&
               username.All(char.IsLetter)))
         {
             throw new DataValidationException("Invalid username format. Must be between 3 and 20 characters long.");
-        }
-    }
-
-    private void ValidateName(string name)
-    {
-        if (!(name.Length >= 3 && name.Length <= 20 &&
-              name.All(char.IsLetter)))
-        {
-            throw new DataValidationException("Invalid name format.");
-        }
-    }
-
-    private void ValidateSurname(string surname)
-    {
-        if (!(surname.Length >= 3 && surname.Length <= 20 &&
-              surname.All(char.IsLetter)))
-        {
-            throw new DataValidationException("Invalid surname format.");
-        }
-    }
-
-    private void ValidatePhoneNumber(string phoneNumber)
-    {
-        if (!(phoneNumber.Length == 9 && phoneNumber.All(char.IsDigit)))
-        {
-            throw new DataValidationException("Invalid phone number format.");
         }
     }
 
@@ -183,39 +156,30 @@ public class DtoValidator
             throw new DataValidationException("Invalid tag format.");
         }
     }
-
-    private void ValidateTagList(string tagList)
+    
+    private void ValidateLocation(double? latitude, double? longitude)
     {
-        var tags = tagList.Split(',');
-        if (!tags.All(tag =>
-            {
-                try
-                {
-                    ValidateTag(tag);
-                    return true;
-                }
-                catch
-                {
-                    return false;
-                }
-            }))
+        if (latitude is null || latitude < -90 || latitude > 90)
         {
-            throw new DataValidationException("Invalid tag list format.");
+            throw new DataValidationException("Invalid latitude format.");
         }
-    }
-
-    private void ValidateLocation(double? location)
-    {
-        // Add your validation logic here
-        // If validation fails, throw exception
-        // throw new DataValidationException("Invalid location format.");
+        if (longitude is null || longitude < -180 || longitude > 180)
+        {
+            throw new DataValidationException("Invalid longitude format.");
+        }
+        
     }
 
     private void ValidatePhoto(string photo)
     {
-        // Add your validation logic here
-        // If validation fails, throw exception
-        // throw new DataValidationException("Invalid photo format.");
+        try
+        {
+            Convert.FromBase64String(photo);
+        }
+        catch (FormatException)
+        {
+            throw new DataValidationException("Invalid photo format. Photo should be a base64 string.");
+        }
     }
 
     #endregion
@@ -228,19 +192,71 @@ public class DtoValidator
             throw new DataValidationException("Token is null or empty.");
         }
     }
-
+    
     public void CheckSearchParameters(SearchParameters search)
     {
-        throw new NotImplementedException();
+        ExecuteIfNotNull(CheckPositiveNumber, search.UserId);
+        ExecuteIfNotNull(CheckDistance, search.MaxDistance);
+        CheckFilteringRage(search.MinFameRating, search.MaxFameRating);
+        CheckFilteringRage(search.MinAge, search.MaxAge);
+        CheckFilteringRage(search.MinFameRating, search.MaxFameRating);
+        ExecuteIfNotNull(ValidateSexualPreference, search.SexualPreferences);
+        CheckTags(search.CommonTags);
+    }
+
+    private void CheckTags(List<string> commonTags)
+    {
+        foreach (var tag in commonTags)
+        {
+            ValidateTag(tag);
+        }
+    }
+
+    private void CheckFilteringRage(int? min, int? max)
+    {
+        if (min is null && max is null) return;
+        if (min is null || max is null) throw new DataValidationException("Invalid filtering rage format.");
+        if (min > max) throw new DataValidationException("Invalid filtering rage format.");
+        CheckPositiveNumber(min.Value);
+        CheckPositiveNumber(max.Value);
+    }
+
+
+    private void CheckDistance(int? obj)
+    {
+        if (obj <= 0)
+        {
+            throw new DataValidationException("Invalid distance format.");
+        }
     }
 
     public void CheckSortParameters(SortParameters sort)
     {
-        throw new NotImplementedException();
+        var sortList = sort.ToList();
+        foreach (var sortParameter in sortList)
+        {
+            if (sortParameter != "ASC" && sortParameter != "DESC")
+            {
+                throw new DataValidationException("Invalid sort parameter format.");
+            }
+        }
+        if(sort.SortingMainParameter < 0 || sort.SortingMainParameter > 3)
+            throw new DataValidationException("Invalid sorting main parameter format.");
     }
 
     public void CheckPaginationParameters(PaginationParameters pagination)
     {
-        throw new NotImplementedException();
+        if (pagination.PageNumber <= 0 || pagination.PageSize <= 0)
+        {
+            throw new DataValidationException("Invalid pagination parameters format.");
+        }
+    }
+
+    public void ExecuteIfNotNull<T>(Action<T> action, T value)
+    {
+        if (value != null)
+        {
+            action(value);
+        }
     }
 }

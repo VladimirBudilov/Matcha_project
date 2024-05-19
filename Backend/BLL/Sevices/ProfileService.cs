@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using BLL.Helpers;
 using DAL.Entities;
 using DAL.Helpers;
@@ -18,7 +19,7 @@ public class ProfileService(
     public async Task<User> GetFullProfileByIdAsync(int id)
     {
         var user = await profileRepository.GetFullProfileAsync(id);
-        if (user == null) throw new ObjectNotFoundException("User not found");
+        if (user == null) throw new ValidationException("User not found");
 
         var builder = new ProfileBuilder();
         builder.AddMainData(user);
@@ -31,6 +32,8 @@ public class ProfileService(
     public async Task<List<User>> GetFullProfilesAsync(SearchParameters search, SortParameters sort,
         PaginationParameters pagination)
     {
+        var currentUser = profileRepository.GetProfileByIdAsync(search.UserId);
+        if(!currentUser.IsCompleted) throw new ValidationException("update user profile first");
         var users = await profileRepository.GetFullProfilesAsync(search, sort, pagination);
         if (users == null) return new List<User>();
         var builder = new ProfileBuilder();

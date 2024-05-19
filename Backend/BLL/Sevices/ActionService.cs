@@ -2,6 +2,7 @@
 using DAL.Entities;
 using DAL.Helpers;
 using DAL.Repositories;
+using Web_API.Helpers;
 
 namespace BLL.Sevices;
 
@@ -9,14 +10,15 @@ public class ActionService(
     LikesRepository likesRepository,
     ProfileRepository userRepository,
     ProfileViewsRepository profileViewRepository,
-    FameRatingCalculator fameRatingCalculator
+    FameRatingCalculator fameRatingCalculator,
+    ServiceValidator validator
     )
 {
     public async Task<Like> LikeUser(int likerId, int likedId)
     {
-        //Check that user is not liking himself
-        if (likerId == likedId) throw new ObjectNotFoundException("You can't like yourself");
-        
+        await validator.CheckUserExistence(new[]{likerId, likedId});
+
+        if (likerId == likedId) throw new DataValidationException("You can't like yourself");
         var likes = await likesRepository.GetLikesByUserIdAsync(likerId);
         Like output = null;
         foreach (var like in likes)
@@ -33,7 +35,6 @@ public class ActionService(
             output = await likesRepository.CreateLikesAsync(new Like() { LikedId = likedId, LikerId = likerId });
         }
 
-        //update fem rating
         await UpdateFameRating(likedId);
 
         return output;
@@ -41,10 +42,11 @@ public class ActionService(
 
     public async Task ViewUser(int viewerId, int viewedId)
     {
-        //Check that user is not viewing himself
         if (viewerId == viewedId) return;
         
-        //check that user is not viewing the same user twice
+        await validator.CheckUserExistence(new[]{viewerId, viewedId});
+
+        
         var views = await profileViewRepository.GetProfileViewsByUserIdAsync(viewerId);
         foreach (var view in views)
         {
