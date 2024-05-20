@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using BLL.Helpers;
 using DAL.Entities;
 using DAL.Helpers;
@@ -18,7 +19,7 @@ public class ProfileService(
     public async Task<User> GetFullProfileByIdAsync(int id)
     {
         var user = await profileRepository.GetFullProfileAsync(id);
-        if (user == null) throw new ObjectNotFoundException("User not found");
+        if (user == null) throw new ValidationException("User not found");
 
         var builder = new ProfileBuilder();
         builder.AddMainData(user);
@@ -31,6 +32,8 @@ public class ProfileService(
     public async Task<List<User>> GetFullProfilesAsync(SearchParameters search, SortParameters sort,
         PaginationParameters pagination)
     {
+        var currentUser = await profileRepository.GetProfileByIdAsync(search.UserId);
+        if(!currentUser.IsActive) throw new ValidationException("update user profile first");
         var users = await profileRepository.GetFullProfilesAsync(search, sort, pagination);
         if (users == null) return new List<User>();
         var builder = new ProfileBuilder();
@@ -49,14 +52,20 @@ public class ProfileService(
 
     public async Task UpdateProfileAsync(int id, Profile profile)
     {
+        //check that interests exist
+        var allInterests= (await interestsRepository.GetInterestsAsync()).Select(i => i.Name);
+        foreach (var interest in profile.Interests)
+        {
+            if (!allInterests.Contains(interest.Name)) throw new ValidationException("Such interest not exist");
+        }
         var currentProfile = await profileRepository.GetProfileByIdAsync(id);
         if (currentProfile == null) throw new ObjectNotFoundException("Profile not found");
         profile.ProfileId = id;
         var res = await profileRepository.UpdateProfileAsync(profile);
         if (res == null) throw new ObjectNotFoundException("Profile not found");
         //add/update interests
-        var fullInterests = await interestsRepository.GetUserInterestsByNamesAsync(profile.Interests.Select(i => i.Name));
-        await interestsRepository.UpdateUserInterestsAsync(id, fullInterests);
+        var userInterestsByNamesAsync = await interestsRepository.GetUserInterestsByNamesAsync(profile.Interests.Select(i => i.Name));
+        await interestsRepository.UpdateUserInterestsAsync(id, userInterestsByNamesAsync);
     }
 
     public async  void UploadPhoto(int id, byte[] filePicture, bool isMain)

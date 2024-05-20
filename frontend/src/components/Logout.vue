@@ -8,6 +8,7 @@ const IsLogin = storeToRefs(SignUpStore()).IsLogin
 const LogoutButtonTurnOn = () => {
 	axios.get('api/auth/logout').then(() => {
 		localStorage.removeItem('token')
+		localStorage.removeItem('UserId')
 		IsLogin.value = false
 		window.location.assign('https://' + window.location.host + '/login')
 	})

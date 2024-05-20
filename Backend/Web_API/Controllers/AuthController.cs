@@ -41,8 +41,8 @@ public class AuthController(UserService userService, AuthService authService,
             logger.LogWarning("Invalid login attempt");
             return BadRequest(new AuthResponseDto()
             {
+                Result = false,
                 Error = "Invalid Authentication",
-                Result = false
             });
         }
 

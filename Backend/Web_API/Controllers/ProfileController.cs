@@ -27,13 +27,12 @@ public class ProfileController(
         [FromQuery] SortParameters sort,
         [FromQuery] PaginationParameters pagination)
     {
-        //TODO implement DTO validation
-        /*validator.CheckSearchParameters(search);
-        validator.CheckSortParameters(sort);
-        validator.CheckPaginationParameters(pagination);*/
-        
         int.TryParse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value, out var id );
         search.UserId = id;
+        validator.CheckSearchParameters(search);
+        validator.CheckSortParameters(sort);
+        validator.CheckPaginationParameters(pagination);
+        
         var output = await profileService.GetFullProfilesAsync(search, sort, pagination);
         var profiles = mapper.Map<List<ProfileForOtherUsers>>(output);
         return new ProfilesData()
@@ -49,7 +48,7 @@ public class ProfileController(
     [HttpGet("{id:int}")]
     public async Task<ProfileFullDataForOtherUsersDto> GetProfileFullDataById([FromRoute]int id)
     {
-        validator.CheckId(id);
+        validator.CheckPositiveNumber(id);
 
         int.TryParse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value, out var viewerId);
         actionService.ViewUser(viewerId, id);
@@ -64,7 +63,7 @@ public class ProfileController(
     public async Task UpdateProfile([FromRoute]int id, [FromBody] ProfileDto profileCreation)
     {
         validator.CheckUserAuth(id, User.Claims);
-        validator.CheckId(id);
+        validator.CheckPositiveNumber(id);
         validator.ProfileRequestDto(profileCreation);
         var model = mapper.Map<Profile>(profileCreation);
         await profileService.UpdateProfileAsync(id, model);

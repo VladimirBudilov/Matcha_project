@@ -22,6 +22,7 @@ public class EntityCreator
             Latitude = userInfoRow.IsNull("latitude") ? null : userInfoRow.Field<float>("latitude"),
             Longitude = userInfoRow.IsNull("longitude") ? null : userInfoRow.Field<float>("longitude"),
             Age = userInfoRow.Field<int>("age"),
+            IsActive = userInfoRow.Field<bool>("is_active"),
         };
     }
 

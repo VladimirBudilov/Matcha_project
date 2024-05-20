@@ -18,7 +18,7 @@ namespace Web_API.Controllers
         [HttpGet("{id:int}")]
         public async Task<UserDto> GetUserById([FromRoute]int id)
         {
-            validator.CheckId(id);
+            validator.CheckPositiveNumber(id);
             validator.CheckUserAuth(id,User.Claims);
             var user = await userService.GetUserByIdAsync(id);
             var output = mapper.Map<UserDto>(user);
@@ -29,7 +29,7 @@ namespace Web_API.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateUser([FromRoute]int id, [FromBody] UserDto value)
         {
-            validator.CheckId(id);
+            validator.CheckPositiveNumber(id);
             validator.CheckUserAuth(id, User.Claims);
             validator.UserDto(value);
             var userModel = mapper.Map<User>(value);
@@ -40,7 +40,7 @@ namespace Web_API.Controllers
         [HttpPut("{id:int}/update-password")]
         public async Task<IActionResult> UpdateUserPassword([FromRoute]int id, [FromBody] PasswordUpdatingDto value)
         {
-            validator.CheckId(id);
+            validator.CheckPositiveNumber(id);
             validator.CheckUserAuth(id, User.Claims);
             validator.ValidatePassword(value.NewPassword);
             validator.ValidatePassword(value.OldPassword);
@@ -52,7 +52,7 @@ namespace Web_API.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteUser([FromRoute]int id)
         {
-            validator.CheckId(id);
+            validator.CheckPositiveNumber(id);
             validator.CheckUserAuth(id, User.Claims);
             var output = await userService.DeleteUserAsync(id);
             return Ok(output);
