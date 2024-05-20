@@ -106,6 +106,7 @@ public sealed class InterestsRepository(
 
     public async Task<List<Interest>> GetUserInterestsByNamesAsync(IEnumerable<string> select)
     {
+        if (select.Count() == 0) return new List<Interest>();
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
         connection.CreateCommand();

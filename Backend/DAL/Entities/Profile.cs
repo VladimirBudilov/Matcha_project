@@ -17,6 +17,7 @@ public class Profile
     public List<Picture> Pictures { get; set; } = new List<Picture>();
     public List<Interest> Interests { get; set; } = new List<Interest>();
     public List<Like> Likes { get; set; } = new List<Like>();
+    public bool IsActive { get; set; }
 
     public bool HasEmptyFields()
     {

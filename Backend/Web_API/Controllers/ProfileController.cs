@@ -27,12 +27,12 @@ public class ProfileController(
         [FromQuery] SortParameters sort,
         [FromQuery] PaginationParameters pagination)
     {
+        int.TryParse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value, out var id );
+        search.UserId = id;
         validator.CheckSearchParameters(search);
         validator.CheckSortParameters(sort);
         validator.CheckPaginationParameters(pagination);
         
-        int.TryParse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value, out var id );
-        search.UserId = id;
         var output = await profileService.GetFullProfilesAsync(search, sort, pagination);
         var profiles = mapper.Map<List<ProfileForOtherUsers>>(output);
         return new ProfilesData()
