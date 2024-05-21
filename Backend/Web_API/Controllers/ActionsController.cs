@@ -24,4 +24,11 @@ public class ActionsController(
         var output = await actionService.LikeUser(likerId, likedId);
         return Ok(output);
     }
+    
+    /*[HttpGet("chat")]
+    public async Task<IActionResult> GetChat([FromQuery]int userId)
+    {
+        //create chat with signalR hub
+        
+    }*/
 }

@@ -9,11 +9,12 @@ using Microsoft.OpenApi.Models;
 using Web_API.Configurations;
 using Web_API.Controllers.AutoMappers;
 using Web_API.Helpers;
+using Web_API.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddSignalR();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -52,6 +53,12 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
         corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+    options.AddPolicy("SignalRCorsPolicy",
+        corsPolicyBuilder => corsPolicyBuilder
+            .WithOrigins("https://localhost:8080") // specify the exact origin
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
 });
 
 builder.Services.AddSingleton<DatabaseSettings>();
@@ -108,14 +115,20 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 // Configure the HTTP request pipeline.
 
-app.UseCors();
+app.UseCors("SignalRCorsPolicy");
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+app.MapHub<Chat>("/chat");
+
 
 app.Run();
