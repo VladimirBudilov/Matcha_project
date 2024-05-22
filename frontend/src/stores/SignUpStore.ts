@@ -8,9 +8,15 @@ export const SignUpStore = defineStore('SignUp', () => {
   return { IsActiveSignUp, IsLogin,  }
 })
 
-interface ProfilePicture {
+export interface ProfilePicture {
   "pictureId": number,
   "picture": string
+}
+
+export interface Interests {
+  interestId: number,
+  name: string,
+  value: string
 }
 
 export interface Profile {

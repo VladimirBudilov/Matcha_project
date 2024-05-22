@@ -18,9 +18,16 @@ async function GetProfileInfo(){
 }
 
 onMounted (async () => {
+
   setTimeout(async () => {
     if (localStorage.getItem('UserId')) {
       await GetProfileInfo()
+    }
+    else {
+      await axios.get('api/auth/get-id').then(async (res) => {
+        localStorage.setItem('UserId', String(res?.data))
+        await GetProfileInfo()
+      })
     }
   }, 100)
 
@@ -38,24 +45,28 @@ onMounted (async () => {
           <Logout />
         </nav>
       </header>
+      <footer>
+        Matcha
+      </footer>
     </div>
   <RouterView />
 </template>
 
 <style scoped>
 header {
-  position: relative;
-  width: 98vw;
-  background-color: var(--color-border);
-  margin: 1vh 1vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: var(--color-background-mute);
+  z-index: 999;
 }
 
 nav {
   position: relative;
   width: 100vw;
+  top:0;
   font-size: 25px;
   text-align: left;
-  margin-top: 2vh;
 }
 
 nav a.router-link-exact-active {
@@ -75,5 +86,18 @@ nav a {
 nav a:first-of-type {
   border: 0;
 }
+
+footer {
+  background-color: var(--color-background-mute);
+   position: fixed;
+   right: 0;
+   bottom: 0;
+   text-align: center;
+   width: 100vw;
+   font-size: 19px;
+font-weight: bold;
+  color: var(--color-text);
+  z-index: 999;
+ }
 
 </style>

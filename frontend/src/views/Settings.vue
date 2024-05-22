@@ -38,7 +38,7 @@ const onFinish = async (values: FormState) => {
 
 
 <template>
-	<a-form
+	<a-form class="Settings"
 		:model="formState"
 		name="basic"
 		:label-col="{ span: 9 }"
@@ -87,5 +87,9 @@ const onFinish = async (values: FormState) => {
 </template>
 
 <style>
-
+.Settings{
+	position: relative;
+	padding-top: 7vh;
+	padding-bottom: 4vh;
+}
 </style>
