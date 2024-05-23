@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSignalR();
-builder.Services.AddScoped<ChatManager>();
+builder.Services.AddSingleton<ChatManager>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -71,6 +71,7 @@ builder.Services.AddScoped<InterestsRepository>();
 builder.Services.AddScoped<PicturesRepository>();
 builder.Services.AddScoped<LikesRepository>();
 builder.Services.AddScoped<ProfileViewsRepository>();
+builder.Services.AddScoped<UserInterestsRepository>();
 
 builder.Services.AddScoped<ServiceValidator>();
 builder.Services.AddScoped<UserService>();

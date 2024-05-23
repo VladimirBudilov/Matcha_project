@@ -31,7 +31,7 @@ export default {
       roomName: '',
       messages: [],
       message: '',
-      user: 'User' + Math.floor(Math.random() * 100) // Replace with actual user identification logic
+      user: 'User' + localStorage.getItem('UserId') // Replace with actual user identification logic
     };
   },
   mounted() {
@@ -71,6 +71,7 @@ export default {
 
 <style>
 .chat {
+  margin-top: 100px;
   display: flex;
   flex-direction: row; /* Change from column to row */
   justify-content: space-between; /* Adjust this as needed */

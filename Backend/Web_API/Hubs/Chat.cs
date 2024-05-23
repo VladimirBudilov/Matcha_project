@@ -4,12 +4,15 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Web_API.Hubs;
 
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class Chat(ChatManager chatManager) : Hub<IChat>
+//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+public class Chat(ChatManager chatManager,
+    ILogger<Chat> logger
+    ) : Hub<IChat>
 {
     public override Task OnConnectedAsync()
     {
         var user = Context.User?.Claims;
+        logger.LogInformation($"User {user} connected");    
         return base.OnConnectedAsync();
     }
         

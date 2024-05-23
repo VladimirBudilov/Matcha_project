@@ -58,6 +58,6 @@ public class ChatManager
         var connectionIds = Rooms[roomName];
 
         // Send the message to the users in the room
-        await Clients.Clients(connectionIds).ReceiveMessage(Context.User.Identity.Name, message);
+        await Clients.Clients(connectionIds).ReceiveMessage(Context.User?.Identity?.Name ?? "user", message);
     }
 }
