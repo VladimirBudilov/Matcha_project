@@ -5,7 +5,6 @@ import { SignUpStore } from '@/stores/SignUpStore';
 import { storeToRefs } from 'pinia';
 import { onMounted, ref, watch } from 'vue';
 import axios from 'axios';
-import ChatView from "@/views/ChatView.vue";
 
 const IsLogin = storeToRefs(SignUpStore()).IsLogin
 const firstName = ref('')

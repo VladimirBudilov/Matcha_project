@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSignalR();
-builder.Services.AddSingleton<ChatManager>();
+builder.Services.AddSingleton  <ChatManager>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -100,7 +100,8 @@ builder.Services.AddAuthentication(options =>
     {    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    }).AddJwtBearer(jwt =>
+    })
+    .AddJwtBearer(jwt =>
 {
     var key = Encoding.ASCII.GetBytes(builder.Configuration[$"JwtConfig:Secret"] ?? throw new InvalidOperationException());    
     jwt.SaveToken = true;
@@ -112,6 +113,22 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = false,
         RequireExpirationTime = false,
         ValidateLifetime = true
+    };
+    jwt.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+ 
+            // если запрос направлен хабу
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chat"))
+            {
+                // получаем токен из строки запроса
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
     };
 });
 
@@ -133,6 +150,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<Chat>("/chat");
-
 
 app.Run();

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using AutoMapper.Internal;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Web_API.Hubs;
@@ -7,38 +8,34 @@ public class ChatManager
 {
     public ConcurrentDictionary<string, List<string>> Rooms { get; set; } = new();
 
-    public void CreateRoom(string roomName, HubCallerContext context)
+    public string CreateRoom(string roomName, HubCallerContext context)
     {
+        string output = "room created successfully."; 
         if (Rooms.ContainsKey(roomName))
         {
-            throw new Exception("A chat room with this name already exists.");
+            output = "A chat room with this name already exists.";
         }
 
-        Rooms.TryAdd(roomName, new List<string> { context.ConnectionId });
+        if(!Rooms.TryAdd(roomName, new List<string> { context.ConnectionId })) output = "An error occurred while creating the chat room.";
+        return output;
     }
 
-    public async Task InviteToRoom(string roomName, string connectionId, IHubCallerClients<IChat> clients)
+    public async Task<string> InviteToRoom(string roomName, string connectionId, IHubCallerClients<IChat> clients)
     {
-        // Check if the room exists
-        if (!Rooms.ContainsKey(roomName))
-        {
-            throw new Exception("The chat room does not exist.");
-        }
-
-        // Send an invitation to the user
+        var output = "Invitation sent successfully.";
+        if (!Rooms.ContainsKey(roomName)) output = "The chat room does not exist.";
+        
         await clients.Client(connectionId).ReceiveInvitation(roomName);
+        return output;
     }
 
-    public void JoinRoom(string roomName, HubCallerContext context)
+    public string JoinRoom(string roomName, HubCallerContext context)
     {
-        // Check if the room exists
-        if (!Rooms.ContainsKey(roomName))
-        {
-            throw new Exception("The chat room does not exist.");
-        }
-
-        // Add the current user to the room
-        Rooms[roomName].Add(context.ConnectionId);
+        var output = "Joined the chat room successfully.";
+        if (!Rooms.ContainsKey(roomName)) output = "The chat room does not exist.";
+        
+        if(!Rooms[roomName].TryAdd(context.ConnectionId)) output = "An error occurred while joining the chat room.";
+        return output;
     }
 
     public void LeaveRoom(string roomName, HubCallerContext context)
@@ -46,18 +43,16 @@ public class ChatManager
         throw new NotImplementedException();
     }
     
-    public async Task SendMessageToRoom(string roomName, string message, IHubCallerClients<IChat> Clients, HubCallerContext Context)
+    public async Task SendMessageToRoom(string roomName, string message, IHubCallerClients<IChat> Clients,
+        HubCallerContext Context, string user)
     {
-        // Check if the room exists
         if (!Rooms.ContainsKey(roomName))
         {
             throw new Exception("The chat room does not exist.");
         }
 
-        // Get the connection ids of the users in the room
         var connectionIds = Rooms[roomName];
-
-        // Send the message to the users in the room
-        await Clients.Clients(connectionIds).ReceiveMessage(Context.User?.Identity?.Name ?? "user", message);
+        
+        await Clients.Clients(connectionIds).ReceiveMessage(user.ToString() ?? "anonimus", message);
     }
 }

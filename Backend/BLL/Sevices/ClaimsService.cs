@@ -7,7 +7,7 @@ public class ClaimsService
 {
     public int GetId(IEnumerable<Claim> claims)
     {
-        var id = claims.FirstOrDefault(x => x.Type == "id")?.Value;
+        var id = claims.FirstOrDefault(x => x.Type == "Id")?.Value;
         if (id == null) throw new ObjectNotFoundException("Unauthorized access.");
         return int.Parse(id);
     }

@@ -94,7 +94,7 @@ public class AuthController(UserService userService, AuthService authService,
             Subject = new ClaimsIdentity(new[]
             {
                 new Claim("Id", user.UserId.ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             }),
