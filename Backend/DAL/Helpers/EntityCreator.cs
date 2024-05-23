@@ -94,4 +94,13 @@ public class EntityCreator
             ViewerId = row.Field<int>("viewer_user_id"),
         };
     }
+
+    public UserInterest CreateUserInterest(DataRow row)
+    {
+        return new UserInterest
+        {
+            USerId = row.Field<int>("user_id"),
+            InterestId = row.Field<int>("interest_id"),
+        };
+    }
 }

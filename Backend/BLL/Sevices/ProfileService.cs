@@ -14,6 +14,7 @@ public class ProfileService(
     PicturesRepository picturesRepository,
     InterestsRepository interestsRepository,
     LikesRepository likesRepository,
+    UserInterestsRepository userInterestsRepository,
     IMapper mapper)
 {
     public async Task<User> GetFullProfileByIdAsync(int id)
@@ -99,15 +100,18 @@ public class ProfileService(
 
     public async Task<List<Interest>> GetInterestsAsync()
     {
+        //check that intersets are used
+        var allInterests = await interestsRepository.GetInterestsAsync();
+        var usersInterests = await userInterestsRepository.GetAllUserInterestsAsync();
+        var usedInterests = usersInterests.Select(i => i.InterestId);
+        foreach (var interest in allInterests)
+        {
+            if (!usedInterests.Contains(interest.InterestId))
+            {
+                await interestsRepository.DeleteInterestByIdAsync(interest.InterestId);
+            }
+        }
+        
         return await interestsRepository.GetInterestsAsync();
-    }
-
-    public async Task RemoveInterest(string interest)
-    {
-        //check that nobady use this interst
-        var interests = await interestsRepository.GetInterestsAsync(); 
-        if (interests.All(i => i.Name != interest)) throw new ObjectNotFoundException("Interest not found");
-        //delete interest
-        await interestsRepository.RemoveInterest(interest);
     }
 }

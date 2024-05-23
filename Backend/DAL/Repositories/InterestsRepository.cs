@@ -124,7 +124,7 @@ public sealed class InterestsRepository(
         return (from DataRow row in table.Rows select entityCreator.CreateInterests(row)).ToList();
     }
 
-    public async Task RemoveInterest(string interest)
+    public async Task DeleteInterestByNAmeAsync(string interest)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
@@ -133,6 +133,18 @@ public sealed class InterestsRepository(
         var command = connection.CreateCommand();
         command.CommandText = query.ToString();
         command.Parameters.AddWithValue("@name", interest);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task DeleteInterestByIdAsync(int id)
+    {
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
+        connection.CreateCommand();
+        var query = new StringBuilder().Append("DELETE FROM interests WHERE interest_id = @id");
+        var command = connection.CreateCommand();
+        command.CommandText = query.ToString();
+        command.Parameters.AddWithValue("@id", id);
         await command.ExecuteNonQueryAsync();
     }
 }
