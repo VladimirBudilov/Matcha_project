@@ -18,12 +18,11 @@ declare module 'vue' {
     ASelect: typeof import('ant-design-vue/es')['Select']
     ATextarea: typeof import('ant-design-vue/es')['Textarea']
     AUpload: typeof import('ant-design-vue/es')['Upload']
-    Header: typeof import('./src/components/Header.vue')['default']
+    ChatComponent: typeof import('./src/components/ChatComponent.vue')['default']
     Logout: typeof import('./src/components/Logout.vue')['default']
     NamePasswordInput: typeof import('./src/components/NamePasswordInput.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SignUpForm: typeof import('./src/components/SignUpForm.vue')['default']
-    Test: typeof import('./src/components/Test.vue')['default']
   }
 }

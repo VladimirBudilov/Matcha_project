@@ -69,25 +69,11 @@ public class ProfileController(
         await profileService.UpdateProfileAsync(id, model);
     }
     
-    [HttpPost("interest")]
-    public async Task<IActionResult> AddInterest([FromBody] string interest)
-    {
-        var output = await profileService.AddInterest(interest);
-        return Ok(output);
-    }
-    
     [HttpGet("interests")]
     public async Task<IActionResult> GetInterests()
     {
         var output = await profileService.GetInterestsAsync();
 
         return Ok(output);
-    }
-    
-    [HttpDelete("interest")]
-    public async Task<IActionResult> RemoveInterest([FromQuery]string interest)
-    {
-        await profileService.RemoveInterest(interest);
-        return Ok();
     }
 }
