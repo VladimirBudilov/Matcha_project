@@ -56,7 +56,7 @@ public class ProfileService(
         var allInterests= (await interestsRepository.GetInterestsAsync()).Select(i => i.Name);
         foreach (var interest in profile.Interests)
         {
-            if (!allInterests.Contains(interest.Name)) throw new ValidationException("Such interest not exist");
+            if (!allInterests.Contains(interest.Name)) await interestsRepository.CreateInterestAsync(interest.Name);
         }
         var currentProfile = await profileRepository.GetProfileByIdAsync(id);
         if (currentProfile == null) throw new ObjectNotFoundException("Profile not found");
@@ -100,14 +100,6 @@ public class ProfileService(
     public async Task<List<Interest>> GetInterestsAsync()
     {
         return await interestsRepository.GetInterestsAsync();
-    }
-
-    public async Task<Interest> AddInterest(string interest)
-    {
-        //TODO check that interest not exist
-        var interests = await interestsRepository.GetInterestsAsync();
-        if (interests.Any(i => i.Name == interest)) return new Interest();
-        return await interestsRepository.CreateInterestAsync(interest);
     }
 
     public async Task RemoveInterest(string interest)

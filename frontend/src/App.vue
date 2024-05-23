@@ -43,6 +43,9 @@ onMounted (async () => {
 </template>
 
 <style scoped>
+
+
+
 header {
   position: relative;
   width: 98vw;
