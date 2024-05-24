@@ -53,10 +53,12 @@ onMounted (async () => {
   <RouterView />
 </template>
 
-<style scoped>
-
-
-
+<style>
+body{
+  font-family: 'Arial', sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
 header {
   position: fixed;
   top: 0;

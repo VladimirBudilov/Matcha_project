@@ -10,14 +10,23 @@ using Microsoft.IdentityModel.Tokens;
 using Web_API.Configurations;
 using Web_API.DTOs;
 using Web_API.Helpers;
+using Web_API.Hubs.Helpers;
+using Web_API.Hubs.Services;
 
 namespace Web_API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AuthController(UserService userService, AuthService authService,
-    IOptions<JwtConfig> jwtConfig, IMapper mapper, ILogger<AuthController> logger,
-    EmailService emailService, DtoValidator validator)
+public class AuthController(
+    UserService userService,
+    AuthService authService,
+    IOptions<JwtConfig> jwtConfig,
+    IMapper mapper, 
+    ILogger<AuthController> logger,
+    EmailService emailService,
+    DtoValidator validator,
+    NotificationService notificationService
+    )
     : ControllerBase
 {
     private readonly JwtConfig _jwtConfig = jwtConfig.Value;
@@ -45,8 +54,11 @@ public class AuthController(UserService userService, AuthService authService,
                 Error = "Invalid Authentication",
             });
         }
-
         var token = GenerateJwtToken(await userService.GetUserByUserNameAsync(loginDto.UserName));
+        
+        var user = await userService.GetUserByUserNameAsync(loginDto.UserName);
+        notificationService.AddNotification(user.UserId, new Notification(){User = user.UserName, Message = "You have logged in"});
+
         return Ok(new AuthResponseDto()
         {
             Result = true,
@@ -94,9 +106,9 @@ public class AuthController(UserService userService, AuthService authService,
             Subject = new ClaimsIdentity(new[]
             {
                 new Claim("Id", user.UserId.ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim( ClaimTypes.NameIdentifier, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Hash, Guid.NewGuid().ToString())
             }),
             Expires = DateTime.UtcNow.AddHours(6),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

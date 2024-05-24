@@ -22,7 +22,12 @@ export default defineConfig({
     },
   },
   plugins: [
-    vue(),
+    vue({
+        template: {
+  compilerOptions: {
+    isCustomElement: tagName => {
+      return tagName === 'vue-advanced-chat' || tagName === 'emoji-picker'
+    }}}}),
     Components({
       resolvers: [
         AntDesignVueResolver({

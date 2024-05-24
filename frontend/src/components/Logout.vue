@@ -2,11 +2,15 @@
 import axios from 'axios';
 import { storeToRefs } from 'pinia';
 import { SignUpStore } from '@/stores/SignUpStore';
-
+import { notificationConnection } from '@/components/NamePasswordInput.vue'
 const IsLogin = storeToRefs(SignUpStore()).IsLogin
 
 const LogoutButtonTurnOn = () => {
 	axios.get('api/auth/logout').then(() => {
+    if(notificationConnection.value)
+    {
+      notificationConnection.value.stop()
+    }
 		localStorage.removeItem('token')
 		localStorage.removeItem('UserId')
 		IsLogin.value = false

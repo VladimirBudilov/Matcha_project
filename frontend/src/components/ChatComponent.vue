@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import createConnection from "../services/ChatService.js";
+import createConnection from "../services/ChatService.ts";
 
 export default {
   data() {
@@ -121,7 +121,10 @@ input {
   width: calc(100% - 60px);
   margin-right: 10px;
 }
-button {
-  width: 50px;
+button{
+  color: var(--color-background);
+}
+input{
+  color: var(--color-background );
 }
 </style>

@@ -16,11 +16,4 @@ export default {
 </script>
 
 <style>
-body {
-  background: white;
-  color: black;
-}
-button {
-  color: black; /* Change this to the color you want */
-}
 </style>

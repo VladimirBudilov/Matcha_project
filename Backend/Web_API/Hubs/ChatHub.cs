@@ -4,13 +4,14 @@ using BLL.Sevices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Web_API.Hubs.Services;
 
 namespace Web_API.Hubs;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class Chat(
+public class ChatHub(
     ChatManager chatManager,
-    ILogger<Chat> logger,
+    ILogger<ChatHub> logger,
     ClaimsService claimsService
 ) : Hub<IChat>
 {
@@ -30,7 +31,7 @@ public class Chat(
 
     public async Task SendMessage(string room, string message)
     {
-        var user = Context.User?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.sub)?.Value;
+        var user = Context.User?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
         await chatManager.SendMessageToRoom(room, message, Clients, Context, user);
 
     }

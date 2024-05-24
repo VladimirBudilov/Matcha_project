@@ -2,7 +2,7 @@
 using AutoMapper.Internal;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Web_API.Hubs;
+namespace Web_API.Hubs.Services;
 
 public class ChatManager
 {

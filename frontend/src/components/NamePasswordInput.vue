@@ -2,12 +2,19 @@
 import { reactive, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { SignUpStore } from '@/stores/SignUpStore';
+import createConnection from '@/services/NotificationService'
 import axios from 'axios';
+import {HubConnection} from "@microsoft/signalr";
+import {Notification, NotificationType} from '@/stores/NotoficationStore'
 
 const IsActiveSignUp = storeToRefs(SignUpStore()).IsActiveSignUp
 const IsLogin = storeToRefs(SignUpStore()).IsLogin
 
+const notificationConnection = ref<HubConnection>();
 
+defineExpose({
+  notificationConnection
+});
 const SignUpButtonTurnOn = () => {
 	IsActiveSignUp.value = !IsActiveSignUp.value
 }
@@ -43,7 +50,21 @@ const onFinish = async (values: any) => {
 		if (errorMsg.value == '' && loginRes.token) {
 			IsLogin.value = true
 			localStorage.setItem("token", loginRes.token)
-      axios.defaults.headers.common.Authorization = 'Bearer ' + loginRes.token
+
+      axios.defaults.headers.common.Authorization = 'Bearer ' + loginRes.token;
+
+      notificationConnection.value = createConnection();
+      if (notificationConnection.value) {
+        notificationConnection.value.start()
+            .then(() => {
+              console.log('Connection started');
+              notificationConnection.value?.on('ReceiveNotification', (message: Notification[]) => {
+                console.log('ReceiveNotification: ' + message);
+              })
+            })
+            .catch((err: Error) => console.error('Error while starting connection: ' + err));
+      }
+
 			window.location.assign('https://' + window.location.host)
 		}
 	})

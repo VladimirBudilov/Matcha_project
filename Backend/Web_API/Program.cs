@@ -10,12 +10,14 @@ using Web_API.Configurations;
 using Web_API.Controllers.AutoMappers;
 using Web_API.Helpers;
 using Web_API.Hubs;
+using Web_API.Hubs.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSignalR();
 builder.Services.AddSingleton  <ChatManager>();
+builder.Services.AddSingleton<NotificationService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -149,6 +151,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-app.MapHub<Chat>("/chat");
+app.MapHub<ChatHub>("/chat");
+app.MapHub<NotificationHub>("/notification");
 
 app.Run();
