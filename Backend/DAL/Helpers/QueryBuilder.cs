@@ -4,14 +4,14 @@ namespace DAL.Helpers;
 
 public class QueryBuilder
 {
-    StringBuilder _selectPart = new StringBuilder("SELECT ");
-    StringBuilder _fromPart = new StringBuilder("FROM ");
-    StringBuilder _wherePart = new StringBuilder("Where ");
-    StringBuilder _groupByPart = new StringBuilder("Group By ");
-    StringBuilder _orderByPart = new StringBuilder("Order By ");
-    StringBuilder _havingPart = new StringBuilder("Having ");
-    StringBuilder _limitPart = new StringBuilder("Limit ");
-    StringBuilder _offsetPart = new StringBuilder("Offset ");
+    StringBuilder _selectPart = new("SELECT ");
+    StringBuilder _fromPart = new("FROM ");
+    StringBuilder _wherePart = new("Where ");
+    StringBuilder _groupByPart = new("Group By ");
+    StringBuilder _orderByPart = new("Order By ");
+    StringBuilder _havingPart = new("Having ");
+    StringBuilder _limitPart = new("Limit ");
+    StringBuilder _offsetPart = new("Offset ");
     
     public QueryBuilder Select(string select)
     {
@@ -67,11 +67,11 @@ public class QueryBuilder
         query.Append(_selectPart);
         query.Append(_fromPart);
         if(_wherePart.ToString() != "Where ") query.Append(_wherePart);
-        query.Append(_groupByPart);
-        query.Append(_orderByPart);
+        if(_groupByPart.ToString() != "Group By ") query.Append(_groupByPart);
+        if(_orderByPart.ToString() != "Order By ") query.Append(_orderByPart);
         if(_havingPart.ToString() != "Having ") query.Append(_havingPart);
-        query.Append(_limitPart);
-        query.Append(_offsetPart);
+        if(_limitPart.ToString() != "Limit ") query.Append(_limitPart);
+        if(_offsetPart.ToString() != "Offset ")query.Append(_offsetPart);
         return query.ToString();
     }
 }

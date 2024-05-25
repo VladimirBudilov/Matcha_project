@@ -31,13 +31,13 @@ public class ProfileService(
         return builder.Build();
     }
 
-    public async Task<List<User>> GetFullProfilesAsync(SearchParameters search, SortParameters sort,
+    public async Task<(long, List<User>)> GetFullProfilesAsync(SearchParameters search, SortParameters sort,
         PaginationParameters pagination)
     {
         var currentUser = await profileRepository.GetProfileByIdAsync(search.UserId);
         if(!currentUser.IsActive) throw new DataValidationException("update user profile first");
-        var users = await profileRepository.GetFullProfilesAsync(search, sort, pagination);
-        if (users == null) return new List<User>();
+        var (counter, users) = await profileRepository.GetFullProfilesAsync(search, sort, pagination);
+        if (users == null) return (0, new List<User>());
         var builder = new ProfileBuilder();
         var usersList = new List<User>();
         foreach (var user in users)
@@ -49,7 +49,8 @@ public class ProfileService(
             usersList.Add(builder.Build());
         }
 
-        return usersList;
+        var amountOfPages = (long)Math.Ceiling((double)counter / pagination.PageSize);
+        return (amountOfPages, usersList);
     }
 
     public async Task UpdateProfileAsync(int id, Profile profile)

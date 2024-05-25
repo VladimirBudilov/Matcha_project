@@ -35,13 +35,13 @@ public class ProfileController(
         validator.CheckSortParameters(sort);
         validator.CheckPaginationParameters(pagination);
         
-        var output = await profileService.GetFullProfilesAsync(search, sort, pagination);
+        var (amountOfPages, output) = await profileService.GetFullProfilesAsync(search, sort, pagination);
         output = await profileService.CheckUsersLikes(output, id);
         var profiles = mapper.Map<List<ProfileResponse>>(output);
         return new ProfilesData()
         {
             Profiles = profiles,
-            ProfilesCount = profiles.Count,
+            AmountOfPages = amountOfPages,
             PageSize = pagination.PageSize,
             PageNumber = pagination.PageNumber
         };

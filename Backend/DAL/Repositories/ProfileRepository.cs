@@ -9,8 +9,7 @@ public class ProfileRepository(
     DatabaseSettings configuration,
     InterestsRepository interestsRepository,
     EntityCreator entityCreator,
-    TableFetcher fetcher,
-    QueryBuilder queryBuilder)
+    TableFetcher fetcher)
 {
     private readonly string _connectionString = configuration.ConnectionString
                                                 ?? throw new ArgumentNullException(nameof(configuration),
@@ -134,8 +133,11 @@ public class ProfileRepository(
         }
     }
 
-    public async Task<IEnumerable<User>?> GetFullProfilesAsync(SearchParameters searchParams, SortParameters sortParams,
-        PaginationParameters pagination)
+    public async Task<(long, IEnumerable<User>?)> GetFullProfilesAsync(
+        SearchParameters searchParams,
+        SortParameters sortParams,
+        PaginationParameters pagination
+        )
     {
         var profile = (await GetFullProfileAsync(searchParams.UserId))!.Profile;
         /*try
@@ -145,6 +147,7 @@ public class ProfileRepository(
         var command = connection.CreateCommand();
         var userInterests = await interestsRepository.GetInterestsByUserIdAsync(searchParams.UserId);
         var userInterestsIds = userInterests.Select(interest => interest.InterestId).ToArray();
+        var queryBuilder = new QueryBuilder();
         queryBuilder
             .Select($" users.user_id as user_id, users.*, profiles.*, ")
             .Select($"calculate_distance('{profile.Latitude}', '{profile.Longitude}', profiles.latitude, profiles.longitude) as distance, ")
@@ -154,10 +157,17 @@ public class ProfileRepository(
             .From("LEFT JOIN user_interests ON user_interests.user_id = users.user_id ")
             .From("LEFT JOIN interests ON user_interests.interest_id = interests.interest_id ");
         //add filters
-        ApplyFilters(searchParams, profile, command);
+        ApplyFilters(searchParams, profile, command, ref queryBuilder);
         //add group by
-        ApplyOrdering(sortParams);
-        //add pagination
+        ApplyOrdering(sortParams, ref queryBuilder);
+        //add pagination\;
+        var counter = new QueryBuilder().Select($"Count(*) ").From($" ({queryBuilder.Build()})");
+        var countCommand = connection.CreateCommand();
+        countCommand.CommandText = counter.Build();
+        countCommand.Parameters.AddWithValue("@userInterests", userInterestsIds);
+        var count = (long) await countCommand.ExecuteScalarAsync();
+        if (count == 0) return (0, new List<User>());
+        
         queryBuilder.Limit($" {pagination.PageSize} ");
         queryBuilder.Offset($" {(pagination.PageNumber -1) * pagination.PageSize} ");
 
@@ -166,7 +176,8 @@ public class ProfileRepository(
         var dataTable = new DataTable();
         var reader = await command.ExecuteReaderAsync();
         dataTable.Load(reader);
-        return dataTable.Rows.Count > 0 ? entityCreator.CreateUsers(dataTable) : null;
+        var users = dataTable.Rows.Count > 0 ? entityCreator.CreateUsers(dataTable) : null;
+        return (count, users);
         /*}
         catch (Exception e)
         {
@@ -174,7 +185,7 @@ public class ProfileRepository(
         }*/
     }
 
-    private void ApplyOrdering(SortParameters sortParams)
+    private void ApplyOrdering(SortParameters sortParams, ref QueryBuilder queryBuilder)
     {
         queryBuilder.GroupBy("users.user_id, profiles.profile_id ");
         //add sorting
@@ -198,7 +209,8 @@ public class ProfileRepository(
         }
     }
 
-    private void ApplyFilters(SearchParameters searchParams, Profile profile, NpgsqlCommand command)
+    private void ApplyFilters(SearchParameters searchParams, Profile profile, NpgsqlCommand command,
+        ref QueryBuilder queryBuilder)
     {
         queryBuilder.Where($"users.user_id != {profile.ProfileId} AND profiles.is_active = TRUE AND users.is_verified = TRUE ");
         if(searchParams.MaxDistance!= null)
