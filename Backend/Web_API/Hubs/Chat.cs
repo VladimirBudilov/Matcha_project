@@ -30,8 +30,8 @@ public class Chat(
 
     public async Task SendMessage(string room, string message)
     {
-        var user = Context.User?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.sub)?.Value;
-        await chatManager.SendMessageToRoom(room, message, Clients, Context, user);
+        //var user = Context.User?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.sub)?.Value;
+        //await chatManager.SendMessageToRoom(room, message, Clients, Context, user);
 
     }
 

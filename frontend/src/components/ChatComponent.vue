@@ -11,7 +11,7 @@
     <input v-model="message" @keyup.enter="sendMessage" placeholder="Type a message..." />
     <button @click="sendMessage">Send</button>
   </div>
-  <div class="room-actions">
+  <div class="room-actions" id="room-actions">
     <input v-model="roomName" placeholder="Room name..." />
     <button @click="createRoom">Create Room</button>
     <button @click="joinRoom">Join Room</button>
@@ -109,6 +109,9 @@ export default {
   flex-direction: column; /* Change from row to column */
   margin-left: 10px; /* Add left margin */
 }
+#room-actions {
+  color: black
+}
 .messages {
   flex: 1;
   height: 300px;
@@ -117,11 +120,11 @@ export default {
 .message {
   margin-bottom: 5px;
 }
-input {
+/*input {
   width: calc(100% - 60px);
   margin-right: 10px;
 }
 button {
   width: 50px;
-}
+}*/
 </style>
