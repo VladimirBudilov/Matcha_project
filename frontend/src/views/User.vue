@@ -50,9 +50,10 @@ onMounted(async () => {
 </script>
 
 <template>
-	<a-form id="User"
-	:label-col="{ span: 3 }"
-	:wrapper-col="{ span: 8 }"
+	<a-card id="User">
+		<a-form
+	:label-col="{ span: 5 }"
+	:wrapper-col="{ span: 12 }"
     layout="horizontal"
     :disabled="componentDisabled"
   	>
@@ -95,14 +96,17 @@ onMounted(async () => {
 			</a-form-item>
 		</div>
 	</a-form>
-	<a-form-item label="Avatar" style="position: absolute ; top: 7vh; left: 50vw; width: 50vw;">
+	</a-card>
+
+	<a-card id="Avatar">
+		<a-form-item label="Avatar" >
 		<a-image v-if="profile.profilePicture.picture"
 		:width="200"
 		:src="'data:image/*' + ';base64,' + profile.profilePicture.picture"
 		/>
 	</a-form-item>
 
-	<a-form-item label="Photos" style="position: absolute ;top: 30vh; left: 50vw; width: 50vw; padding-bottom: 4vh;">
+	<a-form-item label="Photos">
 		<a-image-preview-group v-for="item in profile.pictures">
 			<a-image
 				:width="200"
@@ -110,14 +114,20 @@ onMounted(async () => {
 			/>
 		</a-image-preview-group>
 	</a-form-item>
+	</a-card>
+
 </template>
 
 <style>
 #User {
 	position: relative;
-	padding-top: 7vh;
-	padding-bottom: 4vh;
-	color:black
+	margin-top: 8vh;
+	margin-left: 1vw;
+	margin-right: 60vw;
+	margin-bottom: 15vh;
+	background-color: var(--color-background-soft);
+	padding-top: 1vh;
+	padding-bottom: 1vh;
 }
 
 </style>

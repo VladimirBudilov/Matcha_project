@@ -129,13 +129,15 @@ const DeletePicture = async (picureId: number) => {
 </script>
 
 <template>
-	<a-form class="Profile"
-	:label-col="{ span: 3 }"
-	:wrapper-col="{ span: 8 }"
+	<a-card id="Profile">
+	<a-form
+	:label-col="{ span: 5 }"
+	:wrapper-col="{ span: 12 }"
     layout="horizontal"
     :disabled="componentDisabled"
   	>
 		<div class="Main-info">
+			<a-button type="primary" html-type="signup" @click="SubmiteChanges" style="position: absolute; padding-left: 1vw;">Submite</a-button>
 			<a-form-item label="ID">
 				<a-input-number v-model:value="profile.profileId" disabled style="background-color: grey; color:black"/>
 			</a-form-item>
@@ -173,9 +175,9 @@ const DeletePicture = async (picureId: number) => {
 				></a-select>
 			</a-form-item>
 			<a-form-item label="Location">
-				<a-input-number style="width: 35%;" v-model:value="profile.latitude"/>
-				<a-input-number style="width: 35%; margin-left: 5px;" v-model:value="profile.longitude"/>
-				<a-button type="primary" html-type="signup" @click="getLocation" style="margin-left: 5px;">Location</a-button>
+				<a-input-number style="width: 30%;" v-model:value="profile.latitude"/>
+				<a-input-number style="width: 30%; margin-left: 5px;" v-model:value="profile.longitude"/>
+				<a-button type="primary" html-type="signup" @click="getLocation" style="margin-left: 5px;top: 4px;">Location</a-button>
 			</a-form-item>
 			<a-form-item label="Interests" direction="vertical">
 				<a-select
@@ -191,7 +193,7 @@ const DeletePicture = async (picureId: number) => {
 			</a-form-item>
 		</div>
 
-		<a-button type="primary" html-type="signup" @click="SubmiteChanges" style="position: absolute;top: 7vh;">Submite</a-button>
+
 		<div v-if='errorMsg != "Success"' style="color: red">
 			<span> {{errorMsg}} </span>
 		</div>
@@ -199,7 +201,10 @@ const DeletePicture = async (picureId: number) => {
 			<span> {{errorMsg}} </span>
 		</div>
 	</a-form>
-	<a-form-item label="Avatar" style="position: absolute ; top: 7vh; left: 50vw; width: 50vw;">
+	</a-card>
+
+	<a-card id="Avatar">
+		<a-form-item label="Avatar">
 		<a-image v-if="profile.profilePicture.picture"
 		:width="200"
 		:src="'data:image/*' + ';base64,' + profile.profilePicture.picture"
@@ -222,7 +227,7 @@ const DeletePicture = async (picureId: number) => {
 		</a-upload>
 	</a-form-item>
 
-	<a-form-item label="Photos" style="position: absolute ;top: 30vh; left: 50vw; width: 50vw; padding-bottom: 4vh;">
+	<a-form-item label="Photos">
 		<a-image-preview-group v-for="item in profile.pictures">
 			<a-image
 				:width="200"
@@ -248,13 +253,32 @@ const DeletePicture = async (picureId: number) => {
 			</a-button>
 		</a-upload>
 	</a-form-item>
+
+	</a-card>
+
+
+
 </template>
 
 <style>
-.Profile {
+#Profile {
 	position: relative;
-	padding-top: 7vh;
-	padding-bottom: 4vh;
+	margin-top: 8vh;
+	margin-left: 1vw;
+	margin-right: 60vw;
+	margin-bottom: 15vh;
+	background-color: var(--color-background-soft);
+	padding-top: 1vh;
+	padding-bottom: 1vh;
+}
+
+#Avatar {
+	position: absolute ;
+	top: 8vh;
+	right: 1vw;
+	margin-left: 50vw;
+	width: 50vw;
+	background-color: var(--color-background-soft);
 }
 
 
