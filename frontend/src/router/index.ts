@@ -5,6 +5,7 @@ import Profile from '@/views/Profile.vue'
 import axios from 'axios'
 import Settings from '@/views/Settings.vue'
 import ChatView from '@/views/ChatView.vue'
+import User from '@/views/User.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -25,6 +26,11 @@ const router = createRouter({
       component: Profile
     },
     {
+      path: '/user/:id',
+      name: 'user',
+      component: User
+    },
+    {
       path: '/settings',
       name: 'settings',
       component: Settings
@@ -34,11 +40,6 @@ const router = createRouter({
       name: "chat",
       component: ChatView
     }
-    //{
-    //  path: '/signup',
-    //    name: 'Signup',
-    //    component: SignupView
-    //}
   ]
 })
 
