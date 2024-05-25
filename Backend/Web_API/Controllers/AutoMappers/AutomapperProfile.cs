@@ -21,11 +21,8 @@ public class AutomapperProfile : Profile
 
         CreateMap<UserRegistrationDto, User>();
 
-        CreateMap<User, FullProfileResponsDto>()
+        CreateMap<User, FullProfileResponseDto>()
             .ForMember(dest => dest.ProfileId, opt => opt.MapFrom(src => src.UserId))
-            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
-            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
-            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
             .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Profile!.Gender))
             .ForMember(dest => dest.SexualPreferences, opt => opt.MapFrom(src => src.Profile!.SexualPreferences))
             .ForMember(dest => dest.Biography, opt => opt.MapFrom(src => src.Profile!.Biography))
@@ -40,8 +37,6 @@ public class AutomapperProfile : Profile
         
         CreateMap<User, ProfileResponse>()
             .ForMember(dest => dest.ProfileId, opt => opt.MapFrom(src => src.UserId))
-            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
-            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
             .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Profile!.Gender))
             .ForMember(dest => dest.SexualPreferences, opt => opt.MapFrom(src => src.Profile!.SexualPreferences))
             .ForMember(dest => dest.FameRating, opt => opt.MapFrom(src => src.Profile!.FameRating))

@@ -69,31 +69,36 @@ public class ProfileService(
         await interestsRepository.UpdateUserInterestsAsync(id, userInterestsByNamesAsync);
     }
 
-    public async  void UploadPhoto(int id, byte[] filePicture, bool isMain)
+    public async  Task UploadPhotoAsync(int userId, byte[] filePicture, bool isMain)
     {
-        //TODO add validation
-        
+      
         var isProfilePicture = isMain ? 1 : 0;
-        var pictureId = picturesRepository.UploadPhoto(id, filePicture, isProfilePicture);
         if (isMain)
         {
-            var profile = await profileRepository.GetProfileByIdAsync(id);
-            profile.ProfilePictureId = pictureId;
-            await profileRepository.UpdateProfilePicture(pictureId);
+            var user = await profileRepository.GetProfileByIdAsync(userId);
+            if (user.ProfilePictureId != null)
+            {
+                await picturesRepository.DeletePhotoAsync(userId, (int)user.ProfilePictureId);
+            }
+        }
+        var pictureId = picturesRepository.UploadPhoto(userId, filePicture, isProfilePicture);
+        if (isMain)
+        {
+            await profileRepository.UpdateProfilePictureAsync( userId, pictureId);
         }
     }
 
-    public void DeletePhoto(int userId, int photoId, bool isMain)
+    public async Task DeletePhotoASync(int userId, int photoId, bool isMain)
     {
         //TODO add validation
         
-        picturesRepository.DeletePhoto(userId, photoId);
+        await picturesRepository.DeletePhotoAsync(userId, photoId);
         if (isMain)
         {
             var profile = profileRepository.GetProfileByIdAsync(userId).Result;
             if (profile.ProfilePictureId == photoId)
             {
-                profileRepository.UpdateProfilePicture(null);
+                await profileRepository.UpdateProfilePictureAsync(userId, photoId);
             }
         }
     }

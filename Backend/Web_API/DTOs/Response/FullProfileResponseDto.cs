@@ -2,7 +2,7 @@
 
 namespace Web_API.DTOs;
 
-public record    FullProfileResponsDto
+public record    FullProfileResponseDto
 {
     public long ProfileId { get; init; } = 0;
     public string UserName { get; init; } = "";
@@ -21,4 +21,5 @@ public record    FullProfileResponsDto
     public List<PictureDto> Pictures { get; init; } = new();
     
     public bool HasLike { get; init; } = false;
+    public double Distance { get; init; } = 0;
 }
