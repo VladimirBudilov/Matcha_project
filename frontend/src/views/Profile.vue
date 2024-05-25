@@ -109,7 +109,10 @@ const handleChange = async (info: UploadChangeParam) => {
   }
   if (info.file.status === 'done') {
     message.success(`${info.file.name} file uploaded successfully`);
-	await GetProfile()
+	setTimeout(async () => {
+		await GetProfile()
+	}, 100)
+
   } else if (info.file.status === 'error') {
     message.error(`${info.file.name} file upload failed.`);
   }
@@ -197,9 +200,9 @@ const DeletePicture = async (picureId: number) => {
 		</div>
 	</a-form>
 	<a-form-item label="Avatar" style="position: absolute ; top: 7vh; left: 50vw; width: 50vw;">
-		<a-image
-			:width="200"
-			:src="'data:image/*' + ';base64,' + profile.profilePicture.picture"
+		<a-image v-if="profile.profilePicture.picture"
+		:width="200"
+		:src="'data:image/*' + ';base64,' + profile.profilePicture.picture"
 		/>
 		<a-upload
 			v-model:file-list="fileList"
