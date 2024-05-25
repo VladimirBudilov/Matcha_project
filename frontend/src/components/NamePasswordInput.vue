@@ -4,20 +4,18 @@ import { storeToRefs } from 'pinia';
 import { SignUpStore } from '@/stores/SignUpStore';
 import createConnection from '@/services/NotificationService'
 import axios from 'axios';
-import {HubConnection} from "@microsoft/signalr";
-import {Notification, NotificationType} from '@/stores/NotoficationStore'
+import {useNotificationStore} from '@/stores/NotoficationStore'
+import {} from './SignUpForm.vue'
 
 const IsActiveSignUp = storeToRefs(SignUpStore()).IsActiveSignUp
+
+const SignUpButtonTurnOn = () => {
+  IsActiveSignUp.value = !IsActiveSignUp.value
+}
+
 const IsLogin = storeToRefs(SignUpStore()).IsLogin
 
-const notificationConnection = ref<HubConnection>();
-
-defineExpose({
-  notificationConnection
-});
-const SignUpButtonTurnOn = () => {
-	IsActiveSignUp.value = !IsActiveSignUp.value
-}
+const notificationStore = useNotificationStore();
 
 interface FormState {
 	username: string;
@@ -53,12 +51,12 @@ const onFinish = async (values: any) => {
 
       axios.defaults.headers.common.Authorization = 'Bearer ' + loginRes.token;
 
-      notificationConnection.value = createConnection();
-      if (notificationConnection.value) {
-        notificationConnection.value.start()
+      notificationStore.notificationConnection = createConnection();
+      if (notificationStore.notificationConnection) {
+        notificationStore.notificationConnection.start()
             .then(() => {
               console.log('Connection started');
-              notificationConnection.value?.on('ReceiveNotification', (message: Notification[]) => {
+              notificationStore.notificationConnection?.on('ReceiveNotification', (message: Notification[]) => {
                 console.log('ReceiveNotification: ' + message);
               })
             })

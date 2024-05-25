@@ -1,3 +1,7 @@
+import {defineStore} from "pinia";
+import type {HubConnection} from "@microsoft/signalr";
+import {ref} from "vue";
+
 export class NotificationType {
     readonly ChatMessage = "ChatMessage";
     readonly Like = "Like";
@@ -17,3 +21,10 @@ export class Notification {
         this.Type = type;
     }
 }
+
+export const useNotificationStore = defineStore({
+    id: 'notification',
+    state: () => ({
+        notificationConnection: ref<HubConnection | null>(null),
+    }),
+});

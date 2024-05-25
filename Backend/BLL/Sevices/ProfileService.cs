@@ -4,6 +4,7 @@ using BLL.Helpers;
 using DAL.Entities;
 using DAL.Helpers;
 using DAL.Repositories;
+using Web_API.Helpers;
 using Profile = DAL.Entities.Profile;
 
 namespace BLL.Sevices;
@@ -20,7 +21,7 @@ public class ProfileService(
     public async Task<User> GetFullProfileByIdAsync(int id)
     {
         var user = await profileRepository.GetFullProfileAsync(id);
-        if (user == null) throw new ValidationException("User not found");
+        if (user == null) throw new DataValidationException("User not found");
 
         var builder = new ProfileBuilder();
         builder.AddMainData(user);
@@ -34,7 +35,7 @@ public class ProfileService(
         PaginationParameters pagination)
     {
         var currentUser = await profileRepository.GetProfileByIdAsync(search.UserId);
-        if(!currentUser.IsActive) throw new ValidationException("update user profile first");
+        if(!currentUser.IsActive) throw new DataValidationException("update user profile first");
         var users = await profileRepository.GetFullProfilesAsync(search, sort, pagination);
         if (users == null) return new List<User>();
         var builder = new ProfileBuilder();

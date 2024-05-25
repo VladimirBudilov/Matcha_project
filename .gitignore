@@ -39,6 +39,7 @@
 ehthumbs.db
 Thumbs.db
 PostgeSQL/
+frontend/certs/*
 
 # Visual Studio Code #
 ######################
@@ -56,6 +57,7 @@ PostgeSQL/
 # Node #
 ########
 node_modules/
+*/certs/
 
 # Build results #
 #################
