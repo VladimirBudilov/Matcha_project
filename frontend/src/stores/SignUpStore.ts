@@ -33,5 +33,26 @@ export interface Profile {
   "longitude": number
   "profilePicture": ProfilePicture,
   "pictures": Array<ProfilePicture>,
-  "interests": Array<string>
+  "interests": Array<string>,
+  "hasLike"?: boolean
+}
+
+export interface GetProfileParams {
+	UserId?: number,
+  SexualPreferences?: string,
+  MaxDistance?: number,
+  MinFameRating?: number,
+  MaxFameRating?: number,
+  MaxAge?: number,
+  MinAge?: number,
+  IsLikedUser?: boolean,
+  CommonTags?: Array<string>,
+  IsMatched?: boolean,
+  SortLocation?: string,
+  SortFameRating?: string,
+  SortAge?: string,
+  SortCommonTags?: string,
+  SortingMainParameter?: string,
+  PageNumber?: number,
+  PageSize?: number,
 }

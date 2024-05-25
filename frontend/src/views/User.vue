@@ -2,9 +2,8 @@
 import { onMounted, ref } from 'vue';
 import { message } from 'ant-design-vue';
 import { useRoute } from 'vue-router';
-import type { UploadChangeParam } from 'ant-design-vue';
 import axios from 'axios';
-import {type Profile, type Interests} from '@/stores/SignUpStore'
+import {type Profile} from '@/stores/SignUpStore'
 
 const componentDisabled = ref(true);
 const uploadUrl = ref('')
@@ -32,10 +31,14 @@ const profile = ref<Profile>({
 })
 
 const GetProfile = async () => {
-	await axios.get('api/profile/' + route.params.id).then((res) => {
-		profile.value = res?.data
-		uploadUrl.value = axios.defaults.baseURL + 'api/FileManager/uploadPhoto/' + profile.value.profileId
-		console.log(profile.value)
+	await axios.get('api/profile/' + route.params.id).catch(() => {
+		message.error(`User was not found!!!`);
+	}).then((res) => {
+		if (res?.data) {
+			profile.value = res?.data
+			uploadUrl.value = axios.defaults.baseURL + 'api/FileManager/uploadPhoto/' + profile.value.profileId
+			console.log(profile.value)
+		}
 	})
 }
 
