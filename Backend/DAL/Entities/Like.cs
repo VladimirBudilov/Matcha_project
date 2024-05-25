@@ -7,6 +7,6 @@ public class Like
     
     public string LikerUserName { get; set; }
 
-    public string? State { get; set; } = "like";
+    public bool IsLiked { get; set; } = true;
 
 }

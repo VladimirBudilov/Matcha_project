@@ -232,4 +232,22 @@ public class ProfileRepository(
             ? $" AND users_matched(users.user_id, {profile.ProfileId})"
             : $" AND NOT users_matched(users.user_id, {profile.ProfileId})");
     }
+
+    public async Task UpdateFameRatingAsync(Profile user)
+    {
+        try
+        {
+            await using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+            var command = connection.CreateCommand();
+            command.CommandText = "UPDATE profiles SET fame_rating = @fame_rating WHERE profile_id = @profile_id";
+            command.Parameters.AddWithValue("@fame_rating", user.FameRating);
+            command.Parameters.AddWithValue("@profile_id", user.ProfileId);
+            await command.ExecuteNonQueryAsync();
+        }
+        catch (Exception e)
+        {
+            throw new DataAccessErrorException("Error while updating fame rating", e);
+        }
+    }
 }

@@ -24,10 +24,10 @@ public class LikesRepository(
             await connection.OpenAsync();
             connection.CreateCommand();
             var query = new StringBuilder().Append(
-                "INSERT INTO likes (liker_id, liked_user_id) VALUES (@liker_id, @liked_user_id)");
+                "INSERT INTO likes (liker_user_id, liked_user_id) VALUES (@liker_user_id, @liked_user_id)");
             injector.InjectParameters(query,
                 new Dictionary<string, object>
-                    { { "@liker_id", entity.LikerId }, { "@liked_user_id", entity.LikedId } });
+                    { { "@liker_user_id", entity.LikerId }, { "@liked_user_id", entity.LikedId } });
             var command = connection.CreateCommand();
             command.CommandText = query.ToString();
             await command.ExecuteNonQueryAsync();
@@ -40,7 +40,7 @@ public class LikesRepository(
     }
 
 
-    public async Task<Like> DeleteLikesAsync(int likerId, int likedId)
+    public async Task<Like> DeleteLikeAsync(int likerId, int likedId)
     {
         try
         {
@@ -48,9 +48,9 @@ public class LikesRepository(
             await connection.OpenAsync();
             connection.CreateCommand();
             var query = new StringBuilder().Append(
-                "DELETE FROM likes WHERE liker_id = @liker_id AND liked_user_id = @liked_user_id");
+                "DELETE FROM likes WHERE liker_user_id = @liker_user_id AND liked_user_id = @liked_user_id");
             injector.InjectParameters(query,
-                new Dictionary<string, object> { { "@liker_id", likerId }, { "@liked_user_id", likedId } });
+                new Dictionary<string, object> { { "@liker_user_id", likerId }, { "@liked_user_id", likedId } });
             var command = connection.CreateCommand();
             command.CommandText = query.ToString();
             await command.ExecuteNonQueryAsync();
@@ -61,6 +61,8 @@ public class LikesRepository(
             throw new DataAccessErrorException("Error while deleting like");
         }
     }
+    
+    
 
     public async Task<IEnumerable<Like>> GetLikesByUserIdAsync(int id)
     {
@@ -70,10 +72,8 @@ public class LikesRepository(
             await using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
             connection.CreateCommand();
-            var table = await fetcher.GetTableByParameter((NpgsqlConnection)connection,
-                "SELECT likes.*, users.user_name FROM likes" +
-                " JOIN users ON likes.liked_user_id = users.user_id" +
-                " WHERE liked_user_id = @id", "@id", id);
+            var query = "SELECT * FROM likes WHERE liked_user_id = @id";
+            var table = await fetcher.GetTableByParameter(connection, query, "@id", id);
             foreach (DataRow row in table.Rows)
             {
                 var like = entityCreator.CreateLikes(row);
@@ -109,5 +109,24 @@ public class LikesRepository(
         {
             throw new DataAccessErrorException("Error while fetching likes");
         }
+    }
+
+    public async Task<Like> GetLikeAsync(int likerId, int likedId)
+    {
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
+        connection.CreateCommand();
+        var query = "SELECT * FROM likes WHERE liker_user_id = @liker_user_id AND liked_user_id = @liked_user_id";
+        
+        var table = await fetcher.GetTableByParameter(connection, query, new Dictionary<string, object>
+        {
+            { "@liker_user_id", likerId },
+            { "@liked_user_id", likedId }
+        });
+        
+        if (table.Rows.Count == 0) return new Like(){LikerId = likerId, LikedId = likedId};
+        var like =  entityCreator.CreateLikes(table.Rows[0]);
+        like.IsLiked = false;
+        return like;
     }
 }

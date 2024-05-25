@@ -19,25 +19,19 @@ public class ActionService(
         await validator.CheckUserExistence(new[]{likerId, likedId});
 
         if (likerId == likedId) throw new DataValidationException("You can't like yourself");
-        var likes = await likesRepository.GetLikesByUserIdAsync(likerId);
-        Like output = null;
-        foreach (var like in likes)
+        var like = await likesRepository.GetLikeAsync(likerId, likedId);
+        
+        if (like.IsLiked)
         {
-            if (like.LikedId == likedId)
-            {
-                output = await likesRepository.DeleteLikesAsync(likerId, likedId);
-                output.State = "unlike";
-            }
+            like = await likesRepository.CreateLikesAsync(new Like() { LikedId = likedId, LikerId = likerId });
         }
-
-        if (output?.State != "unlike")
+        else
         {
-            output = await likesRepository.CreateLikesAsync(new Like() { LikedId = likedId, LikerId = likerId });
+            await likesRepository.DeleteLikeAsync(likerId, likedId);
         }
-
+    
         await UpdateFameRating(likedId);
-
-        return output;
+        return like;
     }
 
     public async Task ViewUser(int viewerId, int viewedId)
@@ -64,5 +58,6 @@ public class ActionService(
         var userViews = await profileViewRepository.GetProfileViewsByUserIdAsync(id);
         var userLikes = await likesRepository.GetLikesByUserIdAsync(id);
         user.FameRating = fameRatingCalculator.Calculate(userLikes.Count(), userViews.Count());
+        await userRepository.UpdateFameRatingAsync(user);
     }
 }

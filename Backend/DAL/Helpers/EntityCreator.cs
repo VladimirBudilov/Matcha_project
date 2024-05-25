@@ -59,7 +59,6 @@ public class EntityCreator
         {
             LikerId = row.Field<int>("liker_user_id"),
             LikedId = row.Field<int>("liked_user_id"),
-            LikerUserName = row.Field<string>("liker_user_name")
         };
     }
 

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Web_API.DTOs;
 using Web_API.Helpers;
 
 namespace Web_API.Controllers;
@@ -15,13 +16,13 @@ public class ActionsController(
     ) : ControllerBase
 {
     [HttpPost("like")]
-    public async Task<IActionResult> LikeUser([FromQuery]int likerId, [FromQuery]int likedId)
+    public async Task<IActionResult> LikeUser([FromBody]LikeRequestDto like)
     {
-        validator.CheckPositiveNumber(likedId);
-        validator.CheckPositiveNumber(likerId);
-        validator.CheckUserAuth(likerId, User.Claims);
+        validator.CheckPositiveNumber(like.likedId);
+        validator.CheckPositiveNumber(like.likerId);
+        validator.CheckUserAuth(like.likerId, User.Claims);
         
-        var output = await actionService.LikeUser(likerId, likedId);
+        var output = await actionService.LikeUser(like.likerId, like.likedId);
         return Ok(output);
     }
     
