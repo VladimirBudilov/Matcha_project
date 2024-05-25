@@ -21,7 +21,7 @@ public class AutomapperProfile : Profile
 
         CreateMap<UserRegistrationDto, User>();
 
-        CreateMap<User, ProfileFullDataForOtherUsersDto>()
+        CreateMap<User, FullProfileResponsDto>()
             .ForMember(dest => dest.ProfileId, opt => opt.MapFrom(src => src.UserId))
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
@@ -38,7 +38,7 @@ public class AutomapperProfile : Profile
             .ForMember(dest => dest.Pictures, opt => opt.MapFrom(src => src.Profile!.Pictures.Select(p => new PictureDto(){ PictureId = p.PictureId, Picture = Convert.ToBase64String(p.PicturePath)})))
             .ForMember(dest => dest.Interests, opt => opt.MapFrom(src => src.Profile!.Interests.Select(i => i.Name)));
         
-        CreateMap<User, ProfileForOtherUsers>()
+        CreateMap<User, ProfileResponse>()
             .ForMember(dest => dest.ProfileId, opt => opt.MapFrom(src => src.UserId))
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))

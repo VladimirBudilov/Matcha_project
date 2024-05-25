@@ -54,7 +54,6 @@ public class ProfileService(
 
     public async Task UpdateProfileAsync(int id, Profile profile)
     {
-        //check that interests exist
         var allInterests= (await interestsRepository.GetInterestsAsync()).Select(i => i.Name);
         foreach (var interest in profile.Interests)
         {
@@ -101,7 +100,6 @@ public class ProfileService(
 
     public async Task<List<Interest>> GetInterestsAsync()
     {
-        //check that intersets are used
         var allInterests = await interestsRepository.GetInterestsAsync();
         var usersInterests = await userInterestsRepository.GetAllUserInterestsAsync();
         var usedInterests = usersInterests.Select(i => i.InterestId);
@@ -114,5 +112,21 @@ public class ProfileService(
         }
         
         return await interestsRepository.GetInterestsAsync();
+    }
+
+    public async Task<User> CheckUserLike(User user, int viewerId)
+    {
+            user.HasLike = await likesRepository.HasLike(viewerId, user.UserId);
+            return user;
+    }
+    
+    public async Task<List<User>> CheckUsersLikes(List<User> users, int viewerId)
+    {
+        foreach (var user in users)
+        {
+            user.HasLike = await likesRepository.HasLike(viewerId, user.UserId);
+        }
+
+        return users;
     }
 }

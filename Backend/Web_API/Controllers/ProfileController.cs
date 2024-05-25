@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BLL.Sevices;
+using DAL.Entities;
 using DAL.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +18,8 @@ public class ProfileController(
     ProfileService profileService,
     ActionService actionService,
     IMapper mapper,
-    DtoValidator validator
+    DtoValidator validator,
+    ClaimsService claimsService
     ) : ControllerBase
 {
     // GET: api/<UsersController>
@@ -27,14 +29,15 @@ public class ProfileController(
         [FromQuery] SortParameters sort,
         [FromQuery] PaginationParameters pagination)
     {
-        int.TryParse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value, out var id );
+        var id = claimsService.GetId(User.Claims);
         search.UserId = id;
         validator.CheckSearchParameters(search);
         validator.CheckSortParameters(sort);
         validator.CheckPaginationParameters(pagination);
         
         var output = await profileService.GetFullProfilesAsync(search, sort, pagination);
-        var profiles = mapper.Map<List<ProfileForOtherUsers>>(output);
+        output = await profileService.CheckUsersLikes(output, id);
+        var profiles = mapper.Map<List<ProfileResponse>>(output);
         return new ProfilesData()
         {
             Profiles = profiles,
@@ -46,15 +49,16 @@ public class ProfileController(
     
     // GET api/<UsersController>/5
     [HttpGet("{id:int}")]
-    public async Task<ProfileFullDataForOtherUsersDto> GetProfileFullDataById([FromRoute]int id)
+    public async Task<FullProfileResponsDto> GetProfileFullDataById([FromRoute]int id)
     {
         validator.CheckPositiveNumber(id);
 
-        int.TryParse(User.Claims.FirstOrDefault(c => c.Type == "Id").Value, out var viewerId);
+         var viewerId = claimsService.GetId(User.Claims);
         actionService.ViewUser(viewerId, id);
         
         var model =  await profileService.GetFullProfileByIdAsync(id);
-        var output = mapper.Map<ProfileFullDataForOtherUsersDto>(model);
+        model = await profileService.CheckUserLike(model, viewerId);
+        var output = mapper.Map<FullProfileResponsDto>(model);
         return output;
     }
 

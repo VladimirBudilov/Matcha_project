@@ -49,4 +49,22 @@ public class TableFetcher
         }
         return table;
     }
+
+    public async Task<DataTable> GetTableByParameter(NpgsqlConnection connection, string query, Dictionary<string, object> parameters)
+    {
+        var command = connection.CreateCommand();
+        command.CommandText = query;
+        foreach (var (key, value) in parameters)
+        {
+            command.Parameters.AddWithValue(key, value);
+        }
+        var readerAsync = await command.ExecuteReaderAsync();
+        var table = new DataTable();
+        if (readerAsync.HasRows)
+        {
+            table.Load(readerAsync);
+        }
+        return table;
+    }
+    
 }

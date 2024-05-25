@@ -20,5 +20,8 @@ namespace DAL.Entities
         public bool IsVerified { get; set; } = false;
         
         public Profile? Profile { get; set; }
+        
+        
+        public bool HasLike { get; set; } = false;
     }
 }

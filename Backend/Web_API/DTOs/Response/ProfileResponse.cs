@@ -1,6 +1,6 @@
 ﻿namespace Web_API.DTOs;
 
-public record ProfileForOtherUsers()
+public record ProfileResponse()
 {
     public long ProfileId { get; init; } = 0;
     public string FirstName { get; init; } = "";
@@ -14,4 +14,5 @@ public record ProfileForOtherUsers()
     public string ProfilePicture { get; init; } = "";
     public List<string> Interests { get; init; } = new();
     
+    public bool HasLike { get; init; } = false;
 };

@@ -26,7 +26,8 @@ public class LikesRepository(
             var query = new StringBuilder().Append(
                 "INSERT INTO likes (liker_id, liked_user_id) VALUES (@liker_id, @liked_user_id)");
             injector.InjectParameters(query,
-                new Dictionary<string, object> { { "@liker_id", entity.LikerId }, { "@liked_user_id", entity.LikedId } });
+                new Dictionary<string, object>
+                    { { "@liker_id", entity.LikerId }, { "@liked_user_id", entity.LikedId } });
             var command = connection.CreateCommand();
             command.CommandText = query.ToString();
             await command.ExecuteNonQueryAsync();
@@ -80,6 +81,29 @@ public class LikesRepository(
             }
 
             return output;
+        }
+        catch (Exception e)
+        {
+            throw new DataAccessErrorException("Error while fetching likes");
+        }
+    }
+
+    public async Task<bool> HasLike(int viewerId, int userId)
+    {
+        try
+        {
+            await using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+            connection.CreateCommand();
+            var query = "SELECT * FROM likes WHERE liker_user_id = @viewer_id AND liked_user_id = @user_id";
+            var table = await fetcher.GetTableByParameter(connection,
+                query, new Dictionary<string, object>
+                {
+                    { "@viewer_id", viewerId },
+                    { "@user_id", userId }
+                });
+
+            return table.Rows.Count > 0;
         }
         catch (Exception e)
         {
