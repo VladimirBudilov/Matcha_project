@@ -15,4 +15,5 @@ public record ProfileResponse()
     public List<string> Interests { get; init; } = new();
     
     public bool HasLike { get; init; } = false;
+    public double Distance { get; set; }
 };
