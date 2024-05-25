@@ -2,7 +2,7 @@
 
 <template>
 <div class="chat">
-  <div class="chat-container">
+  <div class="chat-container" id="messages">
     <div class="messages">
       <div v-for="(msg, index) in messages" :key="index" class="message">
         <strong>{{ msg.user }}:</strong> {{ msg.text }}
@@ -109,7 +109,7 @@ export default {
   flex-direction: column; /* Change from row to column */
   margin-left: 10px; /* Add left margin */
 }
-#room-actions {
+#room-actions, #messages{
   color: black
 }
 .messages {
