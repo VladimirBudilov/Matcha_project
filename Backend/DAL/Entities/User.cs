@@ -23,5 +23,6 @@ namespace DAL.Entities
         
         
         public bool HasLike { get; set; } = false;
+        public double Distance { get; set; }
     }
 }

@@ -61,15 +61,12 @@ public class PicturesRepository(
         return (int)command.ExecuteScalar()!;
     }
 
-    public void DeletePhoto(long userId, long photoId)
+    public async Task DeletePhotoAsync(int userId, int photoId)
     {
+        await using var connection = new NpgsqlConnection(_connectionString);
         var query = new StringBuilder("DELETE FROM pictures WHERE user_id = @userId AND picture_id = @photoId");
-        using var connection = new NpgsqlConnection(_connectionString);
-        connection.Open();
-        var command = connection.CreateCommand();
-        command.Parameters.AddWithValue("@userId", userId);
-        command.Parameters.AddWithValue("@photoId", photoId);
-        command.CommandText = query.ToString();
-        command.ExecuteNonQuery();
+        await connection.OpenAsync();
+        await fetcher.GetTableByParameter(connection, query.ToString(),
+            new Dictionary<string, object> { { "@userId", userId }, { "@photoId", photoId } });
     }
 }

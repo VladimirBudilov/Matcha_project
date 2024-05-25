@@ -49,7 +49,7 @@ public class ProfileController(
     
     // GET api/<UsersController>/5
     [HttpGet("{id:int}")]
-    public async Task<FullProfileResponsDto> GetProfileFullDataById([FromRoute]int id)
+    public async Task<FullProfileResponseDto> GetProfileFullDataById([FromRoute]int id)
     {
         validator.CheckPositiveNumber(id);
 
@@ -58,7 +58,7 @@ public class ProfileController(
         
         var model =  await profileService.GetFullProfileByIdAsync(id);
         model = await profileService.CheckUserLike(model, viewerId);
-        var output = mapper.Map<FullProfileResponsDto>(model);
+        var output = mapper.Map<FullProfileResponseDto>(model);
         return output;
     }
 

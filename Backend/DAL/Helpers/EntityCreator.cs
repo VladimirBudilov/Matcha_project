@@ -77,12 +77,26 @@ public class EntityCreator
         foreach (DataRow row in dataTable.Rows)
         {
             var user = CreateUser(row);
+            AddDistance(row, user);
             user.Profile = CreateUserProfile(row);
             users.Add(user);
             
         }
 
         return users;
+    }
+
+    private void AddDistance(DataRow row, User? user)
+    {
+        if (user is null) return;
+        if (row.IsNull("distance"))
+        {
+            user.Distance = 0;
+        }
+        else
+        {
+            user.Distance = row.Field<double>("distance");
+        }  
     }
 
     public ProfileView CreateProfileViews(DataRow row)
