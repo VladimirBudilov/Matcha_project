@@ -4,6 +4,7 @@ import { onMounted, reactive, ref, watch } from 'vue';
 import { message } from 'ant-design-vue';
 import type { Profile, GetProfileParams } from '@/stores/SignUpStore';
 
+
 const profiles = ref<Profile[]>([])
 
 const GetProfile = async () => {

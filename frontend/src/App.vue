@@ -3,6 +3,7 @@ import { RouterLink, RouterView } from 'vue-router'
 import Logout from '@/components/Logout.vue'
 import { SignUpStore } from '@/stores/SignUpStore';
 import { storeToRefs } from 'pinia';
+import WebSocketManager from '@/components/WebSocketManager.vue';
 import { onMounted, ref, watch } from 'vue';
 import axios from 'axios';
 
@@ -36,6 +37,7 @@ onMounted (async () => {
 </script>
 
 <template>
+  <WebSocketManager />
     <div class="Main" v-if="IsLogin">
       <header>
         <nav>

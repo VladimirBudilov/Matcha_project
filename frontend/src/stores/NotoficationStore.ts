@@ -1,6 +1,8 @@
 import {defineStore} from "pinia";
-import type {HubConnection} from "@microsoft/signalr";
+import {type HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
 import {ref} from "vue";
+import {useStorage} from "@vueuse/core";
+import createConnection from "@/services/NotificationService";
 
 export class NotificationType {
     readonly ChatMessage = "ChatMessage";
@@ -22,9 +24,30 @@ export class Notification {
     }
 }
 
-export const useNotificationStore = defineStore({
-    id: 'notification',
+export const useNotificationStore = defineStore('notification', {
     state: () => ({
-        notificationConnection: ref<HubConnection | null>(null),
+        connection: ref<HubConnection>(),
+        notifications: ref<Notification[]>([])
     }),
+    actions: {
+        setConnection(connection: HubConnection) {
+            this.connection = connection;
+        },
+        addNotification(notification: Notification) {
+            this.notifications.push(notification);
+        },
+        ClearNotifications() {
+            this.notifications = [];
+        }
+    },
+    getters: {
+        getNotifications() : Notification[]
+        {
+            return this.notifications;
+        },
+        getConnection() : HubConnection | undefined
+        {
+            return this.connection;
+        }
+    }
 });

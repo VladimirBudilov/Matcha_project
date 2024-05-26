@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@microsoft/signalr": "8.0.0",
+    "@vueuse/core": "^10.9.0",
     "ant-design-vue": "^4.1.2",
     "axios": "^1.6.7",
     "pinia": "^2.1.7",

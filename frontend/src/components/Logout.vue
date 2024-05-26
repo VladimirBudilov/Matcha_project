@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import axios from 'axios';
-import { storeToRefs } from 'pinia';
-import { SignUpStore } from '@/stores/SignUpStore';
+import {storeToRefs} from 'pinia';
+import {SignUpStore} from '@/stores/SignUpStore';
 import {useNotificationStore} from '@/stores/NotoficationStore'
+import {HubConnectionState} from "@microsoft/signalr";
+
 const IsLogin = storeToRefs(SignUpStore()).IsLogin
 
-var notificationConnection = useNotificationStore().notificationConnection;
+const connection = useNotificationStore().connection;
 
 const LogoutButtonTurnOn = () => {
 	axios.get('api/auth/logout').then(() => {
-    if(notificationConnection)
+    if(connection?.state === HubConnectionState.Connected)
     {
-      notificationConnection.stop()
+      console.log(connection.state)
+      connection.stop()
     }
 		localStorage.removeItem('token')
 		localStorage.removeItem('UserId')

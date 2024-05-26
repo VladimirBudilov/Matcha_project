@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
-import { storeToRefs } from 'pinia';
+import {type StoreDefinition, storeToRefs} from 'pinia';
 import { SignUpStore } from '@/stores/SignUpStore';
 import createConnection from '@/services/NotificationService'
 import axios from 'axios';
@@ -15,7 +15,7 @@ const SignUpButtonTurnOn = () => {
 
 const IsLogin = storeToRefs(SignUpStore()).IsLogin
 
-const notificationStore = useNotificationStore();
+const store = useNotificationStore();
 
 interface FormState {
 	username: string;
@@ -48,22 +48,25 @@ const onFinish = async (values: any) => {
 		if (errorMsg.value == '' && loginRes.token) {
 			IsLogin.value = true
 			localStorage.setItem("token", loginRes.token)
+      console.log("login");
 
       axios.defaults.headers.common.Authorization = 'Bearer ' + loginRes.token;
 
-      notificationStore.notificationConnection = createConnection();
-      if (notificationStore.notificationConnection) {
-        notificationStore.notificationConnection.start()
+      var connection = createConnection();
+      console.log("login connection object",connection)
+      if (connection) {
+        await connection.start()
             .then(() => {
               console.log('Connection started');
-              notificationStore.notificationConnection?.on('ReceiveNotification', (message: Notification[]) => {
+              connection?.on('ReceiveNotification', (message: Notification[]) => {
                 console.log('ReceiveNotification: ' + message);
               })
             })
             .catch((err: Error) => console.error('Error while starting connection: ' + err));
       }
+      store.setConnection(connection);
 
-			window.location.assign('https://' + window.location.host)
+      window.location.assign('https://' + window.location.host)
 		}
 	})
 };

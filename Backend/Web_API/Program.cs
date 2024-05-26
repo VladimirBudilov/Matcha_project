@@ -124,7 +124,7 @@ builder.Services.AddAuthentication(options =>
  
             // если запрос направлен хабу
             var path = context.HttpContext.Request.Path;
-            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chat"))
+            if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/chat") || path.StartsWithSegments("/notification")))
             {
                 // получаем токен из строки запроса
                 context.Token = accessToken;
