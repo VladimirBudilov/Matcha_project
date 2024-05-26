@@ -15,7 +15,7 @@ public class UserService(
     public async Task<User?> GetUserByIdAsync(int userId)
     {
         var output = await userRepository.GetUserByIdAsync(userId);
-        if (output == null) throw new ObjectNotFoundException("User not found. You can't get user that doesn't exist");
+        if (output == null) throw new ObjectNotFoundException("Actor not found. You can't get user that doesn't exist");
 
         return output;
     }
@@ -23,7 +23,7 @@ public class UserService(
     public async Task<User?> GetUserByUserNameAsync(string userName)
     {
         var output = await userRepository.GetUserByUserNameAsync(userName);
-        if (output == null) throw new ObjectNotFoundException("User not found. You can't get user that doesn't exist");
+        if (output == null) throw new ObjectNotFoundException("Actor not found. You can't get user that doesn't exist");
 
         return output;
     }
@@ -31,7 +31,7 @@ public class UserService(
     public async Task<User?> UpdateUserAsync(int id, User userModel)
     {
         var user = await userRepository.GetUserByIdAsync(id);
-        if (user == null) throw new ObjectNotFoundException("User not found. You can't update user that doesn't exist");
+        if (user == null) throw new ObjectNotFoundException("Actor not found. You can't update user that doesn't exist");
         user.UserName = userModel.UserName;
         user.FirstName = userModel.FirstName;
         user.LastName = userModel.LastName;
@@ -39,7 +39,7 @@ public class UserService(
 
         var output = await userRepository.UpdateUserAsync(id, userModel);
         if (output == null)
-            throw new DataAccessErrorException("User not found. You can't update user that doesn't exist");
+            throw new DataAccessErrorException("Actor not found. You can't update user that doesn't exist");
 
         return output;
     }
@@ -47,10 +47,10 @@ public class UserService(
     public async Task<User?> DeleteUserAsync(int id)
     {
         var user = await userRepository.GetUserByIdAsync(id);
-        if (user == null) throw new ObjectNotFoundException("User not found. You can't delete user that doesn't exist");
+        if (user == null) throw new ObjectNotFoundException("Actor not found. You can't delete user that doesn't exist");
         var output = await userRepository.DeleteUserAsync(id);
         if (output == null)
-            throw new ObjectNotFoundException("User not found. You can't delete user that doesn't exist");
+            throw new ObjectNotFoundException("Actor not found. You can't delete user that doesn't exist");
 
         return output;
     }
@@ -61,7 +61,7 @@ public class UserService(
         var output = await userRepository.GetUserByEmailAsync(email);
         if (output == null)
             throw new ObjectNotFoundException(
-                "User not found by email. You can't get user that doesn't exist by email");
+                "Actor not found by email. You can't get user that doesn't exist by email");
 
         return output;
     }
@@ -70,12 +70,12 @@ public class UserService(
     {
         var user = await userRepository.GetUserByIdAsync(id);
         if (user == null)
-            throw new ObjectNotFoundException("User not found. You can't update password for user that doesn't exist");
+            throw new ObjectNotFoundException("Actor not found. You can't update password for user that doesn't exist");
         if (!passwordManager.VerifyPassword(valueOldPassword, user.Password))
             throw new DataAccessErrorException("Old password is incorrect");
         user.Password = passwordManager.HashPassword(valueNewPassword);
         var res = await userRepository.UpdateUserAsync(id, user);
         if (res == null)
-            throw new DataAccessErrorException("User not found. You can't update password for user that doesn't exist");
+            throw new DataAccessErrorException("Actor not found. You can't update password for user that doesn't exist");
     }
 }

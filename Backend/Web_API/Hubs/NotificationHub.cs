@@ -21,7 +21,7 @@ public class NotificationHub(
         var userId = claimsService.GetId(Context.User?.Claims);
         var identifier = Context.UserIdentifier!;
         notificationService.AddOnlineUser(userId, identifier);
-        logger.LogInformation($"User {userId} online");
+        logger.LogInformation($"Actor {userId} online");
         SendNotificationToUser(userId);
         return base.OnConnectedAsync();
     }
@@ -30,7 +30,7 @@ public class NotificationHub(
     {
         var userId = claimsService.GetId(Context.User?.Claims);
         notificationService.RemoveOnlineUser(userId);
-        logger.LogInformation($"User {userId} offline");
+        logger.LogInformation($"Actor {userId} offline");
         return base.OnDisconnectedAsync(exception);
     }
     

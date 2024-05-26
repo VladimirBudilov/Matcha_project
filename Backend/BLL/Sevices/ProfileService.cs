@@ -21,7 +21,7 @@ public class ProfileService(
     public async Task<User> GetFullProfileByIdAsync(int id)
     {
         var user = await profileRepository.GetFullProfileAsync(id);
-        if (user == null) throw new DataValidationException("User not found");
+        if (user == null) throw new DataValidationException("Actor not found");
 
         var builder = new ProfileBuilder();
         builder.AddMainData(user);

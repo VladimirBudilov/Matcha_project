@@ -124,8 +124,8 @@ public class LikesRepository(
             { "@liked_user_id", likedId }
         });
         
-        if (table.Rows.Count == 0) return new Like(){LikerId = likerId, LikedId = likedId};
-        var like =  entityCreator.CreateLikes(table.Rows[0]);
+        var like =  new Like(){LikerId = likerId, LikedId = likedId};
+        if (table.Rows.Count == 0) return like;
         like.IsLiked = false;
         return like;
     }

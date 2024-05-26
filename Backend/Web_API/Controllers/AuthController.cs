@@ -57,7 +57,7 @@ public class AuthController(
         var token = GenerateJwtToken(await userService.GetUserByUserNameAsync(loginDto.UserName));
         
         var user = await userService.GetUserByUserNameAsync(loginDto.UserName);
-        notificationService.AddNotification(user.UserId, new Notification(){User = user.UserName, Message = "You have logged in"});
+        notificationService.AddNotification(user.UserId, new Notification(){Actor = user.UserName, Message = "You have logged in"});
 
         return Ok(new AuthResponseDto()
         {
@@ -82,7 +82,7 @@ public class AuthController(
         {
             var userModel = mapper.Map<User>(value);
             var token = await authService.RegisterUserAsync(userModel);
-            if (token == null) return BadRequest("User already exists");
+            if (token == null) return BadRequest("Actor already exists");
             var emailUrl = Request.Scheme + "://" + Request.Host + "/api/auth/verify-email?email=" + userModel.Email + "&token=" + token;
             var emailBody = "Please click on the link to verify your email: <a href=\"" + System.Text.Encodings.Web.HtmlEncoder.Default.Encode(emailUrl) + "\">link</a>";
 

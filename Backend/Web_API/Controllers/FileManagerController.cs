@@ -40,7 +40,7 @@ public class FileManagerController(
     [HttpDelete("deletePhoto/{userId:int}")]
     public async Task<IActionResult> DeletePhoto([FromRoute]int userId, [FromQuery]int photoId, [FromQuery] bool isMain = false)
     {
-        //validator.CheckUserAuth(userId, User.Claims);
+        //validator.CheckUserAuth(userId, Actor.Claims);
         //TODO implement deleting photo from database
         
         profileService.DeletePhotoASync(userId, photoId, isMain);

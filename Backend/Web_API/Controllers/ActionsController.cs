@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web_API.DTOs;
+using Web_API.DTOs.Request;
 using Web_API.Helpers;
+using Web_API.Hubs.Helpers;
+using Web_API.Hubs.Services;
 
 namespace Web_API.Controllers;
 
@@ -12,24 +15,32 @@ namespace Web_API.Controllers;
 [ApiController]
 public class ActionsController(
     ActionService actionService,
-    DtoValidator validator
+    NotificationService notificationService,
+    DtoValidator validator,
+    UserService userService
     ) : ControllerBase
 {
-    [HttpPost("like")]
-    public async Task<IActionResult> LikeUser([FromBody]LikeRequestDto like)
+    [HttpPost("userAction")]
+    public async Task<IActionResult> LikeUser([FromBody]UserActionRequestDto userAction)
     {
-        validator.CheckPositiveNumber(like.likedId);
-        validator.CheckPositiveNumber(like.likerId);
-        validator.CheckUserAuth(like.likerId, User.Claims);
+        validator.CheckPositiveNumber(userAction.ProducerId);
+        validator.CheckPositiveNumber(userAction.ConsumerId);
+        validator.CheckUserAuth(userAction.ConsumerId, User.Claims);
         
-        var output = await actionService.LikeUser(like.likerId, like.likedId);
+        var (notificationType, output) = await actionService.LikeUser(userAction.ConsumerId, userAction.ProducerId);
+        notificationService.AddNotification(userAction.ProducerId, new Notification()
+        {
+            Type = notificationType,
+            Message = "You have a new userAction",
+            Actor = (await userService.GetUserByIdAsync(userAction.ConsumerId))!.UserName
+        });
         return Ok(output);
     }
     
-    /*[HttpGet("chat")]
-    public async Task<IActionResult> GetChat([FromQuery]int userId)
+    [HttpGet("chat")]
+    public async Task<IActionResult> GetChat([FromBody]UserActionRequestDto userAction)
     {
         //create chat with signalR hub
-        
-    }*/
+        return Ok();
+    }
 }

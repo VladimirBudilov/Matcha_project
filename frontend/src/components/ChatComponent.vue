@@ -109,6 +109,11 @@ export default {
   flex-direction: column; /* Change from row to column */
   margin-left: 10px; /* Add left margin */
 }
+
+.messagesOutput{
+  color: white;
+}
+
 #room-actions, #messages{
   color: black
 }
@@ -119,6 +124,7 @@ export default {
 }
 .message {
   margin-bottom: 5px;
+  color: white;
 }
 /*input {
   width: calc(100% - 60px);

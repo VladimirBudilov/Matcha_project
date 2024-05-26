@@ -18,14 +18,14 @@ public class ChatHub(
     public override Task OnConnectedAsync()
     {
         var user = claimsService.GetId(Context.User?.Claims);
-        logger.LogInformation($"User {user} connected");
+        logger.LogInformation($"Actor {user} connected");
         return base.OnConnectedAsync();
     }
 
     public override Task OnDisconnectedAsync(Exception? exception)
     {
         var user = claimsService.GetId(Context.User?.Claims);
-        logger.LogInformation($"User {user} disconnected");
+        logger.LogInformation($"Actor {user} disconnected");
         return base.OnDisconnectedAsync(exception);
     }
 
@@ -43,7 +43,7 @@ public class ChatHub(
 
     public async Task CreateRoom(string roomName)
     {
-        logger.LogInformation($"User {claimsService.GetId(Context.User?.Claims)} created room: {roomName}");
+        logger.LogInformation($"Actor {claimsService.GetId(Context.User?.Claims)} created room: {roomName}");
         chatManager.CreateRoom(roomName, Context);
     }
 
