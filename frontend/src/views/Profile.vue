@@ -137,7 +137,7 @@ const DeletePicture = async (picureId: number) => {
     :disabled="componentDisabled"
   	>
 		<div class="Main-info">
-			<a-button type="primary" html-type="signup" @click="SubmiteChanges" style="position: absolute; padding-left: 1vw;">Submite</a-button>
+			<a-button type="primary" html-type="signup" @click="SubmiteChanges" style="position: absolute; padding-left: 1vw; z-index: 1;">Submite</a-button>
 			<a-form-item label="ID">
 				<a-input-number v-model:value="profile.profileId" disabled style="background-color: grey; color:black"/>
 			</a-form-item>

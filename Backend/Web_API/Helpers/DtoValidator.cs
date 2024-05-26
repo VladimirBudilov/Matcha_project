@@ -142,7 +142,7 @@ public class DtoValidator
 
     private void ValidateBio(string bio)
     {
-        var isValid = bio.All(char.IsLetterOrDigit) || bio.All(char.IsPunctuation);
+        var isValid = bio.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || char.IsPunctuation(c));
         if (!(isValid && bio.Length <= 500))
         {
             throw new DataValidationException("Invalid bio format.");
