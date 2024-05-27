@@ -19,11 +19,11 @@ const getProfileParams = reactive<GetProfileParams>({
 	//IsLikedUser?: boolean,
 	CommonTags: [],
 	//IsMatched?: boolean,
-	SortLocation: '',
-	SortFameRating: '',
-	SortAge: '',
-	SortCommonTags: '',
-	SortingMainParameter: '',
+	//SortLocation: '',
+	//SortFameRating: '',
+	//SortAge: '',
+	//SortCommonTags: '',
+	//SortingMainParameter: '',
 })
 
 const profiles = storeToRefs(SignUpStore()).profiles
