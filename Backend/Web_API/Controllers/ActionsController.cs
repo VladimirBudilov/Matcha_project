@@ -17,22 +17,23 @@ public class ActionsController(
     ActionService actionService,
     NotificationService notificationService,
     DtoValidator validator,
-    UserService userService
+    UserService userService,
+    ClaimsService claimsService
     ) : ControllerBase
 {
-    [HttpPost("userAction")]
+    [HttpPost("like")]
     public async Task<IActionResult> LikeUser([FromBody]UserActionRequestDto userAction)
     {
-        validator.CheckPositiveNumber(userAction.ProducerId);
-        validator.CheckPositiveNumber(userAction.ConsumerId);
-        validator.CheckUserAuth(userAction.ConsumerId, User.Claims);
+        validator.CheckPositiveNumber(userAction.producerId);
+        validator.CheckPositiveNumber(userAction.consumerId);
+        validator.CheckUserAuth(userAction.producerId, User.Claims);
         
-        var (notificationType, output) = await actionService.LikeUser(userAction.ConsumerId, userAction.ProducerId);
-        notificationService.AddNotification(userAction.ProducerId, new Notification()
+        var (notificationType, output) = await actionService.LikeUser(userAction.producerId, userAction.consumerId);
+        notificationService.AddNotification(userAction.consumerId, new Notification()
         {
             Type = notificationType,
             Message = "You have a new userAction",
-            Actor = (await userService.GetUserByIdAsync(userAction.ConsumerId))!.UserName
+            Actor = (await userService.GetUserByIdAsync(userAction.producerId))!.UserName
         });
         return Ok(output);
     }
@@ -41,6 +42,14 @@ public class ActionsController(
     public async Task<IActionResult> GetChat([FromBody]UserActionRequestDto userAction)
     {
         //create chat with signalR hub
+        return Ok();
+    }
+
+    [HttpGet("clearNotification/{id:int}")]
+    public async Task<IActionResult> ClearNotifications([FromRoute] int id)
+    {
+        validator.CheckUserAuth(id, User.Claims);
+        notificationService.ClearNotifications(id);
         return Ok();
     }
 }

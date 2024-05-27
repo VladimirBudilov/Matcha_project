@@ -19,10 +19,10 @@ public class NotificationHub(
     public override Task OnConnectedAsync()
     {
         var userId = claimsService.GetId(Context.User?.Claims);
-        var identifier = Context.UserIdentifier!;
+        var identifier = Context.ConnectionId!;
         notificationService.AddOnlineUser(userId, identifier);
         logger.LogInformation($"Actor {userId} online");
-        SendNotificationToUser(userId);
+        GetNotifications().Wait();
         return base.OnConnectedAsync();
     }
 
@@ -41,18 +41,19 @@ public class NotificationHub(
         await Clients.Caller.ReceiveNotifications(notifications);
     }
     
-    public async Task SendNotificationToUser(int userId)
+    public async Task SendNotificationToUser(int id)
     {
-        var identifier = notificationService.GetIdentifier(userId);
-        var userNotifications = notificationService.GetNotifications(userId);
+        var identifier = notificationService.GetIdentifier(id);
+        if(!notificationService.GetUsersId().Contains(id)) return;
+        var userNotifications = notificationService.GetNotifications(id);
         await Clients.Client(identifier).ReceiveNotifications(userNotifications);
     }
     
-    public async Task ClearNotifications()
+    public Task ClearNotifications()
     {
         var userId = claimsService.GetId(Context.User?.Claims);
         notificationService.ClearNotifications(userId);
-        await Clients.Caller.ReceiveNotifications(new List<Notification>());
+        return Task.CompletedTask;
     }
 }
 

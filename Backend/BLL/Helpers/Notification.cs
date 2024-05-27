@@ -14,6 +14,7 @@ public class NotificationType
     public static readonly string Like = "Like";
     public static readonly string ResponseLike = "ResponseLike";
     public static readonly string Unlike = "Unlike";
-    public static readonly string Viewed = "Viewed";
+    public static readonly string View = "View";
+    public static readonly string Online = "Online";
 }
 

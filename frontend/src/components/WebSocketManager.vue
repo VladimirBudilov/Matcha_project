@@ -15,27 +15,18 @@ onMounted(async () => {
   if (!store.connection) {
     const connection = createConnection();
     if (connection) {
-      await connection.start()
-        .then(() => {
-          console.log('Connection started');
-          connection.on('ReceiveNotification', (message: Notification[]) => {
-            console.log('ReceiveNotification: ' + message);
-          });
-        })
-        .catch((err: Error) => console.error('Error while starting connection: ' + err));
-      store.setConnection(connection);
-      console.log("")
+
+        await connection.start();
+        connection.on('ReceiveNotifications', function (notifications) {
+          console.log(notifications);
+        });
+        let id: number = Number(localStorage.getItem('UserId'));
+        await connection.invoke("SendNotificationToUser", Number(id));
+        store.setConnection(connection);
+      }
     }
-    else
-    {
+    else {
       console.error('Connection is not created');
     }
-  }
-  else
-  {
-    console.log("Connection already exists")
-    console.log(store.connection)
-    await store.connection.start();
-  }
 });
 </script>

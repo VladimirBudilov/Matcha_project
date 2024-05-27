@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web_API.DTOs;
 using Web_API.Helpers;
+using Web_API.Hubs.Helpers;
+using Web_API.Hubs.Services;
 using Profile = DAL.Entities.Profile;
 
 namespace Web_API.Controllers;
@@ -19,7 +21,9 @@ public class ProfileController(
     ActionService actionService,
     IMapper mapper,
     DtoValidator validator,
-    ClaimsService claimsService
+    ClaimsService claimsService,
+    NotificationService notificationService,
+    UserService userService
     ) : ControllerBase
 {
     // GET: api/<UsersController>
@@ -54,8 +58,13 @@ public class ProfileController(
         validator.CheckPositiveNumber(id);
 
          var viewerId = claimsService.GetId(User.Claims);
-        actionService.ViewUser(viewerId, id);
-        
+        await actionService.ViewUser(viewerId, id);
+        notificationService.AddNotification(id, new Notification()
+        {
+            Actor = (await userService.GetUserByIdAsync(viewerId))!.UserName,
+            Message = "You have a new view",
+            Type = NotificationType.View,
+        });
         var model =  await profileService.GetFullProfileByIdAsync(id);
         model = await profileService.CheckUserLike(model, viewerId);
         var output = mapper.Map<FullProfileResponseDto>(model);

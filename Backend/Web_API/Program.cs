@@ -59,7 +59,7 @@ builder.Services.AddCors(options =>
         corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
     options.AddPolicy("SignalRCorsPolicy",
         corsPolicyBuilder => corsPolicyBuilder
-            .WithOrigins("https://localhost:8080")
+            .WithOrigins("https://localhost:8080", "https://127.0.0.1:8080")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());

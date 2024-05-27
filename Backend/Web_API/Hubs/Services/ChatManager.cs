@@ -44,7 +44,7 @@ public class ChatManager
     }
     
     public async Task SendMessageToRoom(string roomName, string message, IHubCallerClients<IChat> Clients,
-        HubCallerContext Context, string user)
+        HubCallerContext context, string user)
     {
         if (!Rooms.ContainsKey(roomName))
         {

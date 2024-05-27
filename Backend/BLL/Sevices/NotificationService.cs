@@ -18,21 +18,21 @@ public class NotificationService
         UsersOnline.TryRemove(userId, out _);
     }
     
-    public void AddNotification(int userId, Notification notification)
+    public void AddNotification(int receiverId, Notification notification)
     {
-        if (!UsersNotification.ContainsKey(userId))
+        if (!UsersNotification.ContainsKey(receiverId))
         {
-            UsersNotification.TryAdd(userId, new List<Notification> { notification });
+            UsersNotification.TryAdd(receiverId, [notification]);
         }
         else
         {
-            UsersNotification[userId].Add(notification);
+            UsersNotification[receiverId].Add(notification);
         }
     }
     
     public List<Notification> GetNotifications(int userId)
     {
-        return UsersNotification.ContainsKey(userId) ? UsersNotification[userId] : new List<Notification>();
+        return UsersNotification.TryGetValue(userId, out var value) ? value : new List<Notification>();
     }
     
     public void ClearNotifications(int userId)

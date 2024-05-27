@@ -3,7 +3,10 @@ import axios from 'axios';
 import { onMounted, reactive, ref, watch } from 'vue';
 import { message } from 'ant-design-vue';
 import type { Profile, GetProfileParams } from '@/stores/SignUpStore';
+import {useNotificationStore} from '@/stores/NotoficationStore'
 
+const store = useNotificationStore();
+const connection = store.connection
 
 const profiles = ref<Profile[]>([])
 
@@ -45,8 +48,8 @@ onMounted(async () => {
 })
 
 const sendLike = async (profileId: number) => {
-	await axios.post('api/actions/like', {likerId: Number(localStorage.getItem('UserId')), likedId: profileId}).catch((res) => {
-		message.error(`Error: ${res.response.data.error}`);
+	await axios.post('api/actions/like', {producerId: Number(localStorage.getItem('UserId')), consumerId: profileId}).catch((res) => {
+		message.error(`Error: ${res.response.data.error} ${localStorage.getItem('UserId')}`);
 	}).then((res) => {
 		if (res?.data) {
 			if (res?.data.isLiked) {
@@ -62,6 +65,8 @@ const sendLike = async (profileId: number) => {
 			})
 		}
 	})
+  
+  await connection?.invoke("SendNotificationToUser", Number(profileId));
 }
 
 
