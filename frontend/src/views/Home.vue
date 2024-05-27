@@ -24,7 +24,7 @@ const GetProfile = async () => {
 		params: getProfileParams
 	}).catch((res) => {
 		if (res.code == 403) {
-			message.success(`Fill out the profile!`);
+			message.error(`Fill out the profile!`);
 		}
 	}).then((res) => {
 		if (res?.data){

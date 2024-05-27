@@ -32,8 +32,12 @@ const GetProfile = async () => {
 	await axios.get('api/profile', {
 		params: getProfileParams
 	}).catch((res) => {
+
 		if (res.code == 403) {
-			message.success(`Fill out the profile!`);
+			message.error(`Fill out the profile!`);
+		}
+		else {
+			message.error('Error')
 		}
 	}).then((res) => {
 		if (res?.data){
