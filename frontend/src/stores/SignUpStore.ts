@@ -55,4 +55,5 @@ export interface GetProfileParams {
   SortingMainParameter?: string,
   PageNumber?: number,
   PageSize?: number,
+  Total?: number
 }

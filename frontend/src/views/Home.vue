@@ -7,6 +7,11 @@ import type { Profile, GetProfileParams } from '@/stores/SignUpStore';
 
 const profiles = ref<Profile[]>([])
 
+const getProfileParams = reactive<GetProfileParams>({
+	PageNumber: 1,
+	PageSize: 10,
+	Total: 0,
+})
 const GetProfile = async () => {
 
 	await axios.get('api/profile', {
@@ -18,6 +23,10 @@ const GetProfile = async () => {
 	}).then((res) => {
 		if (res?.data){
 			profiles.value = res.data.profiles
+			if (getProfileParams.PageSize) {
+				getProfileParams.Total = getProfileParams.PageSize * res.data.amountOfPages
+			}
+
 			console.log(res.data)
 			console.log(res.data.profiles)
 			console.log(profiles.value)
@@ -25,10 +34,7 @@ const GetProfile = async () => {
 	})
 }
 
-const getProfileParams = reactive<GetProfileParams>({
-	PageNumber: 1,
-	PageSize: 10
-})
+
 
 onMounted(async () => {
 	await axios.get('api/auth/get-id').then((res) => {
@@ -68,12 +74,13 @@ watch(() => getProfileParams.PageNumber,
 </script>
 
 <template>
-	<a-space id="Profiles">
+	<div id="profiles">
+		<a-space id="profile-cards">
 		<template #split>
 			<a-divider type="vertical" />
 		</template>
 		<div v-for="el in profiles">
-		<a-card style="position: relative; width: 30vw" :span="8">
+		<a-card id="profile-card" :span="8">
 			<a-card-meta>
 				<template #avatar>
 					<a-image
@@ -119,32 +126,49 @@ watch(() => getProfileParams.PageNumber,
 	<a-pagination
 		id="pagination-users"
 		v-model:current="getProfileParams.PageNumber"
-		:total="50" show-less-items
+		:total="getProfileParams.Total" show-less-items
 		:defaultPageSize="getProfileParams.PageSize"/>
+	</div>
+
+
 </template>
 
 <style>
-#Profiles {
-	position: relative;
+#profiles {
+}
+
+#profile-cards {
+	/*position:absolute;*/
 	padding-top: 7vh;
-	padding-bottom: 4vh;
+	padding-bottom: 10vh;
 	padding-left: 1vw;
 	padding-right: 1vw;
+	width: 98vw;
+	display: flex;
+	flex-wrap: wrap;
 }
+
+#profile-card {
+	position:inherit;
+	width: 30vw;
+}
+
 #card-button-like {
 	position: relative;
 	padding-top: 3%;
-	padding-bottom: 3%;
+	padding-bottom: 5%;
 	padding-left: 40%;
 }
 
 #pagination-users {
 	position: relative;
-	top: 7vh;
+	margin-top: 10vh;
+	width: 100%;
+	bottom: 3vh;
 	padding-top: 2vh;
 	padding-bottom: 2vh;
-	padding-left: 20vw;
-	padding-right: 20vw;
+	padding-left: 3vh;
+	padding-right: 3vh;
 	background-color: grey;
 	color:black
 }

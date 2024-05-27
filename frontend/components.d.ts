@@ -25,6 +25,7 @@ declare module 'vue' {
     ATextarea: typeof import('ant-design-vue/es')['Textarea']
     AUpload: typeof import('ant-design-vue/es')['Upload']
     ChatComponent: typeof import('./src/components/ChatComponent.vue')['default']
+    InputParamsGetProfile: typeof import('./src/components/InputParamsGetProfile.vue')['default']
     Logout: typeof import('./src/components/Logout.vue')['default']
     NamePasswordInput: typeof import('./src/components/NamePasswordInput.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
