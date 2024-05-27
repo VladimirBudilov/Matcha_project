@@ -32,6 +32,7 @@ declare module 'vue' {
     InputParamsGetProfile: typeof import('./src/components/InputParamsGetProfile.vue')['default']
     Logout: typeof import('./src/components/Logout.vue')['default']
     NamePasswordInput: typeof import('./src/components/NamePasswordInput.vue')['default']
+    ParamsGetProfile: typeof import('./src/components/ParamsGetProfile.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SignUpForm: typeof import('./src/components/SignUpForm.vue')['default']

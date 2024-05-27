@@ -3,12 +3,18 @@ import axios from 'axios';
 import { onMounted, reactive, ref, watch } from 'vue';
 import { message } from 'ant-design-vue';
 import type { Profile, GetProfileParams } from '@/stores/SignUpStore';
+<<<<<<< Updated upstream
 import {useNotificationStore} from '@/stores/NotoficationStore'
+=======
+import { SignUpStore } from '@/stores/SignUpStore';
+import ParamsGetProfile from '@/components/ParamsGetProfile.vue'
+import { storeToRefs } from 'pinia';
+>>>>>>> Stashed changes
 
 const store = useNotificationStore();
 const connection = store.connection
 
-const profiles = ref<Profile[]>([])
+const profiles = storeToRefs(SignUpStore()).profiles
 
 const getProfileParams = reactive<GetProfileParams>({
 	PageNumber: 1,
@@ -80,6 +86,7 @@ watch(() => getProfileParams.PageNumber,
 
 <template>
 	<div id="profiles">
+		<ParamsGetProfile />
 		<a-space id="profile-cards">
 		<template #split>
 			<a-divider type="vertical" />

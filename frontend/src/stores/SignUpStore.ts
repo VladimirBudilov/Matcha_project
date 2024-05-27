@@ -4,8 +4,9 @@ import { defineStore } from 'pinia'
 export const SignUpStore = defineStore('SignUp', () => {
   const IsActiveSignUp = ref(false)
   const IsLogin = ref(localStorage.getItem('token') ? true : false)
+  const profiles = ref<Profile[]>([])
 
-  return { IsActiveSignUp, IsLogin,  }
+  return { IsActiveSignUp, IsLogin, profiles }
 })
 
 export interface ProfilePicture {
