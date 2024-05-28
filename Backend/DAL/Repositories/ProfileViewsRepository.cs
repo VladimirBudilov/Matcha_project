@@ -42,4 +42,19 @@ public class ProfileViewsRepository(
 
 
     }
+
+    public async Task<ProfileView> GetView(int viewerId, int viewedId)
+    {
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
+        var query = new StringBuilder().Append(
+            "SELECT * FROM profile_views WHERE profile_user_id = @profile_user_id AND viewer_user_id = @viewer_user_id");
+        var table = await fetcher.GetTableByParameter(connection, query.ToString(), new Dictionary<string, object>
+        {
+            {"@profile_user_id", viewedId},
+            {"@viewer_user_id", viewerId}
+        });
+
+        return table.Rows.Count == 0 ? null : entityCreator.CreateProfileViews(table.Rows[0]);
+    }
 }

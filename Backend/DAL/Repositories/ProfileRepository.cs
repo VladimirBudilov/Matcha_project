@@ -220,7 +220,7 @@ public class ProfileRepository(
 
         if (searchParams.SexualPreferences != null)
         {
-            queryBuilder.Where($" AND sexual_preferences != {searchParams.SexualPreferences} ");
+            queryBuilder.Where($" AND sexual_preferences = '{searchParams.SexualPreferences}' ");
         }
 
         if (searchParams.CommonTags.Count != 0)

@@ -48,11 +48,7 @@ public class ActionService(
         await validator.CheckUserExistence([viewerId, viewedId]);
 
 
-        var views = await profileViewRepository.GetProfileViewsByUserIdAsync(viewerId);
-        foreach (var view in views)
-        {
-            if (view.ViewedId == viewedId) return;
-        }
+        if(await profileViewRepository.GetView(viewerId, viewedId) != null) return;
 
         await profileViewRepository.CreateProfileViewsAsync(new ProfileView()
             { ViewedId = viewedId, ViewerId = viewerId });

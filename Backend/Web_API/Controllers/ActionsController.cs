@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Web_API.DTOs;
 using Web_API.DTOs.Request;
 using Web_API.Helpers;
 using Web_API.Hubs.Helpers;
