@@ -43,7 +43,7 @@ public class ProfileViewsRepository(
 
     }
 
-    public async Task<ProfileView> GetView(int viewerId, int viewedId)
+    public async Task<ProfileView?> GetView(int viewerId, int viewedId)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
@@ -54,7 +54,7 @@ public class ProfileViewsRepository(
             {"@profile_user_id", viewedId},
             {"@viewer_user_id", viewerId}
         });
-
+        
         return table.Rows.Count == 0 ? null : entityCreator.CreateProfileViews(table.Rows[0]);
     }
 }
