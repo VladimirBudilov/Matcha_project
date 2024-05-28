@@ -1,15 +1,13 @@
 ﻿namespace BLL.Helpers;
 
-public class FameRatingCalculator
+public static class FameRatingCalculator
 {
-    public int Calculate(int likes, int views)
+    public static int Calculate(int likes, int views)
     {
-        var likeWeight = 0.7;
-        var viewWeight = 0.3;
-        likes = likes * 100 / (likes + views);
-        views = views * 100 / (likes + views);
-        likes = (int)(likes * likeWeight);
-        views = (int)(views * viewWeight); 
-        return likes + views;
+        if (views == 0) return 0;
+
+        // Fame rating formula
+        var rating = (double)likes / views * 100;
+        return (int)rating; 
     }
 }

@@ -85,7 +85,6 @@ builder.Services.AddScoped<ActionService>();
 builder.Services.AddScoped<ClaimsService>();
 
 builder.Services.AddScoped<QueryBuilder>();
-builder.Services.AddScoped<FameRatingCalculator>();
 builder.Services.AddScoped<EntityCreator>();
 builder.Services.AddScoped<TableFetcher>();
 builder.Services.AddScoped<ParameterInjector>();

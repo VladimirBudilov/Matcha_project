@@ -4,6 +4,9 @@ import { message } from 'ant-design-vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import {type Profile} from '@/stores/SignUpStore'
+import { useNotificationStore} from '@/stores/NotoficationStore'
+
+const store = useNotificationStore();
 
 const componentDisabled = ref(true);
 const uploadUrl = ref('')
@@ -39,7 +42,9 @@ const GetProfile = async () => {
 			uploadUrl.value = axios.defaults.baseURL + 'api/FileManager/uploadPhoto/' + profile.value.profileId
 			console.log(profile.value)
 		}
-	})
+	});
+
+  await store.connection?.invoke("SendNotificationToUser", Number(route.params.id));
 }
 
 onMounted(async () => {

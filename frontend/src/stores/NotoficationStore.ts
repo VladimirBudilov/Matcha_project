@@ -5,28 +5,28 @@ import {useStorage} from "@vueuse/core";
 import createConnection from "@/services/NotificationService";
 
 export class NotificationType {
-    readonly ChatMessage = "ChatMessage";
-    readonly Like = "Like";
-    readonly ResponseLike = "ResponseLike";
-    readonly Unlike = "Unlike";
-    readonly Viewed = "Viewed";
+    readonly chatMessage = "ChatMessage";
+    readonly like = "Like";
+    readonly responseLike = "ResponseLike";
+    readonly unlike = "Unlike";
+    readonly viewed = "Viewed";
 }
 
 export class Notification {
-    User: string;
-    Message: string;
-    Type: NotificationType;
+    actor: string;
+    message: string;
+    type: NotificationType;
 
     constructor(user: string, message: string, type: NotificationType) {
-        this.User = user;
-        this.Message = message;
-        this.Type = type;
+        this.actor = user;
+        this.message = message;
+        this.type = type;
     }
 }
 
 export const useNotificationStore = defineStore('notification', {
     state: () => ({
-        connection: ref<HubConnection>(),
+        connection: ref<HubConnection | null>(null),
         notifications: ref<Notification[]>([])
     }),
     actions: {
@@ -44,10 +44,6 @@ export const useNotificationStore = defineStore('notification', {
         getNotifications() : Notification[]
         {
             return this.notifications;
-        },
-        getConnection() : HubConnection | undefined
-        {
-            return this.connection;
         }
     }
 });

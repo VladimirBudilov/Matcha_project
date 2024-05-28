@@ -9,7 +9,6 @@ import ParamsGetProfile from '@/components/ParamsGetProfile.vue'
 import { storeToRefs } from 'pinia';
 
 const store = useNotificationStore();
-const connection = store.connection
 
 const profiles = storeToRefs(SignUpStore()).profiles
 
@@ -69,7 +68,7 @@ const sendLike = async (profileId: number) => {
 		}
 	})
 
-  await connection?.invoke("SendNotificationToUser", Number(profileId));
+  await store?.connection?.invoke("SendNotificationToUser", Number(profileId)).catch(err => console.log(err.toString()));
 }
 
 

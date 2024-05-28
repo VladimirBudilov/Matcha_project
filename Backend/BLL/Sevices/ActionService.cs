@@ -11,7 +11,6 @@ public class ActionService(
     LikesRepository likesRepository,
     ProfileRepository userRepository,
     ProfileViewsRepository profileViewRepository,
-    FameRatingCalculator fameRatingCalculator,
     ServiceValidator validator
 )
 {
@@ -41,19 +40,17 @@ public class ActionService(
         return (notificationType, like);
     }
 
-    public async Task ViewUser(int viewerId, int viewedId)
+    public async Task<bool> TryViewUser(int viewerId, int viewedId)
     {
-        if (viewerId == viewedId) return;
-
+        if (viewerId == viewedId) return false;
         await validator.CheckUserExistence([viewerId, viewedId]);
-
-
-        if(await profileViewRepository.GetView(viewerId, viewedId) != null) return;
+        if(await profileViewRepository.GetView(viewerId, viewedId) != null) return true;
 
         await profileViewRepository.CreateProfileViewsAsync(new ProfileView()
             { ViewedId = viewedId, ViewerId = viewerId });
 
         await UpdateFameRating(viewedId);
+        return true;
     }
 
     private async Task UpdateFameRating(int id)
@@ -61,7 +58,7 @@ public class ActionService(
         var user = await userRepository.GetProfileByIdAsync(id);
         var userViews = await profileViewRepository.GetProfileViewsByUserIdAsync(id);
         var userLikes = await likesRepository.GetLikesByUserIdAsync(id);
-        user.FameRating = fameRatingCalculator.Calculate(userLikes.Count(), userViews.Count());
+        user.FameRating = FameRatingCalculator.Calculate(userLikes.Count(), userViews.Count());
         await userRepository.UpdateFameRatingAsync(user);
     }
 }

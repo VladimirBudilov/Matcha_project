@@ -8,9 +8,9 @@ public class NotificationService
     private ConcurrentDictionary<int, string> UsersOnline { get; set; } = new();
     private ConcurrentDictionary<int, List<Notification>> UsersNotification { get; set; } = new();
     
-    public void AddOnlineUser(int userId,string unqueId)
+    public void AddOnlineUser(int userId,string uniqueId)
     {
-        UsersOnline.TryAdd(userId, unqueId);
+        UsersOnline[userId] =  uniqueId;
     }
     
     public void RemoveOnlineUser(int userId)

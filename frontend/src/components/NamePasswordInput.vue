@@ -15,7 +15,6 @@ const SignUpButtonTurnOn = () => {
 
 const IsLogin = storeToRefs(SignUpStore()).IsLogin
 
-const store = useNotificationStore();
 
 interface FormState {
 	username: string;
@@ -51,21 +50,6 @@ const onFinish = async (values: any) => {
       console.log("login");
 
       axios.defaults.headers.common.Authorization = 'Bearer ' + loginRes.token;
-
-      var connection = createConnection();
-      console.log("login connection object",connection)
-      if (connection) {
-        await connection.start()
-            .then(() => {
-              console.log('Connection started');
-              connection?.on('ReceiveNotification', (message: Notification[]) => {
-                console.log('ReceiveNotification: ' + message);
-              })
-            })
-            .catch((err: Error) => console.error('Error while starting connection: ' + err));
-      }
-      store.setConnection(connection);
-
       window.location.assign('https://' + window.location.host)
 		}
 	})

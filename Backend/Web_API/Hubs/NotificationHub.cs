@@ -47,13 +47,12 @@ public class NotificationHub(
         if(!notificationService.GetUsersId().Contains(id)) return;
         var userNotifications = notificationService.GetNotifications(id);
         await Clients.Client(identifier).ReceiveNotifications(userNotifications);
+        ClearNotifications(id);
     }
     
-    public Task ClearNotifications()
+    public void ClearNotifications(int id)
     {
-        var userId = claimsService.GetId(Context.User?.Claims);
-        notificationService.ClearNotifications(userId);
-        return Task.CompletedTask;
+        notificationService.ClearNotifications(id);
     }
 }
 
