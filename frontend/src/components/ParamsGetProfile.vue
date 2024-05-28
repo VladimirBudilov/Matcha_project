@@ -1,36 +1,31 @@
 <script setup lang="ts">
-import type { GetProfileParams, Interests } from '@/stores/SignUpStore';
+import type { Interests } from '@/stores/SignUpStore';
 import { SignUpStore } from '@/stores/SignUpStore';
 import { message } from 'ant-design-vue';
 import axios from 'axios';
 import { storeToRefs } from 'pinia';
-import { onMounted, reactive, ref } from 'vue';
-
-const getProfileParams = reactive<GetProfileParams>({
-	PageNumber: 1,
-	PageSize: 10,
-	Total: 0,
-	SexualPreferences: '',
-	//MaxDistance: number,
-	//MinFameRating?: number,
-	//MaxFameRating?: number,
-	//MaxAge?: number,
-	//MinAge?: number,
-	//IsLikedUser?: boolean,
-	CommonTags: [],
-	//IsMatched?: boolean,
-	//SortLocation: '',
-	//SortFameRating: '',
-	//SortAge: '',
-	//SortCommonTags: '',
-	//SortingMainParameter: '',
-})
+import { onMounted, ref } from 'vue';
 
 const profiles = storeToRefs(SignUpStore()).profiles
+const getProfileParams = storeToRefs(SignUpStore()).getProfileParams
+const sortMainParam = [{label: 'Distance', value: 0},
+	{label: 'Rating', value: 1},
+	{label: 'Age', value: 2},
+	{label: 'Interests', value: 3}]
+
+const sort = [{label: 'Ascending', value:'ASC'},
+	{label: 'Descending', value: 'DESC'}]
+
+const age = ref<[number, number]>([getProfileParams.value.MinAge, getProfileParams.value.MaxAge])
+const rating = ref<[number, number]>([getProfileParams.value.MinFameRating, getProfileParams.value.MaxFameRating])
 
 const GetProfile = async () => {
+	getProfileParams.value.MinAge = age.value[0]
+	getProfileParams.value.MaxAge = age.value[1]
+	getProfileParams.value.MinFameRating = rating.value[0]
+	getProfileParams.value.MaxFameRating = rating.value[1]
 	await axios.get('api/profile', {
-		params: getProfileParams
+		params: getProfileParams.value
 	}).catch((res) => {
 
 		if (res.code == 403) {
@@ -42,7 +37,6 @@ const GetProfile = async () => {
 	}).then((res) => {
 		if (res?.data){
 			profiles.value = res.data.profiles
-
 			console.log(res.data)
 			console.log(res.data.profiles)
 			console.log(profiles.value)
@@ -72,11 +66,11 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 	<a-card id="input-params-get-profile">
 		<div id="input-form-get-profile">
 			<a-form
-		:label-col="{ span: 14 }"
-		:wrapper-col="{ span: 10 }"
+		:label-col="{ span: 10 }"
+		:wrapper-col="{ span: 30 }"
 		layout="horizontal"
 		:disabled="false"
-		style="width: 15vw"
+		style="width: 30vw"
 		>
 			<a-form-item label="User Id">
 				<a-input-number v-model:value="getProfileParams.UserId"/>
@@ -89,39 +83,15 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 				placeholder="Please select"
 				></a-select>
 			</a-form-item>
-			<a-form-item label="Max Distance">
-				<a-input-number v-model:value="getProfileParams.MaxDistance"/>
-			</a-form-item>
-			<a-form-item label="Max Distance">
-				<a-input-number v-model:value="getProfileParams.MaxDistance"/>
+			<a-form-item label="Is matched">
+				<a-checkbox v-model:checked="getProfileParams.IsMatched"></a-checkbox>
 			</a-form-item>
 			<a-form-item label="Is liked user">
 				<a-checkbox v-model:checked="getProfileParams.IsLikedUser"></a-checkbox>
 			</a-form-item>
 
-		</a-form>
-		<a-form
-		:label-col="{ span: 14 }"
-		:wrapper-col="{ span: 10 }"
-		layout="horizontal"
-		:disabled="false"
-		style="width: 15vw"
-		>
-			<a-form-item label="Min fame rating">
-				<a-input-number v-model:value="getProfileParams.MinFameRating"/>
-			</a-form-item>
-			<a-form-item label="Max fame rating">
-				<a-input-number v-model:value="getProfileParams.MaxFameRating"/>
-			</a-form-item>
-			<a-form-item label="Max age">
-				<a-input-number v-model:value="getProfileParams.MaxAge"/>
-			</a-form-item>
-			<a-form-item label="Min age">
-				<a-input-number v-model:value="getProfileParams.MinAge" :min='18'/>
-			</a-form-item>
-			<a-form-item label="Is matched">
-				<a-checkbox v-model:checked="getProfileParams.IsMatched"></a-checkbox>
-			</a-form-item>
+			<a-button type="primary" html-type="signup" @click="GetProfile" style="position: relative; margin-left: 7vw; z-index: 1;">Search</a-button>
+
 		</a-form>
 		<a-form
 		:label-col="{ span: 10 }"
@@ -139,6 +109,15 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 				placeholder="Please select"
 				></a-select>
 		</a-form-item>
+		<a-form-item label="Distance">
+				<a-slider v-model:value="getProfileParams.MaxDistance" :max=200 />
+			</a-form-item>
+			<a-form-item label="Age">
+				<a-slider v-model:value="age" range :min=18 />
+			</a-form-item>
+			<a-form-item label="Rating">
+				<a-slider v-model:value="rating" range :max=999 />
+			</a-form-item>
 		</a-form>
 		<a-form
 		:label-col="{ span: 10 }"
@@ -148,23 +127,48 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 		style="width: 30vw"
 		>
 		<a-form-item label="Sort location">
-			<a-input v-model:value="getProfileParams.SortLocation" />
+			<a-select
+				v-model:value="getProfileParams.SortLocation"
+				:options="sort"
+				size="middle"
+				placeholder="Please select"
+				></a-select>
 		</a-form-item>
 		<a-form-item label="Sort fame rating">
-			<a-input v-model:value="getProfileParams.SortFameRating" />
+			<a-select
+				v-model:value="getProfileParams.SortFameRating"
+				:options="sort"
+				size="middle"
+				placeholder="Please select"
+				></a-select>
 		</a-form-item>
 		<a-form-item label="Sort age">
-			<a-input v-model:value="getProfileParams.SortAge" />
+			<a-select
+				v-model:value="getProfileParams.SortAge"
+				:options="sort"
+				size="middle"
+				placeholder="Please select"
+				></a-select>
 		</a-form-item>
 		<a-form-item label="Sort common tags">
-			<a-input v-model:value="getProfileParams.SortCommonTags" />
+			<a-select
+				v-model:value="getProfileParams.SortCommonTags"
+				:options="sort"
+				size="middle"
+				placeholder="Please select"
+				></a-select>
 		</a-form-item>
 		<a-form-item label="Sorting main parameter">
-			<a-input v-model:value="getProfileParams.SortingMainParameter" />
+			<a-select
+				v-model:value="getProfileParams.SortingMainParameter"
+				:options="sortMainParam"
+				size="middle"
+				placeholder="Please select"
+				></a-select>
 		</a-form-item>
 		</a-form>
 		</div>
-		<a-button type="primary" html-type="signup" @click="GetProfile" style="position: absolute; padding-left: 1vw; z-index: 1;">Search</a-button>
+
 	</a-card>
 
 

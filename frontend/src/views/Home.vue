@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { onMounted, reactive, ref, watch } from 'vue';
 import { message } from 'ant-design-vue';
-import type { Profile, GetProfileParams } from '@/stores/SignUpStore';
+import type { Profile } from '@/stores/SignUpStore';
 import {useNotificationStore} from '@/stores/NotoficationStore'
 import { SignUpStore } from '@/stores/SignUpStore';
 import ParamsGetProfile from '@/components/ParamsGetProfile.vue'
@@ -11,12 +11,8 @@ import { storeToRefs } from 'pinia';
 const store = useNotificationStore();
 
 const profiles = storeToRefs(SignUpStore()).profiles
+const getProfileParams = storeToRefs(SignUpStore()).getProfileParams
 
-const getProfileParams = reactive<GetProfileParams>({
-	PageNumber: 1,
-	PageSize: 10,
-	Total: 0,
-})
 const GetProfile = async () => {
 
 	await axios.get('api/profile', {
@@ -28,8 +24,8 @@ const GetProfile = async () => {
 	}).then((res) => {
 		if (res?.data){
 			profiles.value = res.data.profiles
-			if (getProfileParams.PageSize) {
-				getProfileParams.Total = getProfileParams.PageSize * res.data.amountOfPages
+			if (getProfileParams.value.PageSize) {
+				getProfileParams.value.Total = getProfileParams.value.PageSize * res.data.amountOfPages
 			}
 
 			console.log(res.data)
@@ -72,9 +68,9 @@ const sendLike = async (profileId: number) => {
 }
 
 
-watch(() => getProfileParams.PageNumber,
+watch(() => getProfileParams.value.PageNumber,
 	async () => {
-  	console.log('current', getProfileParams.PageNumber);
+  	console.log('current', getProfileParams.value.PageNumber);
   	await GetProfile()}
 );
 

@@ -6,6 +6,7 @@ import Settings from '@/views/Settings.vue'
 import ChatView from '@/views/ChatView.vue'
 import User from '@/views/User.vue'
 
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
