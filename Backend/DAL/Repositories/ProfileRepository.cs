@@ -134,19 +134,19 @@ public class ProfileRepository(
         var userInterestsIds = userInterests.Select(interest => interest.InterestId).ToArray();
         var queryBuilder = new QueryBuilder();
         queryBuilder
-            .Select($" users.user_id as user_id, users.*, profiles.*, ")
-            .Select($"calculate_distance('@profile_latitude', '@profile_longitude', profiles.latitude, profiles.longitude) as distance, ")
-            .Select($"count_common_elements(@userInterests, ARRAY_AGG(interests.interest_id)) AS common_interests ")
+            .Select(" users.user_id as user_id, users.*, profiles.*, ")
+            .Select("calculate_distance(@profile_latitude, @profile_longitude, profiles.latitude, profiles.longitude) as distance, ")
+            .Select("count_common_elements(@userInterests, ARRAY_AGG(interests.interest_id)) AS common_interests ")
             .From("users JOIN profiles ON users.user_id = profiles.profile_id ")
             .From("LEFT JOIN user_interests ON user_interests.user_id = users.user_id ")
             .From("LEFT JOIN interests ON user_interests.interest_id = interests.interest_id ");
+        var latitude = Math.Round((double)profile.Latitude, 2);
+        var longitude = Math.Round((double)profile.Longitude, 2);
         var parameters = new Dictionary<string, object>
         {
-            { "@profile_latitude", profile.Latitude },
-            { "@profile_longitude", profile.Longitude },
+            { "@profile_latitude", latitude },
+            { "@profile_longitude", longitude },
             {"@userInterests", userInterestsIds},
-            {"@pageSize",pagination.PageSize},
-            {"@offset",pagination.PageSize * pagination.PageNumber}
         };
 
         //add filters
@@ -154,11 +154,13 @@ public class ProfileRepository(
         //add group by
         ApplyOrdering(sortParams, ref queryBuilder);
         //add pagination
-        var numberOfUsers = await GetNumberOfUsers(queryBuilder, userInterestsIds);
+        var numberOfUsers = await GetNumberOfUsers(queryBuilder, parameters);
         if (numberOfUsers == 0) return (0, new List<User>());
         
         queryBuilder.Limit($" @pageSize ");
         queryBuilder.Offset($" @offset ");
+        parameters.Add("@pageSize", pagination.PageSize);
+        parameters.Add("@offset",(pagination.PageNumber - 1) * pagination.PageSize);
         
 
         var table = await fetcher.GetTableByParameter(queryBuilder.Build(), parameters);
@@ -177,15 +179,13 @@ public class ProfileRepository(
         }*/
     }
 
-    private async Task<long> GetNumberOfUsers(QueryBuilder queryBuilder, int[] userInterestsIds)
+    private async Task<long> GetNumberOfUsers(QueryBuilder queryBuilder,
+        Dictionary<string, object> parameters)
     {
         var counter = new QueryBuilder()
             .Select("Count(*) ")
             .From($" ({queryBuilder.Build()})");
-        var counterParams = new Dictionary<string, object>(){
-            {"@userInterests", userInterestsIds}
-        };
-        var countCommand = await fetcher.GetTableByParameter(counter.Build(), counterParams);
+        var countCommand = await fetcher.GetTableByParameter(counter.Build(), parameters);
         var count = (long)countCommand.Rows[0][0];
         return count;
     }
@@ -219,11 +219,11 @@ public class ProfileRepository(
         Dictionary<string, object> parameters,
         ref QueryBuilder queryBuilder)
     {
-        queryBuilder.Where($"users.user_id != profile_id AND profiles.is_active = TRUE AND users.is_verified = TRUE ");
+        queryBuilder.Where($"users.user_id != @profile_id AND profiles.is_active = TRUE AND users.is_verified = TRUE ");
         parameters.Add("@profile_id", profile.Id);
         if(searchParams.MaxDistance!= null)
         {
-            queryBuilder.Where($"AND calculate_distance(latitude,longitude,@profile_latitude,@profile_longitude) < @maxDistance ");
+            queryBuilder.Where($"AND calculate_distance(latitude,longitude,@profile_latitude, @profile_longitude) < @maxDistance ");
             parameters.Add("@maxDistance", searchParams.MaxDistance);
         }
 
