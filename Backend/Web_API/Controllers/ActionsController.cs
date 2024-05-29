@@ -1,7 +1,9 @@
 ﻿using BLL.Sevices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Web_API.DTOs;
 using Web_API.DTOs.Request;
 using Web_API.Helpers;
 using Web_API.Hubs.Helpers;
@@ -17,7 +19,8 @@ public class ActionsController(
     NotificationService notificationService,
     DtoValidator validator,
     UserService userService,
-    ClaimsService claimsService
+    ClaimsService claimsService,
+    ChatService chatService
     ) : ControllerBase
 {
     [HttpPost("like")]
@@ -38,10 +41,14 @@ public class ActionsController(
     }
     
     [HttpGet("chat")]
-    public async Task<IActionResult> GetChat([FromBody]UserActionRequestDto userAction)
+    public async Task<ActionResult<ResponseDto<List<MessageResponseDto>>>> GetChat([FromBody]UserActionRequestDto userAction)
     {
-        //create chat with signalR hub
-        return Ok();
+        var messages = await chatService.GetMessages(userAction.producerId, userAction.consumerId);
+        var response = new ResponseDto<List<MessageResponseDto>>()
+        {
+            
+        }
+        return Ok(messages);
     }
 
     [HttpGet("clearNotification/{id:int}")]

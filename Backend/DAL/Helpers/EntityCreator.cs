@@ -9,7 +9,7 @@ public class EntityCreator
     {
         return new Profile
         {
-            ProfileId = userInfoRow.Field<int>("profile_id"),
+            Id = userInfoRow.Field<int>("profile_id"),
             Gender = userInfoRow.IsNull("gender") ? null : userInfoRow.Field<string>("gender"),
             SexualPreferences = userInfoRow.IsNull("sexual_preferences")
                 ? null
@@ -30,7 +30,7 @@ public class EntityCreator
     {
         return new User
         {
-            UserId = row.Field<int>("user_id"),
+            Id = row.Field<int>("user_id"),
             IsVerified = row.Field<bool>("is_verified"),
             UserName = row.Field<string>("user_name"),
             FirstName = row.Field<string>("first_name"),
@@ -46,7 +46,7 @@ public class EntityCreator
     {
         return new Picture
         {
-            PictureId = row.Field<int>("picture_id"),
+            Id = row.Field<int>("picture_id"),
             UserId = row.Field<int>("user_id"),
             PicturePath = row.Field<byte[]>("picture_path"),
             IsProfilePicture = row.Field<int>("is_profile_picture") == 1,

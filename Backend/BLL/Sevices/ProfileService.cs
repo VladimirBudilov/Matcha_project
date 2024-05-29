@@ -25,7 +25,7 @@ public class ProfileService(
 
         var builder = new ProfileBuilder();
         builder.AddMainData(user);
-        builder.AddProfilePictures(await picturesRepository.GetPicturesByUserIdAsync(user.UserId));
+        builder.AddProfilePictures(await picturesRepository.GetPicturesByUserIdAsync(user.Id));
         builder.AddMainProfilePicture(await picturesRepository.GetProfilePictureAsync(user.Profile?.ProfilePictureId));
         builder.AddUserInterests(await interestsRepository.GetInterestsByUserIdAsync(id));
         return builder.Build();
@@ -45,7 +45,7 @@ public class ProfileService(
             builder.AddMainData(user);
             builder.AddMainProfilePicture(
                 await picturesRepository.GetProfilePictureAsync(user.Profile?.ProfilePictureId));
-            builder.AddUserInterests(await interestsRepository.GetInterestsByUserIdAsync(user.UserId));
+            builder.AddUserInterests(await interestsRepository.GetInterestsByUserIdAsync(user.Id));
             usersList.Add(builder.Build());
         }
 
@@ -62,11 +62,14 @@ public class ProfileService(
         }
         var currentProfile = await profileRepository.GetProfileByIdAsync(id);
         if (currentProfile == null) throw new ObjectNotFoundException("Profile not found");
-        profile.ProfileId = id;
+        profile.Id = id;
         var res = await profileRepository.UpdateProfileAsync(profile);
         if (res == null) throw new ObjectNotFoundException("Profile not found");
         //add/update interests
-        var userInterestsByNamesAsync = await interestsRepository.GetUserInterestsByNamesAsync(profile.Interests.Select(i => i.Name));
+        var userInterestsByNamesAsync = await interestsRepository
+            .GetUserInterestsByNamesAsync(profile.Interests
+                .Select(i => i.Name)
+                .ToList());
         await interestsRepository.UpdateUserInterestsAsync(id, userInterestsByNamesAsync);
     }
 
@@ -82,7 +85,7 @@ public class ProfileService(
                 await picturesRepository.DeletePhotoAsync(userId, (int)user.ProfilePictureId);
             }
         }
-        var pictureId = picturesRepository.UploadPhoto(userId, filePicture, isProfilePicture);
+        var pictureId = await picturesRepository.UploadPhoto(userId, filePicture, isProfilePicture);
         if (isMain)
         {
             await profileRepository.UpdateProfilePictureAsync( userId, pictureId);
@@ -122,7 +125,7 @@ public class ProfileService(
 
     public async Task<User> CheckUserLike(User user, int viewerId)
     {
-            user.HasLike = await likesRepository.HasLike(viewerId, user.UserId);
+            user.HasLike = await likesRepository.HasLike(viewerId, user.Id);
             return user;
     }
     
@@ -130,7 +133,7 @@ public class ProfileService(
     {
         foreach (var user in users)
         {
-            user.HasLike = await likesRepository.HasLike(viewerId, user.UserId);
+            user.HasLike = await likesRepository.HasLike(viewerId, user.Id);
         }
 
         return users;

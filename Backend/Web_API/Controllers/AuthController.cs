@@ -57,7 +57,7 @@ public class AuthController(
         var token = GenerateJwtToken(await userService.GetUserByUserNameAsync(loginDto.UserName));
         
         var user = await userService.GetUserByUserNameAsync(loginDto.UserName);
-        notificationService.AddNotification(user.UserId, new Notification(){Actor = user.UserName, Message = "You have logged in"});
+        notificationService.AddNotification(user.Id, new Notification(){Actor = user.UserName, Message = "You have logged in"});
 
         return Ok(new AuthResponseDto()
         {
@@ -105,7 +105,7 @@ public class AuthController(
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim("Id", user.UserId.ToString()),
+                new Claim("Id", user.Id.ToString()),
                 new Claim( ClaimTypes.NameIdentifier, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Hash, Guid.NewGuid().ToString())

@@ -59,7 +59,7 @@ public class EmailService(IOptions<SmtpConfig> smtpConfig)
             throw new DataValidationException("Invalid token");
         }
 
-        var alreadyVerified = await authService.ConfirmEmailAsync(user.UserId);
+        var alreadyVerified = await authService.ConfirmEmailAsync(user.Id);
         if (alreadyVerified)
         {
             throw new DataValidationException("Email already verified");

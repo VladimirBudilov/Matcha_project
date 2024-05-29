@@ -1,8 +1,7 @@
 ﻿namespace DAL.Entities;
 
-public class Interest
+public class Interest : AbstractEntity
 {
-    public int UserId { get; set; }
     public int InterestId { get; set; }
     public string Name { get; set; }
 }

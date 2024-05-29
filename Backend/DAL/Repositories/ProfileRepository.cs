@@ -1,6 +1,8 @@
 ﻿using System.Data;
+using System.Text;
 using DAL.Entities;
 using DAL.Helpers;
+using Microsoft.Extensions.Primitives;
 using Npgsql;
 
 namespace DAL.Repositories;
@@ -11,18 +13,12 @@ public class ProfileRepository(
     EntityCreator entityCreator,
     TableFetcher fetcher)
 {
-    private readonly string _connectionString = configuration.ConnectionString
-                                                ?? throw new ArgumentNullException(nameof(configuration),
-                                                    "Connection string not found in configuration");
-
     public async Task<User?> GetFullProfileAsync(int id)
     {
-        await using var connection = new NpgsqlConnection(_connectionString);
-        await connection.OpenAsync();
-        connection.CreateCommand();
-        var userInfo = await fetcher.GetTableByParameter(connection, "SELECT * FROM users" +
-                                                                     " LEFT JOIN profiles ON users.user_id = profiles.profile_id" +
-                                                                     " WHERE user_id = @id", "@id", id);
+        var query = new StringBuilder().Append("SELECT * FROM users")
+            .Append(" LEFT JOIN profiles ON users.user_id = profiles.profile_id")
+            .Append(" WHERE user_id = @id");
+        var userInfo = await fetcher.GetTableByParameter(query.ToString(), "@id", id);
         if (userInfo.Rows.Count > 0)
         {
             var userInfoRow = userInfo.Rows[0];
@@ -38,10 +34,7 @@ public class ProfileRepository(
     {
         try
         {
-            await using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-            var dataTable = await fetcher.GetTableByParameter(connection,
-                "SELECT * FROM profiles WHERE profile_id = @id", "@id", id);
+            var dataTable = await fetcher.GetTableByParameter("SELECT * FROM profiles WHERE profile_id = @id", "@id", id);
             return dataTable.Rows.Count > 0 ? entityCreator.CreateUserProfile(dataTable.Rows[0]) : null;
         }
         catch (Exception e)
@@ -54,17 +47,17 @@ public class ProfileRepository(
     {
         try
         {
-            await using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-            var command = connection.CreateCommand();
-            command.CommandText =
+            var query =
                 "INSERT INTO profiles (profile_id, gender, age) " +
                 " VALUES (@profile_id, @gender, @age)";
-            command.Parameters.AddWithValue("@profile_id", entity.ProfileId);
-            command.Parameters.AddWithValue("@gender", entity.Gender);
-            command.Parameters.AddWithValue("@age", entity.Age);
-            var res = await command.ExecuteNonQueryAsync();
-            return res > 0 ? entity : null;
+            var parametrs = new Dictionary<string, object>()
+            {
+                { "profile_id", entity.Id },
+                { "gender", entity.Gender },
+                { "age", entity.Age }
+            };
+            var table = await fetcher.GetTableByParameter(query, parametrs);
+            return table.Rows.Count > 0 ? entity : null;
         }
         catch (Exception e)
         {
@@ -76,10 +69,8 @@ public class ProfileRepository(
     {
         try
         {
-            await using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
             var query = "UPDATE profiles SET profile_picture_id = @profile_picture_id WHERE profile_id = @profile_id RETURNING profile_picture_id";
-            var table = await fetcher.GetTableByParameter(connection, query, new Dictionary<string, object>
+            var table = await fetcher.GetTableByParameter(query, new Dictionary<string, object>
             {
                 {"@profile_picture_id", pictureId},
                 {"@profile_id", userId}
@@ -95,36 +86,35 @@ public class ProfileRepository(
     {
         try
         {
-            await using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-            var command = connection.CreateCommand();
-            command.CommandText =
-                "UPDATE profiles SET gender = @gender," +
-                " sexual_preferences = @sexual_preferences, " +
-                "biography = @biography, age = @age, " +
-                "profile_picture_id = @profile_picture_id, " +
-                "latitude = @latitude, longitude = @longitude " +
-                "WHERE profile_id = @profile_id " +
-                "RETURNING is_active";
-
-            command.Parameters.AddWithValue("@profile_id", entity.ProfileId);
-            command.Parameters.AddWithValue("@gender", entity.Gender);
-            command.Parameters.AddWithValue("@sexual_preferences", entity.SexualPreferences);
-            command.Parameters.AddWithValue("@biography", entity.Biography);
-            command.Parameters.AddWithValue("@age", entity.Age);
-            command.Parameters.AddWithValue("@latitude", entity.Latitude);
-            command.Parameters.AddWithValue("@longitude", entity.Longitude);
-
-            var isActive =  (bool)command.ExecuteScalar()!;
-            //get full data about user and check that it does nor contain nulls
-            if (!isActive && !(await GetProfileByIdAsync(entity.ProfileId)).HasEmptyFields())
+            
+            var query = new StringBuilder()
+                .Append("UPDATE profiles SET gender = @gender,")
+                .Append(" sexual_preferences = @sexual_preferences, ")
+                .Append("biography = @biography, age = @age, ")
+                .Append("profile_picture_id = @profile_picture_id, ")
+                .Append("latitude = @latitude, longitude = @longitude ")
+                .Append("WHERE profile_id = @profile_id ")
+                .Append("RETURNING is_active");
+            var parameters = new Dictionary<string, object>()
             {
-                command.CommandText =
-                    "UPDATE profiles SET is_active = TRUE " +
-                    " WHERE profile_id = @profile_id";
-                await command.ExecuteNonQueryAsync();
+                { "@profile_id", entity.Id },
+                { "@gender", entity.Gender },
+                { "@sexual_preferences", entity.SexualPreferences },
+                { "@biography", entity.Biography },
+                { "@age", entity.Age },
+                { "@latitude", entity.Latitude },
+                { "@longitude", entity.Longitude }
+            };
+            
+            var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
+            var isActive =  (bool)table.Rows[0]["is_active"];
+            if (!isActive && !(await GetProfileByIdAsync(entity.Id)).HasEmptyFields())
+            {
+                query = new StringBuilder()
+                    .Append("UPDATE profiles SET is_active = TRUE ")
+                    .Append(" WHERE profile_id = @profile_id");
+                await fetcher.GetTableAsync(query.ToString());
             }
-            // Deconstruct profile
             return  entity;
         }
         catch (Exception e)
@@ -142,47 +132,64 @@ public class ProfileRepository(
         var profile = (await GetFullProfileAsync(searchParams.UserId))!.Profile;
         /*try
         {*/
-        await using var connection = new NpgsqlConnection(_connectionString);
-        await connection.OpenAsync();
-        var command = connection.CreateCommand();
         var userInterests = await interestsRepository.GetInterestsByUserIdAsync(searchParams.UserId);
         var userInterestsIds = userInterests.Select(interest => interest.InterestId).ToArray();
         var queryBuilder = new QueryBuilder();
         queryBuilder
             .Select($" users.user_id as user_id, users.*, profiles.*, ")
-            .Select($"calculate_distance('{profile.Latitude}', '{profile.Longitude}', profiles.latitude, profiles.longitude) as distance, ")
+            .Select($"calculate_distance('@profile_latitude', '@profile_longitude', profiles.latitude, profiles.longitude) as distance, ")
             .Select($"count_common_elements(@userInterests, ARRAY_AGG(interests.interest_id)) AS common_interests ")
-            
             .From("users JOIN profiles ON users.user_id = profiles.profile_id ")
             .From("LEFT JOIN user_interests ON user_interests.user_id = users.user_id ")
             .From("LEFT JOIN interests ON user_interests.interest_id = interests.interest_id ");
+        var parameters = new Dictionary<string, object>
+        {
+            { "@profile_latitude", profile.Latitude },
+            { "@profile_longitude", profile.Longitude },
+            {"@userInterests", userInterestsIds},
+            {"@pageSize",pagination.PageSize},
+            {"@offset",pagination.PageSize * pagination.PageNumber}
+        };
+
         //add filters
-        ApplyFilters(searchParams, profile, command, ref queryBuilder);
+        ApplyFilters(searchParams, profile, parameters, ref queryBuilder);
         //add group by
         ApplyOrdering(sortParams, ref queryBuilder);
-        //add pagination\;
-        var counter = new QueryBuilder().Select($"Count(*) ").From($" ({queryBuilder.Build()})");
-        var countCommand = connection.CreateCommand();
-        countCommand.CommandText = counter.Build();
-        countCommand.Parameters.AddWithValue("@userInterests", userInterestsIds);
-        var count = (long) await countCommand.ExecuteScalarAsync();
-        if (count == 0) return (0, new List<User>());
+        //add pagination
+        var numberOfUsers = await GetNumberOfUsers(queryBuilder, userInterestsIds);
+        if (numberOfUsers == 0) return (0, new List<User>());
         
-        queryBuilder.Limit($" {pagination.PageSize} ");
-        queryBuilder.Offset($" {(pagination.PageNumber -1) * pagination.PageSize} ");
+        queryBuilder.Limit($" @pageSize ");
+        queryBuilder.Offset($" @offset ");
+        
 
-        command.CommandText = queryBuilder.Build();
-        command.Parameters.AddWithValue("@userInterests", userInterestsIds);
-        var dataTable = new DataTable();
-        var reader = await command.ExecuteReaderAsync();
-        dataTable.Load(reader);
-        var users = dataTable.Rows.Count > 0 ? entityCreator.CreateUsers(dataTable) : null;
-        return (count, users);
+        var table = await fetcher.GetTableByParameter(queryBuilder.Build(), parameters);
+        var users = new List<User>();
+        foreach (DataRow row in table.Rows)
+        {
+            var user = entityCreator.CreateUser(row);
+            user.Profile = entityCreator.CreateUserProfile(row);
+            users.Add(user);
+        }
+        return (numberOfUsers, users);
         /*}
         catch (Exception e)
         {
             throw new DataAccessErrorException("Error while getting full profiles", e);
         }*/
+    }
+
+    private async Task<long> GetNumberOfUsers(QueryBuilder queryBuilder, int[] userInterestsIds)
+    {
+        var counter = new QueryBuilder()
+            .Select("Count(*) ")
+            .From($" ({queryBuilder.Build()})");
+        var counterParams = new Dictionary<string, object>(){
+            {"@userInterests", userInterestsIds}
+        };
+        var countCommand = await fetcher.GetTableByParameter(counter.Build(), counterParams);
+        var count = (long)countCommand.Rows[0][0];
+        return count;
     }
 
     private void ApplyOrdering(SortParameters sortParams, ref QueryBuilder queryBuilder)
@@ -209,60 +216,69 @@ public class ProfileRepository(
         }
     }
 
-    private void ApplyFilters(SearchParameters searchParams, Profile profile, NpgsqlCommand command,
+    private static void ApplyFilters(SearchParameters searchParams,
+        Profile profile,
+        Dictionary<string, object> parameters,
         ref QueryBuilder queryBuilder)
     {
-        queryBuilder.Where($"users.user_id != {profile.ProfileId} AND profiles.is_active = TRUE AND users.is_verified = TRUE ");
+        queryBuilder.Where($"users.user_id != profile_id AND profiles.is_active = TRUE AND users.is_verified = TRUE ");
+        parameters.Add("@profile_id", profile.Id);
         if(searchParams.MaxDistance!= null)
         {
-            queryBuilder.Where($"AND calculate_distance(latitude,longitude,{profile.Latitude},{profile.Longitude} < {searchParams.MaxDistance} ");
+            queryBuilder.Where($"AND calculate_distance(latitude,longitude,@profile_latitude,@profile_longitude) < @maxDistance ");
+            parameters.Add("@maxDistance", searchParams.MaxDistance);
         }
 
         if (searchParams.SexualPreferences != null)
         {
-            queryBuilder.Where($" AND sexual_preferences = '{searchParams.SexualPreferences}' ");
+            queryBuilder.Where($" AND sexual_preferences = '@sexualPreferences' ");
+            parameters.Add("@sexualPreferences", searchParams.SexualPreferences);
         }
 
         if (searchParams.CommonTags.Count != 0)
         {
             queryBuilder.Where($" AND count_shared_elements(@filterTags, ARRAY_AGG(interests.name)) >= {searchParams.CommonTags.Count}");
-            command.Parameters.AddWithValue("@filterTags", searchParams.CommonTags);
+            parameters.Add("@filterTags", searchParams.CommonTags);
         }
         
         if (searchParams.MinAge != null && searchParams.MaxAge != null)
         {
-            queryBuilder.Where($" AND age BETWEEN {searchParams.MinAge} AND {searchParams.MaxAge} ");
+            queryBuilder.Where($" AND age BETWEEN @minAge AND @maxAge ");
+            parameters.Add("@minAge", searchParams.MinAge);
+            parameters.Add("@maxAge", searchParams.MaxAge);
         }
         
         if (searchParams.MinFameRating != null && searchParams.MaxFameRating != null)
         {
-            queryBuilder.Where($" AND fame_rating BETWEEN {searchParams.MinFameRating} AND {searchParams.MaxFameRating} ");
+            queryBuilder.Where($" AND fame_rating BETWEEN @minFameRating AND @maxFameRating ");
+            parameters.Add("@minFameRating", searchParams.MinFameRating);
+            parameters.Add("@maxFameRating", searchParams.MaxFameRating);
         }
 
         if (searchParams.IsLikedUser != null)
         {
             queryBuilder.Where(searchParams.IsLikedUser == true
-                ? $" AND has_user_liked(users.user_id, {profile.ProfileId})"
-                : $" AND NOT has_user_liked(users.user_id, {profile.ProfileId})");
+                ? $" AND has_user_liked(users.user_id, @profile_id)"
+                : $" AND NOT has_user_liked(users.user_id, @profile_id)");
         }
 
         if (searchParams.IsMatched == null) return;
         queryBuilder.Where(searchParams.IsMatched == true
-            ? $" AND users_matched(users.user_id, {profile.ProfileId})"
-            : $" AND NOT users_matched(users.user_id, {profile.ProfileId})");
+            ? $" AND users_matched(users.user_id, @profile_id)"
+            : $" AND NOT users_matched(users.user_id, @profile_id)");
     }
 
     public async Task UpdateFameRatingAsync(Profile user)
     {
         try
         {
-            await using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-            var command = connection.CreateCommand();
-            command.CommandText = "UPDATE profiles SET fame_rating = @fame_rating WHERE profile_id = @profile_id";
-            command.Parameters.AddWithValue("@fame_rating", user.FameRating);
-            command.Parameters.AddWithValue("@profile_id", user.ProfileId);
-            await command.ExecuteNonQueryAsync();
+            var query = "UPDATE profiles SET fame_rating = @fame_rating WHERE profile_id = @profile_id";
+            var parameters = new Dictionary<string, object>
+            {
+                {"@fame_rating", user.FameRating},
+                {"@profile_id", user.Id}
+            };
+            await fetcher.GetTableByParameter(query, parameters);
         }
         catch (Exception e)
         {

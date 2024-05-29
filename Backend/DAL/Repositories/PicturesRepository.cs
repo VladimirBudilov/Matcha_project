@@ -7,66 +7,50 @@ using Npgsql;
 namespace DAL.Repositories;
 
 public class PicturesRepository(
-    DatabaseSettings configuration,
     EntityCreator entityCreator,
-    TableFetcher fetcher,
-    ParameterInjector injector)
+    TableFetcher fetcher)
 {
-    private readonly string _connectionString = configuration.ConnectionString
-                                                ?? throw new ArgumentNullException(nameof(configuration),
-                                                    "Connection string not found in configuration");
-
     public async Task<Picture> GetProfilePictureAsync(int? id)
     {
         if (id == null) return null;
-        await using var connection = new NpgsqlConnection(_connectionString);
-        await connection.OpenAsync();
-        connection.CreateCommand();
-        var table = await fetcher.GetTableByParameter(connection, "SELECT * FROM pictures" +
-                                                                  " WHERE picture_id = @id", "@id", (int)id);
+        var query = "SELECT * FROM pictures WHERE user_id = @id AND is_profile_picture = 1";
+        var table = await fetcher.GetTableByParameter(query, "@id", (int)id);
         if (table.Rows.Count == 0) return null;
         return entityCreator.CreatePicture(table.Rows[0]);
     }
 
     public async Task<IEnumerable<Picture>> GetPicturesByUserIdAsync(int id)
     {
-        var output = new List<Picture>();
-        await using var connection = new NpgsqlConnection(_connectionString);
-        await connection.OpenAsync();
-        
-        connection.CreateCommand();
-        var table = await fetcher.GetTableByParameter((NpgsqlConnection)connection, "SELECT * FROM pictures" +
-            " WHERE is_profile_picture = 0 AND user_id = @id", "@id", id);
-        foreach (DataRow row in table.Rows)
-        {
-            output.Add(entityCreator.CreatePicture(row));
-        }
+        var query = "SELECT * FROM pictures WHERE user_id = @id";
+        var table = await fetcher.GetTableByParameter(query, "@id", id);
 
-        return output;
+        return (from DataRow row in table.Rows select entityCreator.CreatePicture(row)).ToList();
     }
 
-    public int UploadPhoto(long id, byte[] filePicture, long isMain)
+    public async Task<int> UploadPhoto(int id, byte[] filePicture, int isMain)
     {
-        var query = new StringBuilder(
+        var query = 
             "INSERT INTO pictures (user_id, picture_path, is_profile_picture)" +
             " VALUES (@userId, @picture, @isMain)" +
-            "RETURNING picture_id;");
-        using var connection = new NpgsqlConnection(_connectionString);
-        connection.Open();
-        var command = connection.CreateCommand();
-        command.Parameters.AddWithValue("@userId", id);
-        command.Parameters.AddWithValue("@picture", filePicture);
-        command.Parameters.AddWithValue("@isMain", isMain);
-        command.CommandText = query.ToString();
-        return (int)command.ExecuteScalar()!;
+            "RETURNING picture_id;";
+        var table = await fetcher.GetTableByParameter(query, new Dictionary<string, object>()
+        {
+            { "@userId", id },
+            { "@picture", filePicture },
+            { "@isMain", isMain }
+
+        });
+        return (int)table.Rows[0]["picture_id"];
     }
 
     public async Task DeletePhotoAsync(int userId, int photoId)
     {
-        await using var connection = new NpgsqlConnection(_connectionString);
-        var query = new StringBuilder("DELETE FROM pictures WHERE user_id = @userId AND picture_id = @photoId");
-        await connection.OpenAsync();
-        await fetcher.GetTableByParameter(connection, query.ToString(),
-            new Dictionary<string, object> { { "@userId", userId }, { "@photoId", photoId } });
+        var query = "DELETE FROM pictures WHERE user_id = @userId AND picture_id = @photoId";
+        await fetcher.GetTableByParameter(query,
+            new Dictionary<string, object>
+            {
+                { "@userId", userId },
+                { "@photoId", photoId }
+            });
     }
 }

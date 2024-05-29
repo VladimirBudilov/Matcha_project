@@ -27,7 +27,7 @@ public class AuthService(UserRepository userRepository,
         userByUserName = await userRepository.GetUserByUserNameAsync(user.UserName);
         var profile = new Profile()
         {
-            ProfileId = userByUserName.UserId,
+            Id = userByUserName.Id,
             Gender = "male",
             Age = 18,
         };

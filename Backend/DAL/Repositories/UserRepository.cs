@@ -9,25 +9,19 @@ using Npgsql;
 namespace DAL.Repositories;
 
 public class UserRepository(
-    DatabaseSettings configuration,
+
     EntityCreator entityCreator,
     TableFetcher fetcher,
     ParameterInjector injector)
 {
-    private readonly string _connectionString = configuration.ConnectionString
-                                                ?? throw new ArgumentNullException(nameof(configuration),
-                                                    "Connection string not found in configuration");
-
+    
     #region GettingData
 
     public async Task<User?> GetUserByIdAsync(int id)
     {
         try
         {
-            await using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-            var dataTable = await fetcher.GetTableByParameter((NpgsqlConnection)connection,
-                "SELECT * FROM users WHERE user_id = @id", "@id", id);
+            var dataTable = await fetcher.GetTableByParameter("SELECT * FROM users WHERE user_id = @id", "@id", id);
             return dataTable.Rows.Count > 0 ? entityCreator.CreateUser(dataTable.Rows[0]) : null;
         }
         catch (Exception e)
@@ -40,9 +34,7 @@ public class UserRepository(
     {
         try
         {
-            await using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-            var dataTable = await fetcher.GetTableByParameter(connection,
+            var dataTable = await fetcher.GetTableByParameter(
                 "SELECT * FROM users WHERE email = @email", "@email",
                 email);
             return dataTable.Rows.Count > 0 ? entityCreator.CreateUser(dataTable.Rows[0]) : null;
@@ -57,9 +49,7 @@ public class UserRepository(
     {
         try
         {
-            await using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-            var dataTable = await fetcher.GetTableByParameter(connection,
+            var dataTable = await fetcher.GetTableByParameter(
                 "SELECT * FROM users WHERE user_name = @userName",
                 "@userName", userName);
             return dataTable.Rows.Count > 0 ? entityCreator.CreateUser(dataTable.Rows[0]) : null;
@@ -77,13 +67,10 @@ public class UserRepository(
     {
         try
         {
-            await using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-            var command = connection.CreateCommand();
             var query = new StringBuilder()
                 .Append("INSERT INTO users (user_name, first_name, last_name, email, password,  is_verified) ")
                 .Append("VALUES            (@userName, @firstName, @lastName, @email, @password,  @isVerified)");
-            injector.InjectParameters(query, new Dictionary<string, object>
+            var parameters = new Dictionary<string, object>
             {
                 {"@userName", user.UserName},
                 {"@firstName", user.FirstName},
@@ -91,10 +78,10 @@ public class UserRepository(
                 {"@email", user.Email},
                 {"@password", user.Password},
                 {"@isVerified", user.IsVerified}
-            });
+            };
             
-            command.CommandText = query.ToString();
-            var res = await command.ExecuteNonQueryAsync();
+            var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
+            var res = (int) table.Rows[0]["user_id"];
             return res > 0 ? user : null;
         }
         catch (Exception e)
@@ -107,24 +94,11 @@ public class UserRepository(
     {
         try
         {
-            await using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-            var command = connection.CreateCommand();
             var query = new StringBuilder()
                 .Append("UPDATE users SET user_name = @userName, first_name = @firstName, ")
                 .Append("last_name = @lastName, email = @email, is_verified = @isVerified ");
 
-            if (user.Password != null)
-            {
-                query.Append(" ,password = @password");
-                injector.InjectParameters(query, new Dictionary<string, object>
-                {
-                    {"@password", user.Password}
-                });
-                
-            }
-            query.Append("WHERE user_id = @user_id");
-            injector.InjectParameters(query, new Dictionary<string, object>
+            var parameters = new Dictionary<string, object>
             {
                 {"@userName", user.UserName},
                 {"@firstName", user.FirstName},
@@ -132,12 +106,20 @@ public class UserRepository(
                 {"@email", user.Email},
                 {"@isVerified", user.IsVerified},
                 {"@user_id", id}
-            });
+            };
             
-            command.CommandText = query.ToString();
+            if (user.Password != null)
+            {
+                query.Append(" ,password = @password");
+                parameters.Add("@password", user.Password);
+
+            }
+            query.Append("WHERE user_id = @user_id");
             
-            var res = await command.ExecuteNonQueryAsync();
-            return res > 0 ? user : null;
+            
+            
+            var res = await fetcher.GetTableByParameter(query.ToString(), parameters); 
+            return res.Rows.Count > 0 ? user : null;
         }
         catch (Exception e)
         {
@@ -145,17 +127,13 @@ public class UserRepository(
         }
     }
 
-    public async Task<User?> DeleteUserAsync(long id)
+    public async Task<User?> DeleteUserAsync(int id)
     {
         try
         {
-            await using var connection = new NpgsqlConnection(_connectionString);
-            await connection.OpenAsync();
-            var command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM users WHERE user_id = @id";
-            command.Parameters.AddWithValue("@id", id);
-            var res = await command.ExecuteNonQueryAsync();
-            return res > 0 ? new User() : null;
+            var query = "DELETE FROM users WHERE user_id = @id";
+            var table = await fetcher.GetTableByParameter(query, "@id", id);
+            return table.Rows.Count > 0 ? new User() : null;
         }
         catch (Exception e)
         {

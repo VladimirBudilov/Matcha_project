@@ -18,14 +18,14 @@ public class ChatHub(
     public override Task OnConnectedAsync()
     {
         var user = claimsService.GetId(Context.User?.Claims);
-        logger.LogInformation($"Actor {user} connected");
+        logger.LogInformation($"Actor {user} connected to chat");
         return base.OnConnectedAsync();
     }
 
     public override Task OnDisconnectedAsync(Exception? exception)
     {
         var user = claimsService.GetId(Context.User?.Claims);
-        logger.LogInformation($"Actor {user} disconnected");
+        logger.LogInformation($"Actor {user} disconnected from chat");
         return base.OnDisconnectedAsync(exception);
     }
 

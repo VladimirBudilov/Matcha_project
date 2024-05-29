@@ -10,7 +10,6 @@ namespace Web_API.Hubs;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class NotificationHub(
-    ChatManager chatManager,
     ILogger<ChatHub> logger,
     ClaimsService claimsService,
     NotificationService notificationService
@@ -38,6 +37,7 @@ public class NotificationHub(
     {
         var userId = claimsService.GetId(Context.User?.Claims);
         var notifications = notificationService.GetNotifications(userId);
+        if(notifications.Count == 0) return;
         await Clients.Caller.ReceiveNotifications(notifications);
     }
     
