@@ -54,7 +54,7 @@ public class ProfileController(
     [HttpGet("{id:int}")]
     public async Task<FullProfileResponseDto> GetProfileFullDataById([FromRoute] int id)
     {
-        validator.CheckPositiveNumber(id);
+        validator.CheckId(id);
 
         var viewerId = claimsService.GetId(User.Claims);
         if (await actionService.TryViewUser(viewerId, id))
@@ -78,7 +78,7 @@ public class ProfileController(
     public async Task UpdateProfile([FromRoute] int id, [FromBody] ProfileDto profileCreation)
     {
         validator.CheckUserAuth(id, User.Claims);
-        validator.CheckPositiveNumber(id);
+        validator.CheckId(id);
         validator.ProfileRequestDto(profileCreation);
         var model = mapper.Map<Profile>(profileCreation);
         await profileService.UpdateProfileAsync(id, model);

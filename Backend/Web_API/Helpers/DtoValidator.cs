@@ -79,11 +79,19 @@ public class DtoValidator
         ValidateAge(profileCreationResponseDto.Age);
     }
 
-    public void CheckPositiveNumber(int id)
+    public void CheckId(int id)
     {
         if (id <= 0)
         {
             throw new DataValidationException("Invalid id format.");
+        }
+    }
+    
+    public void CheckPositiveNumber(int number)
+    {
+        if (number < 0)
+        {
+            throw new DataValidationException("Invalid number format.");
         }
     }
 

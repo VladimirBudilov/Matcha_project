@@ -58,7 +58,6 @@ export interface Profile {
 }
 
 interface GetProfileParams {
-	UserId?: number,
   SexualPreferences?: string,
   MaxDistance: number,
   MinFameRating: number,

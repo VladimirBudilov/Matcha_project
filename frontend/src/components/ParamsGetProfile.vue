@@ -20,6 +20,7 @@ const age = ref<[number, number]>([getProfileParams.value.MinAge, getProfilePara
 const rating = ref<[number, number]>([getProfileParams.value.MinFameRating, getProfileParams.value.MaxFameRating])
 
 const GetProfile = async () => {
+  //TODO fix this kostbIl'
 	getProfileParams.value.MinAge = age.value[0]
 	getProfileParams.value.MaxAge = age.value[1]
 	getProfileParams.value.MinFameRating = rating.value[0]
@@ -72,9 +73,6 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 		:disabled="false"
 		style="width: 30vw"
 		>
-			<a-form-item label="User Id">
-				<a-input-number v-model:value="getProfileParams.UserId"/>
-			</a-form-item>
 			<a-form-item label="Sexual preferences">
 				<a-select
 				v-model:value="getProfileParams.SexualPreferences"

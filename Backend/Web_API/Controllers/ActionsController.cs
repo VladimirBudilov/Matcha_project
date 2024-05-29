@@ -28,8 +28,8 @@ public class ActionsController(
     [HttpPost("like")]
     public async Task<IActionResult> LikeUser([FromBody]UserActionRequestDto userAction)
     {
-        validator.CheckPositiveNumber(userAction.producerId);
-        validator.CheckPositiveNumber(userAction.consumerId);
+        validator.CheckId(userAction.producerId);
+        validator.CheckId(userAction.consumerId);
         validator.CheckUserAuth(userAction.producerId, User.Claims);
         
         var (notificationType, output) = await actionService.LikeUser(userAction.producerId, userAction.consumerId);

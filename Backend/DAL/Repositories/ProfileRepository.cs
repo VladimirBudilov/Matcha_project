@@ -140,12 +140,10 @@ public class ProfileRepository(
             .From("users JOIN profiles ON users.user_id = profiles.profile_id ")
             .From("LEFT JOIN user_interests ON user_interests.user_id = users.user_id ")
             .From("LEFT JOIN interests ON user_interests.interest_id = interests.interest_id ");
-        var latitude = Math.Round((double)profile.Latitude, 2);
-        var longitude = Math.Round((double)profile.Longitude, 2);
         var parameters = new Dictionary<string, object>
         {
-            { "@profile_latitude", latitude },
-            { "@profile_longitude", longitude },
+            { "@profile_latitude", (double)profile.Latitude },
+            { "@profile_longitude", (double)profile.Longitude },
             {"@userInterests", userInterestsIds},
         };
 
@@ -235,8 +233,9 @@ public class ProfileRepository(
 
         if (searchParams.CommonTags.Count != 0)
         {
-            queryBuilder.Where($" AND count_shared_elements(@filterTags, ARRAY_AGG(interests.name)) >= {searchParams.CommonTags.Count}");
+            queryBuilder.Where($" AND count_shared_elements(@filterTags, ARRAY_AGG(interests.name)) >= @filterTags");
             parameters.Add("@filterTags", searchParams.CommonTags);
+            parameters.Add("@filterTags", searchParams.CommonTags.Count);
         }
         
         if (searchParams.MinAge != null && searchParams.MaxAge != null)

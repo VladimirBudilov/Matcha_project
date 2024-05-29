@@ -7,14 +7,9 @@ using Npgsql;
 namespace DAL.Repositories;
 
 public class LikesRepository(
-    DatabaseSettings configuration,
     EntityCreator entityCreator,
-    TableFetcher fetcher,
-    ParameterInjector injector)
+    TableFetcher fetcher)
 {
-    private readonly string _connectionString = configuration.ConnectionString
-                                                ?? throw new ArgumentNullException(nameof(configuration),
-                                                    "Connection string not found in configuration");
 
     public async Task<Like> CreateLikesAsync(Like entity)
     {

@@ -50,6 +50,7 @@ public class NotificationService
 
     public string GetIdentifier(int userId)
     {
+        if (!UsersOnline.ContainsKey(userId)) return string.Empty;
         return UsersOnline[userId];
     }
 }
