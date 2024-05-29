@@ -34,12 +34,11 @@ public class ProfileController(
         [FromQuery] PaginationParameters pagination)
     {
         var id = claimsService.GetId(User.Claims);
-        search.UserId = id;
         validator.CheckSearchParameters(search);
         validator.CheckSortParameters(sort);
         validator.CheckPaginationParameters(pagination);
 
-        var (amountOfPages, output) = await profileService.GetFullProfilesAsync(search, sort, pagination);
+        var (amountOfPages, output) = await profileService.GetFullProfilesAsync(search, sort, pagination, id);
         output = await profileService.CheckUsersLikes(output, id);
         var profiles = mapper.Map<List<ProfileResponse>>(output);
         return new ProfilesData()

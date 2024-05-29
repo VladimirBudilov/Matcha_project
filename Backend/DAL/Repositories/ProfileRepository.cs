@@ -123,16 +123,14 @@ public class ProfileRepository(
         }
     }
 
-    public async Task<(long, IEnumerable<User>?)> GetFullProfilesAsync(
-        SearchParameters searchParams,
+    public async Task<(long, IEnumerable<User>?)> GetFullProfilesAsync(SearchParameters searchParams,
         SortParameters sortParams,
-        PaginationParameters pagination
-        )
+        PaginationParameters pagination, int id)
     {
-        var profile = (await GetFullProfileAsync(searchParams.UserId))!.Profile;
+        var profile = (await GetFullProfileAsync(id))!.Profile;
         /*try
         {*/
-        var userInterests = await interestsRepository.GetInterestsByUserIdAsync(searchParams.UserId);
+        var userInterests = await interestsRepository.GetInterestsByUserIdAsync(id);
         var userInterestsIds = userInterests.Select(interest => interest.InterestId).ToArray();
         var queryBuilder = new QueryBuilder();
         queryBuilder

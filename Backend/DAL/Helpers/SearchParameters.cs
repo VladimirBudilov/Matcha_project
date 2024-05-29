@@ -2,7 +2,6 @@
 
 public record SearchParameters
 {
-    public int UserId { get; set; }
     public string? SexualPreferences { get; set; } = null;
     public int? MaxDistance { get; set; } = null;
     public int? MinFameRating { get; set; } = null;

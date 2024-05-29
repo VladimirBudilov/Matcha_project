@@ -32,11 +32,11 @@ public class ProfileService(
     }
 
     public async Task<(long, List<User>)> GetFullProfilesAsync(SearchParameters search, SortParameters sort,
-        PaginationParameters pagination)
+        PaginationParameters pagination, int id)
     {
-        var currentUser = await profileRepository.GetProfileByIdAsync(search.UserId);
+        var currentUser = await profileRepository.GetProfileByIdAsync(id);
         if(!currentUser.IsActive) throw new DataValidationException("update user profile first");
-        var (counter, users) = await profileRepository.GetFullProfilesAsync(search, sort, pagination);
+        var (counter, users) = await profileRepository.GetFullProfilesAsync(search, sort, pagination, id);
         if (users == null) return (0, new List<User>());
         var builder = new ProfileBuilder();
         var usersList = new List<User>();

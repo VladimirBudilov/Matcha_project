@@ -195,7 +195,6 @@ public class DtoValidator
     
     public void CheckSearchParameters(SearchParameters search)
     {
-        ExecuteIfNotNull(CheckPositiveNumber, search.UserId);
         ExecuteIfNotNull(CheckDistance, search.MaxDistance);
         CheckFilteringRage(search.MinFameRating, search.MaxFameRating);
         CheckFilteringRage(search.MinAge, search.MaxAge);
