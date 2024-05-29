@@ -1,4 +1,6 @@
-﻿namespace BLL.Sevices;
+﻿using DAL.Entities;
+
+namespace BLL.Sevices;
 
 public class ChatService
 {

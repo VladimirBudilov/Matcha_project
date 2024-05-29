@@ -1,4 +1,5 @@
-﻿using BLL.Sevices;
+﻿using AutoMapper;
+using BLL.Sevices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -20,7 +21,8 @@ public class ActionsController(
     DtoValidator validator,
     UserService userService,
     ClaimsService claimsService,
-    ChatService chatService
+    ChatService chatService,
+    IMapper mapper
     ) : ControllerBase
 {
     [HttpPost("like")]
@@ -44,11 +46,15 @@ public class ActionsController(
     public async Task<ActionResult<ResponseDto<List<MessageResponseDto>>>> GetChat([FromBody]UserActionRequestDto userAction)
     {
         var messages = await chatService.GetMessages(userAction.producerId, userAction.consumerId);
+        
+        var output = mapper.Map<IEnumerable<MessageResponseDto>>(messages);
         var response = new ResponseDto<List<MessageResponseDto>>()
         {
-            
-        }
-        return Ok(messages);
+            Data = output.ToList(),
+            Success = true,
+            Error = null,
+        };
+        return Ok(response);
     }
 
     [HttpGet("clearNotification/{id:int}")]
