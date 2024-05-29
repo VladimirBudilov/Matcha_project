@@ -138,4 +138,11 @@ public class ProfileService(
 
         return users;
     }
+
+    public async Task<FiltersData> GetFiltersAsync(int id)
+    {
+        var user = await profileRepository.GetProfileByIdAsync(id);
+        return await profileRepository.GetFiltersDataAsync(user.Longitude, user.Latitude);
+
+    }
 }

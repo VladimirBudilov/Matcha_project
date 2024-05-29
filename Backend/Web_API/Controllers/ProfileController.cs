@@ -91,4 +91,12 @@ public class ProfileController(
 
         return Ok(output);
     }
+    [HttpGet("filters")]
+    public async Task<IActionResult> GetFilters()
+    {
+        var id = claimsService.GetId(User.Claims);
+        var output = await profileService.GetFiltersAsync(id);
+
+        return Ok(output);
+    }
 }

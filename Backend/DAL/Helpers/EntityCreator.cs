@@ -116,4 +116,17 @@ public class EntityCreator
             InterestId = row.Field<int>("interest_id"),
         };
     }
+    
+    public FiltersData CreateFiltersData(DataTable table)
+    {
+        return new FiltersData
+        {
+            MaxAge = (int)table.Rows[0]["max_age"],
+            MinAge = (int)table.Rows[0]["min_age"],
+            MaxDistance = (double)table.Rows[0]["max_distance"],
+            MinDistance = (double)table.Rows[0]["min_distance"],
+            MaxFameRating = (int)table.Rows[0]["max_fame_rating"],
+            MinFameRating = (int)table.Rows[0]["min_fame_rating"]
+        };
+    }
 }
