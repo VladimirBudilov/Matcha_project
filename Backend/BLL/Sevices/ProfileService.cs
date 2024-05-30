@@ -145,4 +145,12 @@ public class ProfileService(
         return await profileRepository.GetFiltersDataAsync(user.Longitude, user.Latitude);
 
     }
+
+    public async Task<bool> IsMatch(int userActionProducerId, int userActionConsumerId)
+    {
+        var producerLikes = await likesRepository.GetLikesByUserIdAsync(userActionProducerId);
+        var consumerLikes = await likesRepository.GetLikesByUserIdAsync(userActionConsumerId);
+        return producerLikes.Any(l => l.LikedId == userActionConsumerId) &&
+               consumerLikes.Any(l => l.LikedId == userActionProducerId);
+    }
 }

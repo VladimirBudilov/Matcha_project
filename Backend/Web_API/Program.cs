@@ -75,6 +75,8 @@ builder.Services.AddScoped<PicturesRepository>();
 builder.Services.AddScoped<LikesRepository>();
 builder.Services.AddScoped<ProfileViewsRepository>();
 builder.Services.AddScoped<UserInterestsRepository>();
+builder.Services.AddScoped<RoomsRepository>();
+builder.Services.AddScoped<MessagesRepository>();
 
 builder.Services.AddScoped<ServiceValidator>();
 builder.Services.AddScoped<UserService>();

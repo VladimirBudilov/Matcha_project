@@ -306,7 +306,7 @@ public class ProfileRepository(
             { "@profile_longitude", (double)longitude }
         };
         var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
-        return entityCreator.CreateFiltersData(table);
+        return entityCreator.CreateFiltersData(table.Rows[0]);
     }
 
     

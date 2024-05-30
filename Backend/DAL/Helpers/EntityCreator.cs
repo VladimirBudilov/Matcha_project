@@ -117,16 +117,27 @@ public class EntityCreator
         };
     }
     
-    public FiltersData CreateFiltersData(DataTable table)
+    public FiltersData CreateFiltersData(DataRow row)
     {
         return new FiltersData
         {
-            MaxAge = (int)table.Rows[0]["max_age"],
-            MinAge = (int)table.Rows[0]["min_age"],
-            MaxDistance = (double)table.Rows[0]["max_distance"],
-            MinDistance = (double)table.Rows[0]["min_distance"],
-            MaxFameRating = (int)table.Rows[0]["max_fame_rating"],
-            MinFameRating = (int)table.Rows[0]["min_fame_rating"]
+            MaxAge = row.Field<int>("max_age"),
+            MinAge = row.Field<int>("min_age"),
+            MaxDistance = row.Field<double>("max_distance"),
+            MinDistance = row.Field<double>("min_distance"),
+            MaxFameRating = row.Field<int>("max_fame_rating"),
+            MinFameRating = row.Field<int>("min_fame_rating")
+        };
+    }
+
+    public Message CreateMessage(DataRow row)
+    {
+        return new Message
+        {
+            RoomId = row.Field<int>("room_id"),
+            SenderId = row.Field<int>("sender_id"),
+            Text = row.Field<string>("text"),
+            Created_at = row.Field<DateTime>("time"),
         };
     }
 }

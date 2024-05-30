@@ -7,10 +7,8 @@ using Npgsql;
 namespace DAL.Repositories;
 
 public class ProfileViewsRepository(
-    DatabaseSettings configuration,
     EntityCreator entityCreator,
-    TableFetcher fetcher,
-    ParameterInjector injector)
+    TableFetcher fetcher)
 {
 
     public async Task<ProfileView> CreateProfileViewsAsync(ProfileView entity)

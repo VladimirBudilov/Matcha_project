@@ -22,7 +22,8 @@ public class ActionsController(
     UserService userService,
     ClaimsService claimsService,
     ChatService chatService,
-    IMapper mapper
+    IMapper mapper,
+    ProfileService profileService
     ) : ControllerBase
 {
     [HttpPost("like")]
@@ -45,6 +46,13 @@ public class ActionsController(
     [HttpGet("chat")]
     public async Task<ActionResult<ResponseDto<List<MessageResponseDto>>>> GetChat([FromBody]UserActionRequestDto userAction)
     {
+        //check that user is authorized
+        validator.CheckId(userAction.producerId);
+        validator.CheckId(userAction.consumerId);
+        validator.CheckUserAuth(userAction.producerId, User.Claims);
+        //check that users are matched
+        if (!await profileService.IsMatch(userAction.producerId, userAction.consumerId)) return BadRequest();
+        
         var messages = await chatService.GetMessages(userAction.producerId, userAction.consumerId);
         
         var output = mapper.Map<IEnumerable<MessageResponseDto>>(messages);
@@ -55,13 +63,5 @@ public class ActionsController(
             Error = null,
         };
         return Ok(response);
-    }
-
-    [HttpGet("clearNotification/{id:int}")]
-    public async Task<IActionResult> ClearNotifications([FromRoute] int id)
-    {
-        validator.CheckUserAuth(id, User.Claims);
-        notificationService.ClearNotifications(id);
-        return Ok();
     }
 }
