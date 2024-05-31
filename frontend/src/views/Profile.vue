@@ -42,56 +42,63 @@ const GetInterests = async () => {
 }
 
 const GetProfile = async () => {
-	await axios.get('api/profile/' + localStorage.getItem('UserId')).then((res) => {
+	await axios.get('api/profile/' + localStorage.getItem('UserId')).catch((res) => {
+		if (res.response.data){
+			message.error(res.response.data)
+		}
+		else {
+			message.error("Error")
+		}
+	}).then((res) => {
 		profile.value = res?.data
 		uploadUrl.value = axios.defaults.baseURL + 'api/FileManager/uploadPhoto/' + profile.value.profileId
-		GetInterests()
 		console.log(profile.value)
 	})
 }
 
 onMounted(async () => {
+	GetInterests()
 	await GetProfile()
 })
 
 const SubmitChanges = async () => {
 	errorMsg.value = ''
-	await axios.put('api/profile/' + profile.value.profileId, profile.value).catch((msg) => {
-		if (msg.response.data.errors) {
-			if (msg.response.data.errors.Biography) {
-				errorMsg.value = errorMsg.value + ' The Biography field is required.'
+	await axios.put('api/profile/' + profile.value.profileId, profile.value).catch((res) => {
+		errorMsg.value = 'Error'
+		if (res.response.data.errors) {
+			if (res.response.data.errors.Biography) {
+				message.error('The Biography field is required.')
 			}
-			if (msg.response.data.errors.Location) {
-				errorMsg.value = errorMsg.value + " The Location field is required."
+			if (res.response.data.errors.Location) {
+				message.error('The Location field is required.')
 			}
-			if (msg.response.data.errors.SexualPreferences) {
-				errorMsg.value = errorMsg.value + " The Sexual preferences field is required."
+			if (res.response.data.errors.SexualPreferences) {
+				message.error('The Sexual preferences field is required.')
 			}
-			console.log(errorMsg.value)
 		}
-		if (msg.response.data.error) {
-			errorMsg.value = errorMsg.value + msg.response.data.error
+		else if (res.response.data.error) {
+			message.error(res.response.data.error)
 		}
+		else {
+			message.error(res.response.data)
+		}
+		message.error(errorMsg.value)
 	}).then((res) => {
 		if (errorMsg.value == '') {
-			errorMsg.value = "Success"
+			message.success("Success")
 		}
 
 	})
-	setTimeout(() => {
-		errorMsg.value = ''
-	}, 10000)
 }
 
 const getLocation = async () => {
-	errorMsg.value = ''
 	navigator.geolocation.getCurrentPosition((pos => {
 		profile.value.latitude = pos.coords.latitude
 		profile.value.longitude = pos.coords.longitude
 	}), (err => {
 		profile.value.latitude = 0
 		profile.value.longitude = 0
-		errorMsg.value = err.message
+		message.error(err.message)
 	}))
 }
 
@@ -131,7 +138,7 @@ const DeletePicture = async (picureId: number) => {
 <template>
 	<a-card id="Profile">
 	<a-form
-	:label-col="{ span: 5 }"
+	:label-col="{ span: 6 }"
 	:wrapper-col="{ span: 12 }"
     layout="horizontal"
     :disabled="componentDisabled"
@@ -192,18 +199,10 @@ const DeletePicture = async (picureId: number) => {
 				<a-textarea v-model:value="profile.biography" placeholder="Biography" :rows="4" />
 			</a-form-item>
 		</div>
-
-
-		<div v-if='errorMsg != "Success"' style="color: red">
-			<span> {{errorMsg}} </span>
-		</div>
-		<div v-else-if='errorMsg = "Success"' style="color: green;">
-			<span> {{errorMsg}} </span>
-		</div>
 	</a-form>
 	</a-card>
 
-	<a-card id="Avatar">
+	<a-card id="Avatar" v-if="profile.biography">
 		<a-form-item label="Avatar">
 		<a-image v-if="profile.profilePicture.picture"
 		:width="200"

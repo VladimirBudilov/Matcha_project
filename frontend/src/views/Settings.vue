@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
 import axios from 'axios';
+import { message } from 'ant-design-vue';
 
 interface FormState {
 	oldPassword: string;
@@ -19,16 +20,20 @@ const formState = reactive<FormState>({
 const onFinish = async (values: FormState) => {
 	errorMsg.value = ''
 	if (values.newPassword !== values.rememberPassword) {
-		errorMsg.value = 'Your new password are not the same'
+		message.error('Your new password are not the same')
 	}
 	else {
 		await axios.put('api/user/' + localStorage.getItem('UserId') + '/update-password', values).catch((msg) => {
+			errorMsg.value = 'Error'
 			if (msg.response.data.error) {
-				errorMsg.value = msg.response.data.error
+				message.error(msg.response.data.error)
+			}
+			else {
+				message.error('Error')
 			}
 		}).then(async (res) => {
 			if (errorMsg.value === '')
-				errorMsg.value = 'Success!'
+				message.success('Success')
 		})
 	}
 
@@ -73,13 +78,6 @@ const onFinish = async (values: FormState) => {
 
 		<a-form-item :wrapper-col="{ offset: 9, span: 7 }">
 			<a-button type="primary" html-type="submit">Submit</a-button>
-
-			<p v-if='errorMsg == "Success!"' style='color: green;'>
-				{{ errorMsg }}
-			</p>
-			<p v-else style='color: red;'>
-				{{ errorMsg }}
-			</p>
 		</a-form-item>
 	</a-form>
 	</a-card>
