@@ -4,6 +4,7 @@ import { reactive, ref } from 'vue';
 import { SignUpStore } from '@/stores/SignUpStore'
 import { storeToRefs } from 'pinia';
 import axios from 'axios';
+import { message } from 'ant-design-vue';
 
 const IsActiveSignUp = storeToRefs(SignUpStore()).IsActiveSignUp
 
@@ -31,8 +32,13 @@ const formState = reactive({
 const onFinish = (values: any) => {
 	errorMsg.value = ''
 	axios.post('api/auth/registration', values).catch((msg) => {
-		console.log(msg.response.data)
-		errorMsg.value = msg.response.data
+		if (msg.response.data.error) {
+			errorMsg.value = msg.response.data.error
+		}
+		else {
+			errorMsg.value = msg.response.data
+		}
+		message.error(errorMsg.value);
 	}).then(() => {
 		if (errorMsg.value == '') {
 			IsActiveSignUp.value = !IsActiveSignUp.value
@@ -69,9 +75,6 @@ const onFinish = (values: any) => {
 		<a-form-item :wrapper-col="{ offset: 9, span: 7 }">
 			<a-button type="primary" html-type="submit">Submit</a-button>
 			<a-button danger type="primary"  html-type="cancel" @click="SignUpButtonTurnOn" style="margin-left: 1vw;">Cancel</a-button>
-			<p style='color: red;'>
-				{{ errorMsg }}
-			</p>
 		</a-form-item>
 
 

@@ -6,6 +6,7 @@ import createConnection from '@/services/NotificationService'
 import axios from 'axios';
 import {useNotificationStore} from '@/stores/NotoficationStore'
 import {} from './SignUpForm.vue'
+import { message } from 'ant-design-vue';
 
 const IsActiveSignUp = storeToRefs(SignUpStore()).IsActiveSignUp
 
@@ -42,6 +43,10 @@ const onFinish = async (values: any) => {
 		if (msg.response.data.error) {
 			errorMsg.value = msg.response.data.error
 		}
+		else {
+			errorMsg.value = msg.response.data
+		}
+		message.error(errorMsg.value);
 	}).then(async (res) => {
 		const loginRes : loginRes = res?.data
 		if (errorMsg.value == '' && loginRes.token) {
@@ -53,10 +58,6 @@ const onFinish = async (values: any) => {
       window.location.assign('https://' + window.location.host)
 		}
 	})
-};
-
-const onFinishFailed = (errorInfo: any) => {
-	console.log('Failed:', errorInfo);
 };
 
 </script>
@@ -87,12 +88,9 @@ const onFinishFailed = (errorInfo: any) => {
 			<a-input-password v-model:value="formState.password" />
 		</a-form-item>
 
-		<a-form-item :wrapper-col="{ offset: 9, span: 7 }">
+		<a-form-item :wrapper-col="{ offset: 9, span: 2 }">
 			<a-button type="primary" html-type="submit">Submit</a-button>
-			<p style='color: red;'>
-				{{ errorMsg }}
-			</p>
-			<a-button type="primary" html-type="signup" @click="SignUpButtonTurnOn">Sign up</a-button>
+			<a-button type="primary" html-type="signup" @click="SignUpButtonTurnOn" style="margin-top: 3px;">Sign up</a-button>
 		</a-form-item>
 	</a-form>
 

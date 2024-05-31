@@ -14,7 +14,6 @@ const profiles = storeToRefs(SignUpStore()).profiles
 const getProfileParams = storeToRefs(SignUpStore()).getProfileParams
 
 const GetProfile = async () => {
-
 	await axios.get('api/profile', {
 		params: getProfileParams
 	}).catch((res) => {

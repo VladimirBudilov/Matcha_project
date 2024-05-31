@@ -20,11 +20,23 @@ const age = ref<[number, number]>([getProfileParams.value.MinAge, getProfilePara
 const rating = ref<[number, number]>([getProfileParams.value.MinFameRating, getProfileParams.value.MaxFameRating])
 
 const GetProfile = async () => {
-  //TODO fix this kostbIl'
-	getProfileParams.value.MinAge = age.value[0]
-	getProfileParams.value.MaxAge = age.value[1]
-	getProfileParams.value.MinFameRating = rating.value[0]
-	getProfileParams.value.MaxFameRating = rating.value[1]
+	if (age.value[0] < age.value[1]) {
+		getProfileParams.value.MinAge = age.value[0]
+		getProfileParams.value.MaxAge = age.value[1]
+	}
+	else {
+		getProfileParams.value.MaxAge = age.value[0]
+		getProfileParams.value.MinAge = age.value[1]
+	}
+	if (rating.value[0] < rating.value[1]) {
+		getProfileParams.value.MinFameRating = rating.value[0]
+		getProfileParams.value.MaxFameRating = rating.value[1]
+	}
+	else {
+		getProfileParams.value.MaxFameRating = rating.value[0]
+		getProfileParams.value.MinFameRating = rating.value[1]
+	}
+
 	await axios.get('api/profile', {
 		params: getProfileParams.value
 	}).catch((res) => {
