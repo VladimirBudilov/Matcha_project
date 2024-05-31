@@ -15,9 +15,9 @@ const getProfileParams = storeToRefs(SignUpStore()).getProfileParams
 
 const GetProfile = async () => {
 	await axios.get('api/profile', {
-		params: getProfileParams
+		params: getProfileParams.value
 	}).catch((res) => {
-		if (res.code == 403) {
+		if (res.response.data) {
 			message.error(`Fill out the profile!`);
 		}
 	}).then((res) => {
@@ -77,7 +77,7 @@ watch(() => getProfileParams.value.PageNumber,
 
 <template>
 	<div id="profiles">
-		<ParamsGetProfile />
+		<ParamsGetProfile v-if="profiles.length"/>
 		<a-space id="profile-cards">
 		<template #split>
 			<a-divider type="vertical" />
