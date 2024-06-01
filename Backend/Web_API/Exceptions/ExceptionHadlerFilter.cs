@@ -16,6 +16,14 @@ public class ExceptionHadlerFilter : ExceptionFilterAttribute
         {
             context.Result = new BadRequestObjectResult(new { error = context.Exception.Message });
         }
+        else if(context.Exception is ForbiddenActionException)
+        {
+            context.Result = new ForbidResult();
+        }
+        else if(context.Exception is NotAuthorizedRequestException)
+        {
+            context.Result = new UnauthorizedResult();
+        }
         else if(context.Exception is ObjectNotFoundException)
         {
             context.Result = new NotFoundObjectResult(new { error = context.Exception.Message });

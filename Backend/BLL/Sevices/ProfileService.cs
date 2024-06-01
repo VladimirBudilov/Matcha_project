@@ -35,7 +35,7 @@ public class ProfileService(
         PaginationParameters pagination, int id)
     {
         var currentUser = await profileRepository.GetProfileByIdAsync(id);
-        if(!currentUser.IsActive) throw new DataValidationException("update user profile first");
+        if(!currentUser.IsActive) throw new ForbiddenActionException("update user profile first");
         var (counter, users) = await profileRepository.GetFullProfilesAsync(search, sort, pagination, id);
         if (users == null) return (0, new List<User>());
         var builder = new ProfileBuilder();
