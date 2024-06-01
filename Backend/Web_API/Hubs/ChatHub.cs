@@ -19,6 +19,7 @@ public class ChatHub(
     {
         var user = claimsService.GetId(Context.User?.Claims);
         logger.LogInformation($"Actor {user} connected to chat");
+        //check that you should beconnected to chats
         return base.OnConnectedAsync();
     }
 
@@ -26,39 +27,28 @@ public class ChatHub(
     {
         var user = claimsService.GetId(Context.User?.Claims);
         logger.LogInformation($"Actor {user} disconnected from chat");
+        //check that you should be disconnected from chats
         return base.OnDisconnectedAsync(exception);
     }
 
     public async Task SendMessage(string room, string message)
     {
         var user = Context.User?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-        await chatManager.SendMessageToRoom(room, message, Clients, Context, user);
-
+    }
+    
+    public async Task StartChat(int inviteeId)
+    {
+        //check that user can start chat
+        var inviterId = claimsService.GetId(Context.User?.Claims);
+        if(!await chatManager.CanChat(inviterId, inviteeId)) return;
+        //check that room exists
+        var room = await chatManager.GetRoom(inviterId, inviteeId);
+        //connect users to room
+        chatManager.ConnectToRoom(room, Context.ConnectionId);
     }
 
-    public async Task InviteUser(string connectionId, string roomName)
+    public async Task LeaveChat(string roomName)
     {
-        await Clients.Client(connectionId).ReceiveInvitation(roomName);
-    }
-
-    public async Task CreateRoom(string roomName)
-    {
-        logger.LogInformation($"Actor {claimsService.GetId(Context.User?.Claims)} created room: {roomName}");
-        chatManager.CreateRoom(roomName, Context);
-    }
-
-    public async Task JoinRoom(string roomName)
-    {
-        chatManager.JoinRoom(roomName, Context);
-    }
-
-    public async Task LeaveRoom(string roomName)
-    {
-        chatManager.LeaveRoom(roomName, Context);
-    }
-
-    public async Task InviteToRoom(string roomName, string connectionId)
-    {
-        chatManager.InviteToRoom(roomName, connectionId, Clients);
+        //chatManager.LeaveRoom(roomName, Context);
     }
 }

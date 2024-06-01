@@ -8,18 +8,33 @@ public class RoomsRepository(
     DatabaseSettings databaseSettings,
     TableFetcher fetcher)
 {
-    public async Task<int> GetRoom(int producerId, int consumerId)
+    public async Task<int> GetRoom(int inviterId, int invitedId)
     {
         var query = new StringBuilder()
             .Append("SELECT id FROM rooms")
-            .Append(" WHERE (user1 = @producerId AND user2 = @consumerId)")
-            .Append(" OR (user1 = @consumerId AND user2 = @producerId)");
+            .Append(" WHERE (user1 = @inviterId AND user2 = @invitedId)")
+            .Append(" OR (user1 = @invitedId AND user2 = @inviterId)");
         var parameters = new Dictionary<string, object>
         {
-            { "@producerId", producerId },
-            { "@consumerId", consumerId }
+            { "@inviterId", inviterId },
+            { "@invitedId", invitedId }
         };
         var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
         return table.Rows.Count == 0 ? 0 : (int)table.Rows[0]["id"];
+    }
+    
+    public async Task<int> CreateRoom(int inviterId, int invitedId)
+    {
+        var query = new StringBuilder()
+            .Append("INSERT INTO rooms (user1, user2)")
+            .Append(" VALUES (@inviterId, @invitedId)")
+            .Append(" RETURNING id");
+        var parameters = new Dictionary<string, object>
+        {
+            { "@inviterId", inviterId },
+            { "@invitedId", invitedId }
+        };
+        var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
+        return (int)table.Rows[0]["id"];
     }
 }

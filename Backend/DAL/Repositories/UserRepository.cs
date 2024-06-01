@@ -69,7 +69,7 @@ public class UserRepository(
         {
             var query = new StringBuilder()
                 .Append("INSERT INTO users (user_name, first_name, last_name, email, password,  is_verified) ")
-                .Append("VALUES            (@userName, @firstName, @lastName, @email, @password,  @isVerified)");
+                .Append("VALUES            (@userName, @firstName, @lastName, @email, @password,  @isVerified) Returning user_id");
             var parameters = new Dictionary<string, object>
             {
                 {"@userName", user.UserName},
@@ -96,7 +96,7 @@ public class UserRepository(
         {
             var query = new StringBuilder()
                 .Append("UPDATE users SET user_name = @userName, first_name = @firstName, ")
-                .Append("last_name = @lastName, email = @email, is_verified = @isVerified ");
+                .Append("last_name = @lastName, email = @email, is_verified = @isVerified Returning user_id");
 
             var parameters = new Dictionary<string, object>
             {
@@ -131,7 +131,7 @@ public class UserRepository(
     {
         try
         {
-            var query = "DELETE FROM users WHERE user_id = @id";
+            var query = "DELETE FROM users WHERE user_id = @id Returning user_id";
             var table = await fetcher.GetTableByParameter(query, "@id", id);
             return table.Rows.Count > 0 ? new User() : null;
         }

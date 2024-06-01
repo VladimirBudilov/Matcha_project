@@ -12,12 +12,10 @@
     <button @click="sendMessage">Send</button>
   </div>
   <div class="room-actions" id="room-actions">
-    <input v-model="roomName" placeholder="Room name..." />
-    <button @click="createRoom">Create Room</button>
-    <button @click="joinRoom">Join Room</button>
-    <button @click="leaveRoom">Leave Room</button>
     <input v-model="inviteeId" placeholder="Invitee connection ID..." />
-    <button @click="inviteToRoom">Invite to Room</button>
+    <button @click="GetMessages">GetMessages</button>
+    <button @click="StartChat">Start</button>
+    <button @click="LeaveChat">Leave</button>
   </div>
 </div>
 </template>
@@ -29,7 +27,6 @@ export default {
   data() {
     return {
       connection: null,
-      roomName: '',
       messages: [],
       message: '',
       user: 'User' + localStorage.getItem('UserId'),
@@ -37,9 +34,7 @@ export default {
     };
   },
   mounted() {
-    console.log('mounted')
     this.connection = createConnection();
-    console.log("conection", this.connection);
     this.connection.start().catch(err => console.error(err.toString()));
     this.connection.on("ReceiveMessage", (user, message) => {
       this.messages.push({ user, text: message });
@@ -49,25 +44,37 @@ export default {
     sendMessage() {
       if (this.message.trim() !== '') {
         console.log(this.connection);
-        this.connection.invoke("SendMessage", this.roomName, this.message)
+        this.connection
+            .invoke("SendMessage", this.roomName, this.message)
+            .then(() => console.log('Message sent'))
             .catch(err => console.error(err.toString()));
         this.message = '';
       }
     },
-    createRoom() {
-      this.connection.invoke("CreateRoom", this.roomName)
+    GetMessages() {
+      this.connection.invoke("GetMessages", Number(this.inviteeId))
+          .then((data) =>
+      {
+        console.log(data);
+      })
           .catch(err => console.error(err.toString()));
     },
-    joinRoom() {
-      this.connection.invoke("JoinRoom", this.roomName)
+    StartChat() {
+      this.connection.invoke("StartChat", Number(this.inviteeId))
+          .then((data) =>
+      {
+        console.log(data);
+      })
           .catch(err => console.error(err.toString()));
     },
-    leaveRoom() {
-      this.connection.invoke("LeaveRoom", this.roomName)
-          .catch(err => console.error(err.toString()));
-    },
-    inviteToRoom() {
-      this.connection.invoke("InviteToRoom", this.roomName, this.inviteeId)
+    LeaveChat() {
+      this.connection.invoke("LeaveChat", Number(this.inviteeId))
+          .then(
+              () =>
+              {
+                console.log('Chat left')
+
+              })
           .catch(err => console.error(err.toString()));
     }
   },

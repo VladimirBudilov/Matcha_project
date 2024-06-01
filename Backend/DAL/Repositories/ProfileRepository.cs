@@ -47,16 +47,17 @@ public class ProfileRepository(
     {
         try
         {
-            var query =
-                "INSERT INTO profiles (profile_id, gender, age) " +
-                " VALUES (@profile_id, @gender, @age)";
+            var query =new StringBuilder()
+                .Append("INSERT INTO profiles (profile_id, gender, age) ")
+                .Append(" VALUES (@profile_id, @gender, @age) ")
+                .Append("Returning profile_id");
             var parametrs = new Dictionary<string, object>()
             {
                 { "profile_id", entity.Id },
                 { "gender", entity.Gender },
                 { "age", entity.Age }
             };
-            var table = await fetcher.GetTableByParameter(query, parametrs);
+            var table = await fetcher.GetTableByParameter(query.ToString(), parametrs);
             return table.Rows.Count > 0 ? entity : null;
         }
         catch (Exception e)
@@ -192,7 +193,7 @@ public class ProfileRepository(
         return count;
     }
 
-    private void ApplyOrdering(SortParameters sortParams, ref QueryBuilder queryBuilder)
+    private static void ApplyOrdering(SortParameters sortParams, ref QueryBuilder queryBuilder)
     {
         queryBuilder.GroupBy("users.user_id, profiles.profile_id ");
         //add sorting
