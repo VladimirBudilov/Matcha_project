@@ -69,7 +69,7 @@ export default {
           .catch(err => console.error(err.toString()));
     },
     GetMessages() {
-      axios.post('api/chat/get-messages', {producerId: Number(localStorage.getItem("token")), consumerId: Number(this.inviteeId)})
+      axios.post('api/actions/chat', {producerId: Number(localStorage.getItem("token")), consumerId: Number(this.inviteeId)})
           .then((res) => {
             console.log(res.data);
             this.messages = res.data;

@@ -231,7 +231,7 @@ public class DtoValidator
 
     private void CheckDistance(int? obj)
     {
-        if (obj <= 0)
+        if (obj < 0)
         {
             throw new DataValidationException("Invalid distance format.");
         }
