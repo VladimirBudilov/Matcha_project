@@ -21,12 +21,13 @@ const GetFilters = async () => {
 	}).then ((res) => {
 		if (res?.data) {
 			getFilters.value = res.data
+			getFilters.value.maxDistance = Math.floor(getFilters.value.maxDistance)
 		}
 	})
 }
 
 const GetProfile = async () => {
-	getProfileParams.value.MaxDistance = Math.floor(getFilters.value.maxDistance)
+	getProfileParams.value.MaxDistance = getFilters.value.maxDistance
 	getProfileParams.value.MinAge = getFilters.value.minAge
 	getProfileParams.value.MaxAge = getFilters.value.maxAge
 	getProfileParams.value.MinFameRating = getFilters.value.minFameRating
@@ -98,7 +99,7 @@ watch(
 
 <template>
 	<div id="profiles">
-		<ParamsGetProfile v-if="profiles.length"/>
+		<ParamsGetProfile/>
 		<a-space id="profile-cards">
 		<template #split>
 			<a-divider type="vertical" />
@@ -158,8 +159,6 @@ watch(
 </template>
 
 <style>
-#profiles {
-}
 
 #profile-cards {
 	/*position:absolute;*/

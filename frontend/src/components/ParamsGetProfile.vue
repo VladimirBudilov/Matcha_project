@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import type { GetFiltersType, Interests } from '@/stores/SignUpStore';
+import type {  Interests } from '@/stores/SignUpStore';
 import { SignUpStore } from '@/stores/SignUpStore';
 import { message } from 'ant-design-vue';
 import axios from 'axios';
 import { storeToRefs } from 'pinia';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 const profiles = storeToRefs(SignUpStore()).profiles
 const getProfileParams = storeToRefs(SignUpStore()).getProfileParams
+const getFilters = storeToRefs(SignUpStore()).getFilters
+
 const sortMainParam = [{label: 'Distance', value: 0},
 	{label: 'Rating', value: 1},
 	{label: 'Age', value: 2},
@@ -19,36 +21,11 @@ const sort = [{label: 'Ascending', value:'ASC'},
 const age = ref<[number, number]>([getProfileParams.value.MinAge, getProfileParams.value.MaxAge])
 const rating = ref<[number, number]>([getProfileParams.value.MinFameRating, getProfileParams.value.MaxFameRating])
 
-const getFilters = ref<GetFiltersType>()
-const GetFilters = async () => {
-	await axios.get('api/profile/filters').catch((res) => {
-		if (res.response.data) {
-			message.error(res.response.data)
-		}
-	}).then ((res) => {
-		if (res?.data) {
-			getFilters.value = res.data
-		}
-	})
-}
-
 const GetProfile = async () => {
-	if (age.value[0] < age.value[1]) {
-		getProfileParams.value.MinAge = age.value[0]
-		getProfileParams.value.MaxAge = age.value[1]
-	}
-	else {
-		getProfileParams.value.MaxAge = age.value[0]
-		getProfileParams.value.MinAge = age.value[1]
-	}
-	if (rating.value[0] < rating.value[1]) {
-		getProfileParams.value.MinFameRating = rating.value[0]
-		getProfileParams.value.MaxFameRating = rating.value[1]
-	}
-	else {
-		getProfileParams.value.MaxFameRating = rating.value[0]
-		getProfileParams.value.MinFameRating = rating.value[1]
-	}
+	getProfileParams.value.MinAge = Math.min(age.value[0], age.value[1])
+	getProfileParams.value.MaxAge = Math.max(age.value[0], age.value[1])
+	getProfileParams.value.MinFameRating = Math.min(rating.value[0], rating.value[1])
+	getProfileParams.value.MaxFameRating = Math.max(rating.value[0], rating.value[1])
 
 	await axios.get('api/profile', {
 		params: getProfileParams.value
@@ -73,7 +50,6 @@ const GetProfile = async () => {
 const interests = ref<Interests[]>([])
 const GetInterests = async () => {
 	await axios.get('api/profile/interests').then((res) => {
-		console.log(res)
 		interests.value = res.data
 		interests.value.forEach((element) => {
 			element.value = element.name
@@ -81,9 +57,18 @@ const GetInterests = async () => {
 	})
 }
 onMounted(async () => {
-	await GetFilters()
 	await GetInterests()
 })
+
+watch (
+	() => getFilters.value,
+	async () => {
+		age.value[0] = getFilters.value.minAge
+		age.value[1] = getFilters.value.maxAge
+		rating.value[0] = getFilters.value.minFameRating
+		rating.value[1] = getFilters.value.maxFameRating
+	}
+)
 
 const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Female'}, {value: '', label: 'Nothing'}]
 

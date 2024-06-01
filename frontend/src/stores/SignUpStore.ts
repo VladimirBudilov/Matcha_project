@@ -19,7 +19,6 @@ export const SignUpStore = defineStore('SignUp', () => {
     PageNumber: 1,
     PageSize: 10,
     Total: 0,
-    SexualPreferences: '',
     MaxDistance: 0,
     MinFameRating: 0,
     MaxFameRating: 0,
