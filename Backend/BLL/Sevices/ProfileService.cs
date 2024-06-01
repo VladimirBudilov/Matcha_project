@@ -142,6 +142,7 @@ public class ProfileService(
     public async Task<FiltersData> GetFiltersAsync(int id)
     {
         var user = await profileRepository.GetProfileByIdAsync(id);
+        if (!user.IsActive) throw new ForbiddenActionException("update user profile first");
         return await profileRepository.GetFiltersDataAsync(user.Longitude, user.Latitude);
 
     }

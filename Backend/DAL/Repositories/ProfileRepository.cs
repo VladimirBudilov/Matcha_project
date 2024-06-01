@@ -300,7 +300,8 @@ public class ProfileRepository(
                 "min(calculate_distance(@profile_latitude, @profile_longitude, profiles.latitude, profiles.longitude)) as min_distance, ")
             .Append(
                 "max(calculate_distance(@profile_latitude, @profile_longitude, profiles.latitude, profiles.longitude)) as max_distance ")
-            .Append("from profiles ");
+            .Append("from profiles ")
+            .Append(" where profiles.is_active = TRUE");
         var parameters = new Dictionary<string, object>
         {
             { "@profile_latitude", (double)latitude },
