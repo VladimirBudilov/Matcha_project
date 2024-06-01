@@ -43,7 +43,7 @@ public class ActionsController(
         return Ok(output);
     }
     
-    [HttpGet("chat")]
+    [HttpPost("chat")]
     public async Task<ActionResult<ResponseDto<List<MessageResponseDto>>>> GetChat([FromBody]UserActionRequestDto userAction)
     {
         //check that user is authorized

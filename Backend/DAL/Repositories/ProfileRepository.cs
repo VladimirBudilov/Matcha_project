@@ -229,7 +229,7 @@ public class ProfileRepository(
         if (searchParams.MaxDistance != null)
         {
             queryBuilder.Where(
-                $"AND calculate_distance(latitude,longitude,@profile_latitude, @profile_longitude) < @maxDistance ");
+                $"AND calculate_distance(latitude,longitude,@profile_latitude, @profile_longitude) <= @maxDistance ");
             parameters.Add("@maxDistance", searchParams.MaxDistance);
         }
 
