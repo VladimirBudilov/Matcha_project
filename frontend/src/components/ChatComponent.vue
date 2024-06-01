@@ -15,12 +15,14 @@
     <input v-model="inviteeId" placeholder="Invitee connection ID..." />
     <button @click="StartChat">Start</button>
     <button @click="LeaveChat">Leave</button>
+    <button @click="GetMessages">Get Messages</button>
   </div>
 </div>
 </template>
 
 <script>
 import createConnection from "../services/ChatService.ts";
+import axios from "axios";
 
 export default {
   data() {
@@ -64,6 +66,14 @@ export default {
                 console.log('Chat left')
 
               })
+          .catch(err => console.error(err.toString()));
+    },
+    GetMessages() {
+      axios.post('api/chat/get-messages', {producerId: Number(localStorage.getItem("token")), consumerId: Number(this.inviteeId)})
+          .then((res) => {
+            console.log(res.data);
+            this.messages = res.data;
+          })
           .catch(err => console.error(err.toString()));
     }
   },

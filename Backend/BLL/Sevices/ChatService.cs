@@ -17,8 +17,15 @@ public class ChatService(
         return messages;
     }
     
-    public async Task<Message> AddMessage(Message message)
+    public async Task<Message> AddMessage(int inviterId, int roomName, string text)
     {
+        var message = new Message()
+        {
+            Created_at = DateTime.Now,
+            RoomId = roomName,
+            SenderId = inviterId,
+            Text = text
+        };
         return await messagesRepository.AddMessage(message);
     }
 }

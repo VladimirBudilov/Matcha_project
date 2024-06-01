@@ -27,9 +27,4 @@ public class ChatManager(
         if (roomId != 0) return roomId;
         return await roomsRepository.CreateRoom(inviterId, inviteeId);
     }
-
-    public void ConnectToRoom(int room, string contextConnectionId)
-    {
-        
-    }
 }

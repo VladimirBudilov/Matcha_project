@@ -13,7 +13,9 @@ public class ChatHub(
     ChatManager chatManager,
     ILogger<ChatHub> logger,
     ClaimsService claimsService,
-    UserService userService
+    UserService userService,
+    ChatService chatService
+    
 ) : Hub<IChat>
 {
     public override Task OnConnectedAsync()
@@ -36,7 +38,9 @@ public class ChatHub(
         var roomName = await chatManager.GetRoomName(inviterId, inviteeId);
         var user = await userService.GetUserByIdAsync(inviterId);
         await Clients.Group(roomName.ToString()).ReceiveMessage(user!.FirstName, message);
-        //add m
+        //add message to db
+        chatService.AddMessage(inviterId, roomName, message);
+
     }
     
     public async Task StartChat(int inviteeId)
