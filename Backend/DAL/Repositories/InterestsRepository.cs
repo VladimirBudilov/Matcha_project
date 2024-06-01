@@ -29,7 +29,7 @@ public sealed class InterestsRepository(
     public async Task<Interest> CreateInterestAsync(string entity)
     {
        
-        var query = "INSERT INTO interests (name) VALUES (\'@entity\') RETURNING interest_id";
+        var query = "INSERT INTO interests (name) VALUES ( @entity ) RETURNING interest_id";
         var parameters = new Dictionary<string, object> {{"@entity", entity}};
         var table = await fetcher.GetTableByParameter(query, parameters);
         var interest = new Interest

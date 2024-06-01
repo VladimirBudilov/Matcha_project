@@ -2,8 +2,6 @@
 using System.Text;
 using DAL.Entities;
 using DAL.Helpers;
-using Microsoft.Extensions.Primitives;
-using Npgsql;
 
 namespace DAL.Repositories;
 
@@ -138,8 +136,7 @@ public class ProfileRepository(
         var queryBuilder = new QueryBuilder();
         queryBuilder
             .Select(" users.user_id as user_id, users.*, profiles.*, ")
-            .Select(
-                "calculate_distance(@profile_latitude, @profile_longitude, profiles.latitude, profiles.longitude) as distance, ")
+            .Select("calculate_distance(@profile_latitude, @profile_longitude, profiles.latitude, profiles.longitude) as distance, ")
             .Select("count_common_elements(@userInterests, ARRAY_AGG(interests.interest_id)) AS common_interests ")
             .From("users JOIN profiles ON users.user_id = profiles.profile_id ")
             .From("LEFT JOIN user_interests ON user_interests.user_id = users.user_id ")
@@ -152,7 +149,7 @@ public class ProfileRepository(
         };
 
         //add filters
-        ApplyFilters(searchParams, profile, parameters, ref queryBuilder);
+        //ApplyFilters(searchParams, profile, parameters, ref queryBuilder);
         //add group by
         ApplyOrdering(sortParams, ref queryBuilder);
         //add pagination
@@ -163,8 +160,7 @@ public class ProfileRepository(
         queryBuilder.Offset($" @offset ");
         parameters.Add("@pageSize", pagination.PageSize);
         parameters.Add("@offset", (pagination.PageNumber - 1) * pagination.PageSize);
-
-
+        
         var table = await fetcher.GetTableByParameter(queryBuilder.Build(), parameters);
         var users = new List<User>();
         foreach (DataRow row in table.Rows)
