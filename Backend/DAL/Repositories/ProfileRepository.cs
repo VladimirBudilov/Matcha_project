@@ -146,10 +146,12 @@ public class ProfileRepository(
             { "@profile_latitude", (double)profile.Latitude },
             { "@profile_longitude", (double)profile.Longitude },
             { "@userInterests", userInterestsIds },
+            {"@profile_id", id}
+
         };
 
         //add filters
-        //ApplyFilters(searchParams, profile, parameters, ref queryBuilder);
+        ApplyFilters(searchParams, profile, parameters, ref queryBuilder);
         //add group by
         ApplyOrdering(sortParams, ref queryBuilder);
         //add pagination
@@ -184,7 +186,8 @@ public class ProfileRepository(
         var counter = new QueryBuilder()
             .Select("Count(*) ")
             .From($" ({queryBuilder.Build()})");
-        var countCommand = await fetcher.GetTableByParameter(counter.Build(), parameters);
+        var query = counter.Build();
+        var countCommand = await fetcher.GetTableByParameter(query , parameters);
         var count = (long)countCommand.Rows[0][0];
         return count;
     }
@@ -220,7 +223,6 @@ public class ProfileRepository(
         ref QueryBuilder queryBuilder)
     {
         queryBuilder.Where($"users.user_id != @profile_id AND profiles.is_active = TRUE AND users.is_verified = TRUE ");
-        parameters.Add("@profile_id", profile.Id);
         if (searchParams.MaxDistance != null)
         {
             queryBuilder.Where(
@@ -230,15 +232,15 @@ public class ProfileRepository(
 
         if (searchParams.SexualPreferences != null)
         {
-            queryBuilder.Where($" AND sexual_preferences = '@sexualPreferences' ");
+            queryBuilder.Where($" AND sexual_preferences = @sexualPreferences ");
             parameters.Add("@sexualPreferences", searchParams.SexualPreferences);
         }
 
         if (searchParams.CommonTags.Count != 0)
         {
-            queryBuilder.Where($" AND count_shared_elements(@filterTags, ARRAY_AGG(interests.name)) >= @filterTags");
+            queryBuilder.Where($" AND count_shared_elements(@filterTags, ARRAY_AGG(interests.name)) >= @tagsCount ");
             parameters.Add("@filterTags", searchParams.CommonTags);
-            parameters.Add("@filterTags", searchParams.CommonTags.Count);
+            parameters.Add("@tagsCount", searchParams.CommonTags.Count);
         }
 
         if (searchParams.MinAge != null && searchParams.MaxAge != null)
