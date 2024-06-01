@@ -196,7 +196,6 @@ public class ProfileRepository(
     private static void ApplyOrdering(SortParameters sortParams, ref QueryBuilder queryBuilder)
     {
         queryBuilder.GroupBy("users.user_id, profiles.profile_id ");
-        //add sorting
         var parameters = new List<string>
         {
             $"distance",

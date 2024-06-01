@@ -13,7 +13,7 @@ public class PicturesRepository(
     public async Task<Picture> GetProfilePictureAsync(int? id)
     {
         if (id == null) return null;
-        var query = "SELECT * FROM pictures WHERE user_id = @id AND is_profile_picture = 1";
+        var query = "SELECT * FROM pictures WHERE picture_id = @id";
         var table = await fetcher.GetTableByParameter(query, "@id", (int)id);
         if (table.Rows.Count == 0) return null;
         return entityCreator.CreatePicture(table.Rows[0]);
@@ -21,7 +21,7 @@ public class PicturesRepository(
 
     public async Task<IEnumerable<Picture>> GetPicturesByUserIdAsync(int id)
     {
-        var query = "SELECT * FROM pictures WHERE user_id = @id";
+        var query = "SELECT * FROM pictures WHERE user_id = @id AND is_profile_picture = 0";
         var table = await fetcher.GetTableByParameter(query, "@id", id);
 
         return (from DataRow row in table.Rows select entityCreator.CreatePicture(row)).ToList();
