@@ -21,7 +21,7 @@ public class ChatManager(
         return inviterHasLike && inviteeHasLike;
     }
 
-    public async Task<int> GetRoom(int inviterId, int inviteeId)
+    public async Task<int> GetRoomName(int inviterId, int inviteeId)
     {
         var roomId = await roomsRepository.GetRoom(inviterId, inviteeId);
         if (roomId != 0) return roomId;

@@ -12,14 +12,14 @@ namespace Web_API.Hubs;
 public class ChatHub(
     ChatManager chatManager,
     ILogger<ChatHub> logger,
-    ClaimsService claimsService
+    ClaimsService claimsService,
+    UserService userService
 ) : Hub<IChat>
 {
     public override Task OnConnectedAsync()
     {
         var user = claimsService.GetId(Context.User?.Claims);
         logger.LogInformation($"Actor {user} connected to chat");
-        //check that you should beconnected to chats
         return base.OnConnectedAsync();
     }
 
@@ -27,13 +27,16 @@ public class ChatHub(
     {
         var user = claimsService.GetId(Context.User?.Claims);
         logger.LogInformation($"Actor {user} disconnected from chat");
-        //check that you should be disconnected from chats
         return base.OnDisconnectedAsync(exception);
     }
 
-    public async Task SendMessage(string room, string message)
+    public async Task SendMessage(int inviteeId, string message)
     {
-        var user = Context.User?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+        var inviterId = claimsService.GetId(Context.User?.Claims);
+        var roomName = await chatManager.GetRoomName(inviterId, inviteeId);
+        var user = await userService.GetUserByIdAsync(inviterId);
+        await Clients.Group(roomName.ToString()).ReceiveMessage(user!.FirstName, message);
+        //add m
     }
     
     public async Task StartChat(int inviteeId)
@@ -42,13 +45,15 @@ public class ChatHub(
         var inviterId = claimsService.GetId(Context.User?.Claims);
         if(!await chatManager.CanChat(inviterId, inviteeId)) return;
         //check that room exists
-        var room = await chatManager.GetRoom(inviterId, inviteeId);
+        var roomName = await chatManager.GetRoomName(inviterId, inviteeId);
         //connect users to room
-        chatManager.ConnectToRoom(room, Context.ConnectionId);
+        await Groups.AddToGroupAsync(Context.ConnectionId, roomName.ToString());
     }
 
-    public async Task LeaveChat(string roomName)
+    public async Task LeaveChat(int inviteeId)
     {
-        //chatManager.LeaveRoom(roomName, Context);
+        var inviterId = claimsService.GetId(Context.User?.Claims);
+        var roomName = await chatManager.GetRoomName(inviterId, inviteeId);
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomName.ToString());
     }
 }

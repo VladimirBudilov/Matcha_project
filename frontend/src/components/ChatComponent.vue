@@ -13,7 +13,6 @@
   </div>
   <div class="room-actions" id="room-actions">
     <input v-model="inviteeId" placeholder="Invitee connection ID..." />
-    <button @click="GetMessages">GetMessages</button>
     <button @click="StartChat">Start</button>
     <button @click="LeaveChat">Leave</button>
   </div>
@@ -43,21 +42,11 @@ export default {
   methods: {
     sendMessage() {
       if (this.message.trim() !== '') {
-        console.log(this.connection);
         this.connection
-            .invoke("SendMessage", this.roomName, this.message)
-            .then(() => console.log('Message sent'))
+            .invoke("SendMessage", Number(this.inviteeId), this.message)
             .catch(err => console.error(err.toString()));
         this.message = '';
       }
-    },
-    GetMessages() {
-      this.connection.invoke("GetMessages", Number(this.inviteeId))
-          .then((data) =>
-      {
-        console.log(data);
-      })
-          .catch(err => console.error(err.toString()));
     },
     StartChat() {
       this.connection.invoke("StartChat", Number(this.inviteeId))
@@ -79,7 +68,11 @@ export default {
     }
   },
   beforeUnmount() {
-    this.connection.stop();
+    if (this.connection) {
+      this.connection.stop()
+          .then(() => console.log('Connection stopped'))
+          .catch(err => console.error('Error while stopping connection: ' + err));
+    }
   },
   beforeDestroy() {
     if (this.connection) {

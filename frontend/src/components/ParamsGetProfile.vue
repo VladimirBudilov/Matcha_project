@@ -21,7 +21,7 @@ const rating = ref<[number, number]>([getProfileParams.value.MinFameRating, getP
 
 const GetProfile = async () => {
 	if (age.value[0] < age.value[1]) {
-		getProfileParams.value.MinAge = age.value[0]
+		getProfileParams.value.MinAge = age.value[1]
 		getProfileParams.value.MaxAge = age.value[1]
 	}
 	else {
