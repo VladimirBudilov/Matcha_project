@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import axios from 'axios';
-import { onMounted, reactive, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { message } from 'ant-design-vue';
-import type { Profile } from '@/stores/SignUpStore';
 import {useNotificationStore} from '@/stores/NotoficationStore'
 import { SignUpStore } from '@/stores/SignUpStore';
 import ParamsGetProfile from '@/components/ParamsGetProfile.vue'
@@ -11,9 +10,29 @@ import { storeToRefs } from 'pinia';
 const store = useNotificationStore();
 
 const profiles = storeToRefs(SignUpStore()).profiles
+const getFilters = storeToRefs(SignUpStore()).getFilters
 const getProfileParams = storeToRefs(SignUpStore()).getProfileParams
 
+const GetFilters = async () => {
+	await axios.get('api/profile/filters').catch((res) => {
+		if (res.response.data) {
+			message.error(res.response.data)
+		}
+	}).then ((res) => {
+		if (res?.data) {
+			getFilters.value = res.data
+		}
+	})
+}
+
 const GetProfile = async () => {
+	getProfileParams.value.MaxDistance = Math.floor(getFilters.value.maxDistance)
+	getProfileParams.value.MinAge = getFilters.value.minAge
+	getProfileParams.value.MaxAge = getFilters.value.maxAge
+	getProfileParams.value.MinFameRating = getFilters.value.minFameRating
+	getProfileParams.value.MaxFameRating = getFilters.value.maxFameRating
+
+	console.log(getProfileParams.value)
 	await axios.get('api/profile', {
 		params: getProfileParams.value
 	}).catch((res) => {
@@ -40,7 +59,7 @@ onMounted(async () => {
 	await axios.get('api/auth/get-id').then((res) => {
 		localStorage.setItem('UserId', String(res?.data))
 	})
-
+	await GetFilters()
 	await GetProfile()
 })
 
@@ -67,10 +86,12 @@ const sendLike = async (profileId: number) => {
 }
 
 
-watch(() => getProfileParams.value.PageNumber,
+watch(
+	() => getProfileParams.value.PageNumber,
 	async () => {
-  	console.log('current', getProfileParams.value.PageNumber);
-  	await GetProfile()}
+		console.log('current', getProfileParams.value.PageNumber);
+		await GetProfile()
+	}
 );
 
 </script>

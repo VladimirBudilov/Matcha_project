@@ -202,7 +202,7 @@ const DeletePicture = async (picureId: number) => {
 	</a-form>
 	</a-card>
 
-	<a-card id="Avatar" v-if="profile.biography">
+	<a-card id="Avatar">
 		<a-form-item label="Avatar">
 		<a-image v-if="profile.profilePicture.picture"
 		:width="200"

@@ -1,20 +1,30 @@
 import { reactive, ref } from 'vue'
 import { defineStore } from 'pinia'
+import axios from 'axios'
 
 export const SignUpStore = defineStore('SignUp', () => {
   const IsActiveSignUp = ref(false)
   const IsLogin = ref(localStorage.getItem('token') ? true : false)
   const profiles = ref<Profile[]>([])
-  const getProfileParams = reactive<GetProfileParams>({
+  const getFilters = ref<GetFiltersType>({
+    maxAge: 18,
+    maxDistance: 0,
+    maxFameRating: 0,
+    minAge: 18,
+    minDistance: 0,
+    minFameRating: 0
+  })
+
+  const getProfileParams = ref<GetProfileParams>({
     PageNumber: 1,
     PageSize: 10,
     Total: 0,
     SexualPreferences: '',
-    MaxDistance: 100,
+    MaxDistance: 0,
     MinFameRating: 0,
-    MaxFameRating: 500,
-    MaxAge: 18,
-    MinAge: 99,
+    MaxFameRating: 0,
+    MinAge: 0,
+    MaxAge: 0,
     IsLikedUser: false,
     CommonTags: [],
     IsMatched: false,
@@ -25,7 +35,7 @@ export const SignUpStore = defineStore('SignUp', () => {
     SortingMainParameter: 0,
   })
 
-  return { IsActiveSignUp, IsLogin, profiles, getProfileParams }
+  return { IsActiveSignUp, IsLogin, profiles, getProfileParams, getFilters }
 })
 
 export interface ProfilePicture {
@@ -75,4 +85,13 @@ interface GetProfileParams {
   PageNumber: number,
   PageSize: number,
   Total: number
+}
+
+export interface GetFiltersType {
+  maxAge: number,
+  maxDistance: number,
+  maxFameRating: number,
+  minAge: number,
+  minDistance: number,
+  minFameRating: number
 }

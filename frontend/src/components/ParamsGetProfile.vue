@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Interests } from '@/stores/SignUpStore';
+import type { GetFiltersType, Interests } from '@/stores/SignUpStore';
 import { SignUpStore } from '@/stores/SignUpStore';
 import { message } from 'ant-design-vue';
 import axios from 'axios';
@@ -19,9 +19,22 @@ const sort = [{label: 'Ascending', value:'ASC'},
 const age = ref<[number, number]>([getProfileParams.value.MinAge, getProfileParams.value.MaxAge])
 const rating = ref<[number, number]>([getProfileParams.value.MinFameRating, getProfileParams.value.MaxFameRating])
 
+const getFilters = ref<GetFiltersType>()
+const GetFilters = async () => {
+	await axios.get('api/profile/filters').catch((res) => {
+		if (res.response.data) {
+			message.error(res.response.data)
+		}
+	}).then ((res) => {
+		if (res?.data) {
+			getFilters.value = res.data
+		}
+	})
+}
+
 const GetProfile = async () => {
 	if (age.value[0] < age.value[1]) {
-		getProfileParams.value.MinAge = age.value[1]
+		getProfileParams.value.MinAge = age.value[0]
 		getProfileParams.value.MaxAge = age.value[1]
 	}
 	else {
@@ -68,6 +81,7 @@ const GetInterests = async () => {
 	})
 }
 onMounted(async () => {
+	await GetFilters()
 	await GetInterests()
 })
 
@@ -120,13 +134,13 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 				></a-select>
 		</a-form-item>
 		<a-form-item label="Distance">
-				<a-slider v-model:value="getProfileParams.MaxDistance" :max=200 />
+				<a-slider v-model:value="getProfileParams.MaxDistance" :min=getFilters?.minDistance :max=getFilters?.maxDistance />
 			</a-form-item>
 			<a-form-item label="Age">
-				<a-slider v-model:value="age" range :min=18 />
+				<a-slider v-model:value="age" range :min=getFilters?.minAge :max=getFilters?.maxAge />
 			</a-form-item>
 			<a-form-item label="Rating">
-				<a-slider v-model:value="rating" range :max=999 />
+				<a-slider v-model:value="rating" range :min=getFilters?.minFameRating :max=getFilters?.maxFameRating />
 			</a-form-item>
 		</a-form>
 		<a-form
