@@ -136,8 +136,8 @@ public class EntityCreator
         {
             RoomId = row.Field<int>("room_id"),
             SenderId = row.Field<int>("sender_id"),
-            Text = row.Field<string>("text"),
-            Created_at = row.Field<DateTime>("time"),
+            Text = row.Field<string>("message"),
+            Created_at = row.Field<DateTime>("created_at")
         };
     }
 }

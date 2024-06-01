@@ -12,7 +12,7 @@ public class MessagesRepository(
     public async Task<Message> AddMessage(Message message)
     {
         var query = new StringBuilder()
-            .Append("INSERT INTO messages (room_id, sender_id, text, created_at)")
+            .Append("INSERT INTO messages (room_id, sender_id, message, created_at)")
             .Append("VALUES (@room_id, @sender_id, @text, @created_at)");
         var parameters = new Dictionary<string, object>
         {

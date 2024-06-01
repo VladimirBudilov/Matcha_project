@@ -37,9 +37,8 @@ public class ChatHub(
         var inviterId = claimsService.GetId(Context.User?.Claims);
         var roomName = await chatManager.GetRoomName(inviterId, inviteeId);
         var user = await userService.GetUserByIdAsync(inviterId);
+        await chatService.AddMessage(inviterId, roomName, message);
         await Clients.Group(roomName.ToString()).ReceiveMessage(user!.FirstName, message);
-        //add message to db
-        chatService.AddMessage(inviterId, roomName, message);
 
     }
     

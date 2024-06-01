@@ -147,11 +147,11 @@ public class ProfileService(
 
     }
 
-    public async Task<bool> IsMatch(int userActionProducerId, int userActionConsumerId)
+    public async Task<bool> IsMatch(int producerId, int consumerId)
     {
-        var producerLikes = await likesRepository.GetLikesByUserIdAsync(userActionProducerId);
-        var consumerLikes = await likesRepository.GetLikesByUserIdAsync(userActionConsumerId);
-        return producerLikes.Any(l => l.LikedId == userActionConsumerId) &&
-               consumerLikes.Any(l => l.LikedId == userActionProducerId);
+        var producerLikes = await likesRepository.GetLikesByUserIdAsync(producerId);
+        var consumerLikes = await likesRepository.GetLikesByUserIdAsync(consumerId);
+        return producerLikes.Any(l => l.LikerId == consumerId) &&
+               consumerLikes.Any(l => l.LikerId == producerId);
     }
 }
