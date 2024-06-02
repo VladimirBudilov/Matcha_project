@@ -126,7 +126,7 @@ public class ProfileRepository(
 
     public async Task<(long, IEnumerable<User>?)> GetFullProfilesAsync(SearchParameters searchParams,
         SortParameters sortParams,
-        PaginationParameters pagination, int id)
+        PaginationParameters pagination, int id, List<Interest> tagsIds)
     {
         var profile = (await GetFullProfileAsync(id))!.Profile;
         /*try
@@ -151,7 +151,7 @@ public class ProfileRepository(
         };
 
         //add filters
-        ApplyFilters(searchParams, profile, parameters, ref queryBuilder);
+        ApplyFilters(searchParams, tagsIds, parameters, ref queryBuilder);
         //add group by
         ApplyOrdering(sortParams, ref queryBuilder);
         //add pagination
@@ -162,8 +162,10 @@ public class ProfileRepository(
         queryBuilder.Offset($" @offset ");
         parameters.Add("@pageSize", pagination.PageSize);
         parameters.Add("@offset", (pagination.PageNumber - 1) * pagination.PageSize);
+
+        var query = queryBuilder.Build();
         
-        var table = await fetcher.GetTableByParameter(queryBuilder.Build(), parameters);
+        var table = await fetcher.GetTableByParameter(query, parameters);
         var users = new List<User>();
         foreach (DataRow row in table.Rows)
         {
@@ -194,7 +196,7 @@ public class ProfileRepository(
 
     private static void ApplyOrdering(SortParameters sortParams, ref QueryBuilder queryBuilder)
     {
-        queryBuilder.GroupBy("users.user_id, profiles.profile_id ");
+        queryBuilder.GroupBy(" users.user_id, profiles.profile_id ");
         var parameters = new List<string>
         {
             $"distance",
@@ -218,7 +220,7 @@ public class ProfileRepository(
     }
 
     private static void ApplyFilters(SearchParameters searchParams,
-        Profile profile,
+        List<Interest> tagsIds,
         Dictionary<string, object> parameters,
         ref QueryBuilder queryBuilder)
     {
@@ -238,9 +240,8 @@ public class ProfileRepository(
 
         if (searchParams.CommonTags.Count != 0)
         {
-            queryBuilder.Where($" AND count_shared_elements(@filterTags, ARRAY_AGG(interests.name)) >= @tagsCount ");
-            parameters.Add("@filterTags", searchParams.CommonTags);
-            parameters.Add("@tagsCount", searchParams.CommonTags.Count);
+            queryBuilder.Where(" AND interests.interest_id = ANY(@commonTags) ");
+            parameters.Add("@commonTags", tagsIds.Select(x => x.InterestId));
         }
 
         if (searchParams.MinAge != null && searchParams.MaxAge != null)

@@ -36,7 +36,8 @@ public class ProfileService(
     {
         var currentUser = await profileRepository.GetProfileByIdAsync(id);
         if(!currentUser.IsActive) throw new ForbiddenActionException("update user profile first");
-        var (counter, users) = await profileRepository.GetFullProfilesAsync(search, sort, pagination, id);
+        var tagsIds = await interestsRepository.GetUserInterestsByNamesAsync(search.CommonTags);
+        var (counter, users) = await profileRepository.GetFullProfilesAsync(search, sort, pagination, id, tagsIds);
         if (users == null) return (0, new List<User>());
         var builder = new ProfileBuilder();
         var usersList = new List<User>();
