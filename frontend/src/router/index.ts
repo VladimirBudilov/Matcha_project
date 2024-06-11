@@ -21,12 +21,12 @@ const router = createRouter({
       component: LoginVue
     },
     {
-      path: '/profile',
+      path: '/profiles',
       name: 'profile',
       component: Profile
     },
     {
-      path: '/user/:id',
+      path: '/users/:id',
       name: 'user',
       component: User
     },

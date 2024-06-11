@@ -16,7 +16,7 @@ namespace Web_API.Controllers;
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route("api/[controller]")]
 [ApiController]
-public class ProfileController(
+public class ProfilesController(
     ProfileService profileService,
     ActionService actionService,
     IMapper mapper,
@@ -29,24 +29,23 @@ public class ProfileController(
     // GET: api/profile
     [HttpGet]
     public async Task<ProfilesData> GetAllProfilesInfo(
-        [FromQuery] SearchParameters search,
-        [FromQuery] SortParameters sort,
-        [FromQuery] PaginationParameters pagination)
+        [FromBody] Parameters parameters)
     {
         var id = claimsService.GetId(User.Claims);
-        validator.CheckSearchParameters(search);
-        validator.CheckSortParameters(sort);
-        validator.CheckPaginationParameters(pagination);
+        validator.CheckSearchParameters(parameters.Search);
+        validator.CheckSortParameters(parameters.Sort);
+        validator.CheckPaginationParameters(parameters.Pagination);
 
-        var (amountOfPages, output) = await profileService.GetFullProfilesAsync(search, sort, pagination, id);
+        var (amountOfPages, output) =
+            await profileService.GetFullProfilesAsync(parameters.Search, parameters.Sort, parameters.Pagination, id);
         output = await profileService.CheckUsersLikes(output, id);
         var profiles = mapper.Map<List<ProfileResponse>>(output);
         return new ProfilesData()
         {
             Profiles = profiles,
             AmountOfPages = amountOfPages,
-            PageSize = pagination.PageSize,
-            PageNumber = pagination.PageNumber
+            PageSize = parameters.Pagination.PageSize,
+            PageNumber = parameters.Pagination.PageNumber
         };
     }
 

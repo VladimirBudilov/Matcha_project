@@ -12,7 +12,7 @@ namespace Web_API.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController(UserService userService, IMapper mapper, DtoValidator validator) : ControllerBase
+    public class UsersController(UserService userService, IMapper mapper, DtoValidator validator) : ControllerBase
     {
         // GET api/<UsersController>/5
         [HttpGet("{id:int}")]
