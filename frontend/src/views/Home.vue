@@ -14,7 +14,7 @@ const getFilters = storeToRefs(SignUpStore()).getFilters
 const getProfileParams = storeToRefs(SignUpStore()).getProfileParams
 
 const GetFilters = async () => {
-	await axios.get('api/profile/filters').catch((res) => {
+	await axios.get('api/profiles/filters').catch((res) => {
 		if (res.response.data) {
 			message.error(res.response.data)
 		}
@@ -34,7 +34,7 @@ const GetProfile = async () => {
 	getProfileParams.value.MaxFameRating = getFilters.value.maxFameRating
 
 	console.log(getProfileParams.value)
-	await axios.get('api/profile', {
+	await axios.get('api/profiles', {
 		params: getProfileParams.value
 	}).catch((res) => {
 		if (res.response) {

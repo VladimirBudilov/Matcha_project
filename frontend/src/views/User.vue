@@ -34,7 +34,7 @@ const profile = ref<Profile>({
 })
 
 const GetProfile = async () => {
-	await axios.get('api/profile/' + route.params.id).catch(() => {
+	await axios.get('api/profiles/' + route.params.id).catch(() => {
 		message.error(`User was not found!!!`);
 	}).then((res) => {
 		if (res?.data) {

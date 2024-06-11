@@ -32,7 +32,7 @@ const profile = ref<Profile>({
 
 const interests = ref<Interests[]>([])
 const GetInterests = async () => {
-	await axios.get('api/profile/interests').then((res) => {
+	await axios.get('api/profiles/interests').then((res) => {
 		console.log(res)
 		interests.value = res.data
 		interests.value.forEach((element) => {
@@ -42,7 +42,7 @@ const GetInterests = async () => {
 }
 
 const GetProfile = async () => {
-	await axios.get('api/profile/' + localStorage.getItem('UserId')).catch((res) => {
+	await axios.get('api/profiles/' + localStorage.getItem('UserId')).catch((res) => {
 		if (res.response.data){
 			message.error(res.response.data)
 		}
@@ -63,7 +63,7 @@ onMounted(async () => {
 
 const SubmitChanges = async () => {
 	errorMsg.value = ''
-	await axios.put('api/profile/' + profile.value.profileId, profile.value).catch((res) => {
+	await axios.put('api/profiles/' + profile.value.profileId, profile.value).catch((res) => {
 		errorMsg.value = 'Error'
 		if (res.response.data.errors) {
 			if (res.response.data.errors.Biography) {

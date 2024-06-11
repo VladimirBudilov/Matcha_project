@@ -22,12 +22,12 @@ const router = createRouter({
     },
     {
       path: '/profiles',
-      name: 'profile',
+      name: 'profiles',
       component: Profile
     },
     {
       path: '/users/:id',
-      name: 'user',
+      name: 'users',
       component: User
     },
     {

@@ -12,7 +12,7 @@ const firstName = ref('')
 const lastName = ref('')
 
 async function GetProfileInfo(){
-  await axios.get('api/profile/' + localStorage.getItem('UserId')).then((res) => {
+  await axios.get('api/profiles/' + localStorage.getItem('UserId')).then((res) => {
       firstName.value = res.data.firstName
       lastName.value = res.data.lastName
     })
@@ -42,7 +42,7 @@ onMounted (async () => {
       <header>
         <nav>
           <RouterLink to="/">Home</RouterLink>
-          <RouterLink to="/profile"> {{ firstName }} {{ lastName }}</RouterLink>
+          <RouterLink to="/profiles"> {{ firstName }} {{ lastName }}</RouterLink>
           <RouterLink to="/settings">Settings</RouterLink>
           <RouterLink to="/chat">Chat</RouterLink>
           <Logout />

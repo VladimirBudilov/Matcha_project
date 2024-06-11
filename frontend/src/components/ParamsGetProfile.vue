@@ -27,7 +27,7 @@ const GetProfile = async () => {
 	getProfileParams.value.MinFameRating = Math.min(rating.value[0], rating.value[1])
 	getProfileParams.value.MaxFameRating = Math.max(rating.value[0], rating.value[1])
 
-	await axios.get('api/profile', {
+	await axios.get('api/profiles', {
 		params: getProfileParams.value
 	}).catch((res) => {
 
@@ -49,7 +49,7 @@ const GetProfile = async () => {
 
 const interests = ref<Interests[]>([])
 const GetInterests = async () => {
-	await axios.get('api/profile/interests').then((res) => {
+	await axios.get('api/profiles/interests').then((res) => {
 		interests.value = res.data
 		interests.value.forEach((element) => {
 			element.value = element.name
