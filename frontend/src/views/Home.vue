@@ -27,24 +27,22 @@ const GetFilters = async () => {
 }
 
 const GetProfile = async () => {
-	getProfileParams.value.MaxDistance = getFilters.value.maxDistance
-	getProfileParams.value.MinAge = getFilters.value.minAge
-	getProfileParams.value.MaxAge = getFilters.value.maxAge
-	getProfileParams.value.MinFameRating = getFilters.value.minFameRating
-	getProfileParams.value.MaxFameRating = getFilters.value.maxFameRating
+	getProfileParams.value.search.maxDistance = getFilters.value.maxDistance
+	getProfileParams.value.search.minAge = getFilters.value.minAge
+	getProfileParams.value.search.maxAge = getFilters.value.maxAge
+	getProfileParams.value.search.minFameRating = getFilters.value.minFameRating
+	getProfileParams.value.search.maxFameRating = getFilters.value.maxFameRating
 
 	console.log(getProfileParams.value)
-	await axios.get('api/profiles', {
-		params: getProfileParams.value
-	}).catch((res) => {
+	await axios.post('api/profiles', getProfileParams.value).catch((res) => {
 		if (res.response) {
 			message.error(`Fill out the profile!`);
 		}
 	}).then((res) => {
 		if (res?.data){
 			profiles.value = res.data.profiles
-			if (getProfileParams.value.PageSize) {
-				getProfileParams.value.Total = getProfileParams.value.PageSize * res.data.amountOfPages
+			if (getProfileParams.value.pagination.pageSize) {
+				getProfileParams.value.pagination.total = getProfileParams.value.pagination.pageSize * res.data.amountOfPages
 			}
 
 			console.log(res.data)
@@ -88,9 +86,9 @@ const sendLike = async (profileId: number) => {
 
 
 watch(
-	() => getProfileParams.value.PageNumber,
+	() => getProfileParams.value.pagination.pageNumber,
 	async () => {
-		console.log('current', getProfileParams.value.PageNumber);
+		console.log('current', getProfileParams.value.pagination.pageNumber);
 		await GetProfile()
 	}
 );
@@ -150,9 +148,9 @@ watch(
 	</a-space>
 	<a-pagination
 		id="pagination-users"
-		v-model:current="getProfileParams.PageNumber"
-		:total="getProfileParams.Total" show-less-items
-		:defaultPageSize="getProfileParams.PageSize"/>
+		v-model:current="getProfileParams.pagination.pageNumber"
+		:total="getProfileParams.pagination.total" show-less-items
+		:defaultPageSize="getProfileParams.pagination.pageSize"/>
 	</div>
 
 

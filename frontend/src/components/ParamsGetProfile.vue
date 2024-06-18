@@ -18,19 +18,17 @@ const sortMainParam = [{label: 'Distance', value: 0},
 const sort = [{label: 'Ascending', value:'ASC'},
 	{label: 'Descending', value: 'DESC'}]
 
-const age = ref<[number, number]>([getProfileParams.value.MinAge, getProfileParams.value.MaxAge])
-const rating = ref<[number, number]>([getProfileParams.value.MinFameRating, getProfileParams.value.MaxFameRating])
+const age = ref<[number, number]>([getProfileParams.value.search.minAge, getProfileParams.value.search.maxAge])
+const rating = ref<[number, number]>([getProfileParams.value.search.minFameRating, getProfileParams.value.search.maxFameRating])
 
 const GetProfile = async () => {
-	getProfileParams.value.MinAge = Math.min(age.value[0], age.value[1])
-	getProfileParams.value.MaxAge = Math.max(age.value[0], age.value[1])
-	getProfileParams.value.MinFameRating = Math.min(rating.value[0], rating.value[1])
-	getProfileParams.value.MaxFameRating = Math.max(rating.value[0], rating.value[1])
+	getProfileParams.value.search.minAge = Math.min(age.value[0], age.value[1])
+	getProfileParams.value.search.maxAge = Math.max(age.value[0], age.value[1])
+	getProfileParams.value.search.minFameRating = Math.min(rating.value[0], rating.value[1])
+	getProfileParams.value.search.maxFameRating = Math.max(rating.value[0], rating.value[1])
 
-	await axios.get('api/profiles', {
-		params: getProfileParams.value
-	}).catch((res) => {
-
+	await axios.post('api/profiles', getProfileParams.value)
+	.catch((res) => {
 		if (res.code == 403) {
 			message.error(`Fill out the profile!`);
 		}
@@ -86,17 +84,17 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 		>
 			<a-form-item label="Sexual preferences">
 				<a-select
-				v-model:value="getProfileParams.SexualPreferences"
+				v-model:value="getProfileParams.search.sexualPreferences"
 				:options="genders"
 				size="middle"
 				placeholder="Please select"
 				></a-select>
 			</a-form-item>
 			<a-form-item label="Is matched">
-				<a-checkbox v-model:checked="getProfileParams.IsMatched"></a-checkbox>
+				<a-checkbox v-model:checked="getProfileParams.search.isMatched"></a-checkbox>
 			</a-form-item>
 			<a-form-item label="Is liked user">
-				<a-checkbox v-model:checked="getProfileParams.IsLikedUser"></a-checkbox>
+				<a-checkbox v-model:checked="getProfileParams.search.isLikedUser"></a-checkbox>
 			</a-form-item>
 
 			<a-button type="primary" html-type="signup" @click="GetProfile" style="position: relative; margin-left: 7vw; z-index: 1;">Search</a-button>
@@ -111,7 +109,7 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 		>
 		<a-form-item label="Interests" direction="vertical">
 				<a-select
-				v-model:value="getProfileParams.CommonTags"
+				v-model:value="getProfileParams.search.commonTags"
 				:options="interests"
 				mode="tags"
 				size="middle"
@@ -119,7 +117,7 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 				></a-select>
 		</a-form-item>
 		<a-form-item label="Distance">
-				<a-slider v-model:value="getProfileParams.MaxDistance" :min=getFilters?.minDistance :max=getFilters?.maxDistance />
+				<a-slider v-model:value="getProfileParams.search.maxDistance" :min=getFilters?.minDistance :max=getFilters?.maxDistance />
 			</a-form-item>
 			<a-form-item label="Age">
 				<a-slider v-model:value="age" range :min=getFilters?.minAge :max=getFilters?.maxAge />
@@ -137,7 +135,7 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 		>
 		<a-form-item label="Sort location">
 			<a-select
-				v-model:value="getProfileParams.SortLocation"
+				v-model:value="getProfileParams.sort.sortLocation"
 				:options="sort"
 				size="middle"
 				placeholder="Please select"
@@ -145,7 +143,7 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 		</a-form-item>
 		<a-form-item label="Sort fame rating">
 			<a-select
-				v-model:value="getProfileParams.SortFameRating"
+				v-model:value="getProfileParams.sort.sortFameRating"
 				:options="sort"
 				size="middle"
 				placeholder="Please select"
@@ -153,7 +151,7 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 		</a-form-item>
 		<a-form-item label="Sort age">
 			<a-select
-				v-model:value="getProfileParams.SortAge"
+				v-model:value="getProfileParams.sort.sortAge"
 				:options="sort"
 				size="middle"
 				placeholder="Please select"
@@ -161,7 +159,7 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 		</a-form-item>
 		<a-form-item label="Sort common tags">
 			<a-select
-				v-model:value="getProfileParams.SortCommonTags"
+				v-model:value="getProfileParams.sort.sortCommonTags"
 				:options="sort"
 				size="middle"
 				placeholder="Please select"
@@ -169,7 +167,7 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 		</a-form-item>
 		<a-form-item label="Sorting main parameter">
 			<a-select
-				v-model:value="getProfileParams.SortingMainParameter"
+				v-model:value="getProfileParams.sort.sortingMainParameter"
 				:options="sortMainParam"
 				size="middle"
 				placeholder="Please select"
