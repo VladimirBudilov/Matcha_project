@@ -68,7 +68,7 @@ watch (
 	}
 )
 
-const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Female'}, {value: '', label: 'Nothing'}]
+const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Female'}]
 
 </script>
 
