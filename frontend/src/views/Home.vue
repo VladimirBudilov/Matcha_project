@@ -45,8 +45,6 @@ const GetProfile = async () => {
 				getProfileParams.value.pagination.total = getProfileParams.value.pagination.pageSize * res.data.amountOfPages
 			}
 
-			console.log(res.data)
-			console.log(res.data.profiles)
 			console.log(profiles.value)
 		}
 	})

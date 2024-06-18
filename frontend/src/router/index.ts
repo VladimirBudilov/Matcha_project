@@ -4,6 +4,7 @@ import LoginVue from '@/views/Login.vue'
 import Profile from '@/views/Profile.vue'
 import Settings from '@/views/Settings.vue'
 import ChatView from '@/views/ChatView.vue'
+import Chat from '@/views/Chat.vue'
 import User from '@/views/User.vue'
 
 
@@ -26,8 +27,8 @@ const router = createRouter({
       component: Profile
     },
     {
-      path: '/users/:id',
-      name: 'users',
+      path: '/user/:id',
+      name: 'user',
       component: User
     },
     {
@@ -39,6 +40,11 @@ const router = createRouter({
       path: "/chat",
       name: "chat",
       component: ChatView
+    },
+    {
+      path: "/chat2",
+      name: "chat2",
+      component: Chat
     }
   ]
 })
