@@ -158,8 +158,8 @@ public class ProfileRepository(
         var numberOfUsers = await GetNumberOfUsers(queryBuilder, parameters);
         if (numberOfUsers == 0) return (0, new List<User>());
 
-        queryBuilder.Limit($" @pageSize ");
-        queryBuilder.Offset($" @offset ");
+        queryBuilder.Limit(" @pageSize ");
+        queryBuilder.Offset(" @offset ");
         parameters.Add("@pageSize", pagination.PageSize);
         parameters.Add("@offset", (pagination.PageNumber - 1) * pagination.PageSize);
 
@@ -241,7 +241,7 @@ public class ProfileRepository(
         if (searchParams.CommonTags.Count != 0)
         {
             queryBuilder.Where(" AND interests.interest_id = ANY(@commonTags) ");
-            parameters.Add("@commonTags", tagsIds.Select(x => x.InterestId));
+            parameters.Add("@commonTags", tagsIds.Select(x => x.InterestId).ToArray());
         }
 
         if (searchParams.MinAge != null && searchParams.MaxAge != null)
