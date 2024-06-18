@@ -4,10 +4,15 @@ import { message } from 'ant-design-vue';
 import axios from 'axios';
 import { storeToRefs } from 'pinia';
 import { onMounted, watch } from 'vue';
+import createConnection from "../services/ChatService";
+import ChatMsg from "@/components/ChatMsg.vue"
 
 const getFilters = storeToRefs(SignUpStore()).getFilters
 const getProfileParams = storeToRefs(SignUpStore()).getProfileParams
 const profiles = storeToRefs(SignUpStore()).profiles
+const connection = storeToRefs(SignUpStore()).connection
+const chatId = storeToRefs(SignUpStore()).chatId
+
 
 const columns = [
 	{
@@ -66,9 +71,28 @@ const GetProfile = async () => {
 	})
 }
 
+const LeaveChat = async () => {
+	await connection.value?.invoke("LeaveChat", chatId.value[1])
+        .then(() => {
+            console.log('Chat left')
+        })
+        .catch(err => console.error(err.toString()));
+}
+
+const setChatId = async (userId : number) => {
+	if (chatId.value[1]) {
+		await LeaveChat()
+	}
+	chatId.value[0] = Number(localStorage.getItem('UserId'))
+	chatId.value[1] = userId
+	console.log(chatId.value)
+}
+
 onMounted(async () => {
 	await GetFilters()
 	await GetProfile()
+	connection.value = createConnection();
+    connection.value.start().catch(err => message.error(err.toString()));
 })
 
 watch(
@@ -94,7 +118,7 @@ watch(
 					/>
 				</template>
 				<template v-if="column.key === 'name'">
-					<a>
+					<a @click="setChatId(record.profileId)">
 						{{ record.firstName + ' ' + record.lastName }}
 					</a>
 				</template>
@@ -106,6 +130,8 @@ watch(
 		:total="getProfileParams.pagination.total" show-less-items
 		:defaultPageSize="getProfileParams.pagination.pageSize"/>
 	</div>
+	<ChatMsg />
+
 
 </template>
 

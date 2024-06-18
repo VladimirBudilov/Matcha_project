@@ -1,6 +1,6 @@
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import type { HubConnection } from '@microsoft/signalr'
 
 export const SignUpStore = defineStore('SignUp', () => {
   const IsActiveSignUp = ref(false)
@@ -38,7 +38,11 @@ export const SignUpStore = defineStore('SignUp', () => {
     }
   })
 
-  return { IsActiveSignUp, IsLogin, profiles, getProfileParams, getFilters }
+  const connection = ref<HubConnection>()
+  const chatId = ref<number[]>([])
+  const messages = ref<Message[]>([])
+
+  return { IsActiveSignUp, IsLogin, profiles, getProfileParams, getFilters, connection, messages, chatId}
 })
 
 export interface ProfilePicture {
@@ -53,21 +57,21 @@ export interface Interests {
 }
 
 export interface Profile {
-  "profileId": number,
-  "userName": string,
-  "firstName": string,
-  "lastName": string,
-  "gender": string | null,
-  "sexualPreferences": string | null,
-  "biography": string | null,
-  "fameRating": number,
-  "age": number,
-  "latitude": number,
-  "longitude": number
-  "profilePicture": ProfilePicture,
-  "pictures": Array<ProfilePicture>,
-  "interests": Array<string>,
-  "hasLike"?: boolean
+  profileId: number,
+  userName: string,
+  firstName: string,
+  lastName: string,
+  gender: string | null,
+  sexualPreferences: string | null,
+  biography: string | null,
+  fameRating: number,
+  age: number,
+  latitude: number,
+  longitude: number
+  profilePicture: ProfilePicture,
+  pictures: Array<ProfilePicture>,
+  interests: Array<string>,
+  hasLike?: boolean
 }
 
 interface sort {
@@ -109,4 +113,11 @@ export interface GetFiltersType {
   minAge: number,
   minDistance: number,
   minFameRating: number
+}
+
+interface Message {
+  id: number
+  photo?: string
+  text?: string
+  date: Date
 }
