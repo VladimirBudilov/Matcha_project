@@ -27,7 +27,7 @@ public class ProfilesController(
 ) : ControllerBase
 {
     // GET: api/profile
-    [HttpGet]
+    [HttpPost]
     public async Task<ProfilesData> GetAllProfilesInfo(
         [FromBody] Parameters parameters)
     {
