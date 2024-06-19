@@ -74,7 +74,7 @@ const onFinish = (values: any) => {
 		</a-form-item>
 		<a-form-item :wrapper-col="{ offset: 9, span: 7 }">
 			<a-button type="primary" html-type="submit">Submit</a-button>
-			<a-button danger type="primary"  html-type="cancel" @click="SignUpButtonTurnOn" style="margin-left: 1vw;">Cancel</a-button>
+			<a-button id="button-sing-up-cancel" danger type="primary"  html-type="cancel" @click="SignUpButtonTurnOn">Cancel</a-button>
 		</a-form-item>
 
 
@@ -84,4 +84,7 @@ const onFinish = (values: any) => {
 </template>
 
 <style>
+#button-sing-up-cancel {
+	margin-left: 1vw;
+}
 </style>

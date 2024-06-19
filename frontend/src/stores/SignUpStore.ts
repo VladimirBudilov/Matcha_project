@@ -118,5 +118,6 @@ export interface GetFiltersType {
 interface Message {
   author: string
   content: string
-  datetime: string
+  datetime?: string
+  date?: string
 }

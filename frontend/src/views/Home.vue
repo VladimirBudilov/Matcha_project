@@ -157,7 +157,6 @@ watch(
 <style>
 
 #profile-cards {
-	/*position:absolute;*/
 	padding-top: 7vh;
 	padding-bottom: 10vh;
 	padding-left: 1vw;

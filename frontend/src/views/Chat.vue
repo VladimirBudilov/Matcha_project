@@ -143,21 +143,23 @@ watch(
 	padding-top: 7vh;
 	padding-bottom: 10vh;
 	padding-left: 1vw;
-	padding-right: 70vw;
-	width: 98vw;
+	padding-right: 1vw;
+	width: 30vw;
+	display: flex;
+	flex-wrap: wrap;
 }
 
 #pagination-users-chat {
 	position: relative;
 	margin-top: 10vh;
-	width: 100%;
 	bottom: 3vh;
 	padding-top: 2vh;
 	padding-bottom: 2vh;
 	padding-left: 3vh;
-	padding-right: 3vh;
-	background-color: grey;
-	color:black
+	background-color: var(--color-background-soft);
+	color:var(--color-text);
+	display: flex;
+	flex-wrap: wrap;
 }
 
 </style>

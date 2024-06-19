@@ -80,7 +80,7 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 		:wrapper-col="{ span: 30 }"
 		layout="horizontal"
 		:disabled="false"
-		style="width: 30vw"
+		id="input-form-get-profile-check-box"
 		>
 			<a-form-item label="Sexual preferences">
 				<a-select
@@ -97,7 +97,7 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 				<a-checkbox v-model:checked="getProfileParams.search.isLikedUser"></a-checkbox>
 			</a-form-item>
 
-			<a-button type="primary" html-type="signup" @click="GetProfile" style="position: relative; margin-left: 7vw; z-index: 1;">Search</a-button>
+			<a-button id="button-get-profile" type="primary" html-type="signup" @click="GetProfile">Search</a-button>
 
 		</a-form>
 		<a-form
@@ -105,7 +105,7 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 		:wrapper-col="{ span: 15 }"
 		layout="horizontal"
 		:disabled="false"
-		style="width: 30vw"
+		id="input-form-get-profile-middle"
 		>
 		<a-form-item label="Interests" direction="vertical">
 				<a-select
@@ -131,7 +131,7 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 		:wrapper-col="{ span: 15 }"
 		layout="horizontal"
 		:disabled="false"
-		style="width: 30vw"
+		id="input-form-get-profile-sort"
 		>
 		<a-form-item label="Sort location">
 			<a-select
@@ -194,6 +194,24 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 #input-form-get-profile {
 	display: flex;
 	flex-wrap: wrap;
+}
+
+#input-form-get-profile-check-box {
+	width: 30vw;
+}
+
+#input-form-get-profile-middle {
+	width: 30vw;
+}
+
+#input-form-get-profile-sort {
+	width: 30vw;
+}
+
+#button-get-profile {
+	position: relative;
+	margin-left: 7vw;
+	z-index: 1;
 }
 
 </style>

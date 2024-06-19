@@ -90,12 +90,15 @@ const onFinish = async (values: any) => {
 
 		<a-form-item :wrapper-col="{ offset: 9, span: 2 }">
 			<a-button type="primary" html-type="submit">Submit</a-button>
-			<a-button type="primary" html-type="signup" @click="SignUpButtonTurnOn" style="margin-top: 3px;">Sign up</a-button>
+			<a-button id='sign-up' type="primary" html-type="signup" @click="SignUpButtonTurnOn">Sign up</a-button>
 		</a-form-item>
 	</a-form>
 
 </template>
 
 <style>
+#sign-up {
+	margin-top: 3px
+}
 
 </style>
