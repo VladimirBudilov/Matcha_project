@@ -85,14 +85,17 @@ const setChatId = async (userId : number) => {
 	}
 	chatId.value[0] = Number(localStorage.getItem('UserId'))
 	chatId.value[1] = userId
-	console.log(chatId.value)
+	console.log("set ids for chat" + chatId.value)
 }
 
 onMounted(async () => {
-	await GetFilters()
-	await GetProfile()
+	await GetFilters();
+	await GetProfile();
 	connection.value = createConnection();
-    connection.value.start().catch(err => message.error(err.toString()));
+  connection.value.start().catch(err => message.error(err.toString()));
+  connection.value.on("ReceiveMessage", (user, message) => {
+        console.log('Message received by ' + user + ' ' + message);
+    });
 })
 
 watch(

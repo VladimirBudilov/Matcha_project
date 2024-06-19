@@ -25,14 +25,12 @@ const GetMessages = async () => {
 }
 
 const StartChat = async () => {
-	await connection.value?.invoke("StartChat", chatId.value[1])
+	await connection.value?.invoke("StartChat", Number(chatId.value[1]))
 		.then((data) => {
 			message.open(data);
 		})
 		.catch(err => message.error(err.toString()));
 }
-
-
 
 const SendMsg = async () => {
 	if (msg.value != ''){
@@ -41,7 +39,6 @@ const SendMsg = async () => {
         msg.value = '';
 	}
 }
-
 
 watch (
 	() => chatId.value[1],
