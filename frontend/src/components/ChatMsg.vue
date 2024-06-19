@@ -19,7 +19,7 @@ const GetMessages = async () => {
 	await axios.post('api/actions/chat',  {producerId: chatId.value[0], consumerId: chatId.value[1]})
 	.then((res) => {
 	console.log(res.data);
-	messages.value = res.data;
+	messages.value = res.data.data;
 	})
 	.catch(err => message.error(err.toString()));
 }
@@ -60,15 +60,15 @@ watch (
 		>
 		<template #renderItem="{ item }">
 			<a-comment>
-				<template #author>{{ item.id }}</template>
+				<template #author>{{ item.author }}</template>
 				<template #content>
 				<p>
-					{{ item.text }}
+					{{ item.content }}
 				</p>
 				</template>
 				<template #datetime>
-				<a-tooltip :title="item.date.format('YYYY-MM-DD HH:mm:ss')">
-					<span>{{ item.date.fromNow() }}</span>
+				<a-tooltip :title="item.datetime.format('YYYY-MM-DD HH:mm:ss')">
+					<span>{{ item.datetime.fromNow() }}</span>
 				</a-tooltip>
 				</template>
 			</a-comment>

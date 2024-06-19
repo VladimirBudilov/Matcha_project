@@ -116,8 +116,7 @@ export interface GetFiltersType {
 }
 
 interface Message {
-  id: number
-  photo?: string
-  text?: string
-  date: Date
+  author: string
+  content: string
+  datetime: string
 }
