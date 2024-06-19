@@ -72,7 +72,7 @@ export default {
       axios.post('api/actions/chat',  {producerId: Number(localStorage.getItem("UserId")), consumerId: Number(this.inviteeId)})
           .then((res) => {
             console.log(res.data);
-            this.messages = res.data;
+            //this.messages = res.data;
           })
           .catch(err => console.error(err.toString()));
     }

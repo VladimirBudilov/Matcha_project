@@ -45,8 +45,9 @@ public class AutomapperProfile : Profile
             .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Profile!.Longitude))
             .ForMember(dest => dest.ProfilePicture, opt => opt.MapFrom(src => Convert.ToBase64String(src.Profile!.ProfilePicture.PicturePath)))
             .ForMember(dest => dest.Interests, opt => opt.MapFrom(src => src.Profile!.Interests.Select(i => i.Name)));
+
+        CreateMap<Message, MessageResponseDto>()
+            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Created_at)).ReverseMap();
         
-        CreateMap<Message, MessageResponseDto>().ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Created_at)).ReverseMap();
-            
     }
 }

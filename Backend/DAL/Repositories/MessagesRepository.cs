@@ -18,7 +18,7 @@ public class MessagesRepository(
         {
             { "@room_id", message.RoomId },
             { "@sender_id", message.SenderId },
-            { "@text", message.Text },
+            { "@text", message.Content },
             { "@created_at", message.Created_at }
         };
         await fetcher.GetTableByParameter(query.ToString(), parameters);
