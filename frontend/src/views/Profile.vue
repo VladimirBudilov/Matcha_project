@@ -197,7 +197,7 @@ const DeletePicture = async (picureId: number) => {
     :disabled="componentDisabled"
   	>
 		<div class="Main-info">
-			<a-button type="primary" html-type="signup" @click="SubmitChanges" style="position: absolute; padding-left: 1vw; z-index: 1;">Submite</a-button>
+			<a-button id="submit-changes" type="primary" html-type="signup" @click="SubmitChanges">Submite</a-button>
 			<a-form-item label="ID">
 				<a-input-number v-model:value="profile.profileId" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
@@ -261,38 +261,51 @@ const DeletePicture = async (picureId: number) => {
 	<a-card id="Avatar">
 		<a-form-item label="Avatar">
 		<a-image v-if="profile.profilePicture.picture"
-		:width="200"
+		width="8vw"
+		hight="8vh"
 		:src="'data:image/*' + ';base64,' + profile.profilePicture.picture"
 		/>
-		<a-upload
+		<div id="avatar-upload">
+			<a-upload
 			v-model:file-list="fileList"
 			:showUploadList="false"
 			name="file"
 			:action="uploadUrl + '?isMain=true'"
 			:headers="headers"
 			:maxCount="1"
-			style="max-width: 100%;"
 			@change="handleChange"
 			accept=".jpg, .jpeg, .png"
 		>
-			<a-button style="margin-left: 3px;">
+			<a-button>
 			<upload-outlined></upload-outlined>
 			Click to Upload
 			</a-button>
 		</a-upload>
+		</div>
+
 	</a-form-item>
 
 	<a-form-item label="Photos">
-		<a-image-preview-group v-for="item in profile.pictures">
-			<a-image
-				:width="200"
+		<div id="photos-profile">
+			<a-image-preview-group v-for="item in profile.pictures">
+			<div id="photo-profile">
+				<a-image
+				width="8vw"
+				hight="8vh"
 				:src="'data:image/*' + ';base64,' + item.picture"
+
 			/>
-			<a-button style="margin-left: 3px;" @click="DeletePicture(item.pictureId)">
-			Delete
-			</a-button>
+				<div>
+					<a-button id="delete-picture" @click="DeletePicture(item.pictureId)">
+					Delete
+					</a-button>
+				</div>
+			</div>
 		</a-image-preview-group>
-		<a-upload
+		</div>
+
+		<div id="upload-photo-profile">
+			<a-upload
 			v-model:file-list="fileList"
 			:showUploadList="false"
 			name="file"
@@ -302,11 +315,13 @@ const DeletePicture = async (picureId: number) => {
 			@change="handleChange"
 			accept=".jpg, .jpeg, .png"
 		>
-			<a-button style="margin-left: 3px;">
+			<a-button>
 			<upload-outlined></upload-outlined>
 			Click to Upload
 			</a-button>
 		</a-upload>
+		</div>
+
 	</a-form-item>
 
 	</a-card>
@@ -324,6 +339,12 @@ const DeletePicture = async (picureId: number) => {
 	padding-bottom: 1vh;
 }
 
+#submit-changes {
+	position: absolute;
+	padding-left: 1vw;
+	z-index: 1;
+}
+
 #Avatar {
 	position: absolute ;
 	top: 8vh;
@@ -331,6 +352,29 @@ const DeletePicture = async (picureId: number) => {
 	margin-left: 50vw;
 	width: 50vw;
 	background-color: var(--color-background-mute);
+}
+
+#avatar-upload{
+	margin-top: 3vh;
+}
+
+#photos-profile {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+#photo-profile {
+	margin-bottom: 1vh;
+	width: 10vw;
+	max-height: 20vh;
+}
+
+#delete-picture {
+	margin-top: 1vh;
+}
+
+#upload-photo-profile {
+	margin-top: 3vh;
 }
 
 
