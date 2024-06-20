@@ -8,14 +8,6 @@ import { onMounted, ref, watch } from 'vue';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
-const author = ref('')
-
-async function GetProfileInfo(){
-	await axios.get('api/profiles/' + localStorage.getItem('UserId')).then((res) => {
-		author.value = res.data.firstName + ' ' + res.data.lastName
-	})
-}
-
 
 const messages = storeToRefs(SignUpStore()).messages
 const connection = storeToRefs(SignUpStore()).connection
@@ -38,7 +30,7 @@ const GetMessages = async () => {
 const ReceiveMessage = async () => {
 	if (connection.value) {
 		connection.value.on("ReceiveMessage", (user, message) => {
-      		messages.value.push({ author: author.value, content: message, datetime: dayjs().format('YYYY-MM-DD HH:mm:ss') });
+      		messages.value.push({ author: user, content: message, datetime: dayjs().format('YYYY-MM-DD HH:mm:ss') });
     	});
 	}
 
@@ -60,10 +52,6 @@ const SendMsg = async () => {
         msg.value = '';
 	}
 }
-
-onMounted (async () => {
-	await GetProfileInfo()
-})
 
 watch (
 	() => chatId.value[1],
