@@ -20,6 +20,7 @@ const profile = ref<Profile>({
 	"biography": null,
 	"fameRating": 0,
 	"age": 0,
+	"location": '',
 	"latitude": 0,
 	"longitude": 0,
 	"profilePicture": {
@@ -49,10 +50,26 @@ const GetProfile = async () => {
 		else {
 			message.error("Error")
 		}
-	}).then((res) => {
+	}).then( async (res) => {
 		profile.value = res?.data
 		uploadUrl.value = axios.defaults.baseURL + 'api/FileManager/uploadPhoto/' + profile.value.profileId
-		console.log(profile.value)
+
+		if (profile.value.latitude && profile.value.longitude) {
+			const response = await fetch('https://geocode.maps.co/reverse?' + new URLSearchParams({
+				lat: profile.value.latitude.toString(),
+				lon: profile.value.longitude.toString(),
+				api_key: process.env.MAP_API_KEY
+			}).toString(), {
+				method: 'GET'
+			})
+			const data : any = await response.json()
+			if (data.address.city) {
+				profile.value.location = data.address.city
+			}
+			else if (data.address.country) {
+				profile.value.location = data.address.country
+			}
+		}
 	})
 }
 
@@ -91,15 +108,51 @@ const SubmitChanges = async () => {
 	})
 }
 
+
 const getLocation = async () => {
-	navigator.geolocation.getCurrentPosition((pos => {
-		profile.value.latitude = pos.coords.latitude
-		profile.value.longitude = pos.coords.longitude
-	}), (err => {
-		profile.value.latitude = 0
-		profile.value.longitude = 0
-		message.error(err.message)
-	}))
+
+	if (profile.value.location) {
+		const response : any = await fetch('https://geocode.maps.co/search?' + new URLSearchParams({
+			q: profile.value.location,
+			api_key: process.env.MAP_API_KEY
+		}).toString(), {
+			method: 'GET'
+		})
+		const data : any = await response.json()
+
+		if (!data.length) {
+			message.error('The city or country was not found')
+		}
+		else {
+			profile.value.latitude = data[0].lat
+			profile.value.longitude = data[0].lon
+		}
+	}
+	else {
+		navigator.geolocation.getCurrentPosition(( async (pos) => {
+			profile.value.latitude = pos.coords.latitude
+			profile.value.longitude = pos.coords.longitude
+
+			const response = await fetch('https://geocode.maps.co/reverse?' + new URLSearchParams({
+				lat: profile.value.latitude.toString(),
+				lon: profile.value.longitude.toString(),
+				api_key: process.env.MAP_API_KEY
+			}).toString(), {
+				method: 'GET'
+			})
+			const data : any = await response.json()
+			if (data.address.city) {
+				profile.value.location = data.address.city
+			}
+			else if (data.address.country) {
+				profile.value.location = data.address.country
+			}
+		}), (err => {
+			profile.value.latitude = 0
+			profile.value.longitude = 0
+			message.error(err.message)
+		}))
+	}
 }
 
 
@@ -146,19 +199,19 @@ const DeletePicture = async (picureId: number) => {
 		<div class="Main-info">
 			<a-button type="primary" html-type="signup" @click="SubmitChanges" style="position: absolute; padding-left: 1vw; z-index: 1;">Submite</a-button>
 			<a-form-item label="ID">
-				<a-input-number v-model:value="profile.profileId" disabled style="background-color: grey; color:black"/>
+				<a-input-number v-model:value="profile.profileId" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
 			<a-form-item label="Fame rating">
-				<a-input-number v-model:value="profile.fameRating" disabled style="background-color: grey; color:black"/>
+				<a-input-number v-model:value="profile.fameRating" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
 			<a-form-item label="Username">
-				<a-input v-model:value="profile.userName" disabled style="background-color: grey; color:black"/>
+				<a-input v-model:value="profile.userName" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
 			<a-form-item label="First Name">
-				<a-input v-model:value="profile.firstName" disabled style="background-color: grey; color:black"/>
+				<a-input v-model:value="profile.firstName" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
 			<a-form-item label="Last Name">
-				<a-input v-model:value="profile.lastName" disabled style="background-color: grey; color:black"/>
+				<a-input v-model:value="profile.lastName" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
 		</div>
 		<div class="Optional-info">
@@ -182,8 +235,11 @@ const DeletePicture = async (picureId: number) => {
 				></a-select>
 			</a-form-item>
 			<a-form-item label="Location">
-				<a-input-number style="width: 30%;" v-model:value="profile.latitude"/>
-				<a-input-number style="width: 30%; margin-left: 5px;" v-model:value="profile.longitude"/>
+				<a-input v-model:value="profile.location"/>
+			</a-form-item>
+			<a-form-item label="Lat & long">
+				<a-input-number disabled style="width: 30%; background-color: var(--color-background-soft); color: var(--color-text)" v-model:value="profile.latitude" />
+				<a-input-number disabled style="width: 30%; margin-left: 5px; background-color: var(--color-background-soft); color: var(--color-text)" v-model:value="profile.longitude"/>
 				<a-button type="primary" html-type="signup" @click="getLocation" style="margin-left: 5px;top: 4px;">Location</a-button>
 			</a-form-item>
 			<a-form-item label="Interests" direction="vertical">
@@ -254,9 +310,6 @@ const DeletePicture = async (picureId: number) => {
 	</a-form-item>
 
 	</a-card>
-
-
-
 </template>
 
 <style>
@@ -266,7 +319,7 @@ const DeletePicture = async (picureId: number) => {
 	margin-left: 1vw;
 	margin-right: 60vw;
 	margin-bottom: 15vh;
-	background-color: var(--color-background-soft);
+	background-color: var(--color-background-mute);
 	padding-top: 1vh;
 	padding-bottom: 1vh;
 }
@@ -277,7 +330,7 @@ const DeletePicture = async (picureId: number) => {
 	right: 1vw;
 	margin-left: 50vw;
 	width: 50vw;
-	background-color: var(--color-background-soft);
+	background-color: var(--color-background-mute);
 }
 
 

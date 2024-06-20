@@ -66,6 +66,7 @@ export interface Profile {
   biography: string | null,
   fameRating: number,
   age: number,
+  location: string
   latitude: number,
   longitude: number
   profilePicture: ProfilePicture,

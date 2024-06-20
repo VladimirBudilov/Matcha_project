@@ -23,6 +23,7 @@ const profile = ref<Profile>({
 	"biography": null,
 	"fameRating": 0,
 	"age": 0,
+	"location": '',
 	"latitude": 0,
 	"longitude": 0,
 	"profilePicture": {
@@ -36,11 +37,27 @@ const profile = ref<Profile>({
 const GetProfile = async () => {
 	await axios.get('api/profiles/' + route.params.id).catch(() => {
 		message.error(`User was not found!!!`);
-	}).then((res) => {
+	}).then(async (res) => {
 		if (res?.data) {
 			profile.value = res?.data
 			uploadUrl.value = axios.defaults.baseURL + 'api/FileManager/uploadPhoto/' + profile.value.profileId
 			console.log(profile.value)
+		}
+		if (profile.value.latitude && profile.value.longitude) {
+			const response = await fetch('https://geocode.maps.co/reverse?' + new URLSearchParams({
+				lat: profile.value.latitude.toString(),
+				lon: profile.value.longitude.toString(),
+				api_key: process.env.MAP_API_KEY
+			}).toString(), {
+				method: 'GET'
+			})
+			const data : any = await response.json()
+			if (data.address.city) {
+				profile.value.location = data.address.city
+			}
+			else if (data.address.country) {
+				profile.value.location = data.address.country
+			}
 		}
 	});
 
@@ -65,40 +82,39 @@ onMounted(async () => {
   	>
 		<div class="Main-info">
 			<a-form-item label="ID">
-				<a-input-number v-model:value="profile.profileId" disabled style="background-color: grey; color:black"/>
+				<a-input-number v-model:value="profile.profileId" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
 			<a-form-item label="Fame rating">
-				<a-input-number v-model:value="profile.fameRating" disabled style="background-color: grey; color:black"/>
+				<a-input-number v-model:value="profile.fameRating" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
 			<a-form-item label="Username">
-				<a-input v-model:value="profile.userName" disabled style="background-color: grey; color:black"/>
+				<a-input v-model:value="profile.userName" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
 			<a-form-item label="First Name">
-				<a-input v-model:value="profile.firstName" disabled style="background-color: grey; color:black"/>
+				<a-input v-model:value="profile.firstName" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
 			<a-form-item label="Last Name">
-				<a-input v-model:value="profile.lastName" disabled style="background-color: grey; color:black"/>
+				<a-input v-model:value="profile.lastName" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
 		</div>
 		<div class="Optional-info">
 			<a-form-item label="Gender">
-				<a-input v-model:value="profile.gender" disabled style="background-color: grey; color:black" />
+				<a-input v-model:value="profile.gender" disabled style="background-color: var(--color-background-soft); color: var(--color-text)" />
 			</a-form-item>
 			<a-form-item label="Age">
-				<a-input-number v-model:value="profile.age" disabled style="background-color: grey; color:black"/>
+				<a-input-number v-model:value="profile.age" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
 			<a-form-item label="Sexual preferences">
-				<a-input v-model:value="profile.sexualPreferences" disabled style="background-color: grey; color:black" />
+				<a-input v-model:value="profile.sexualPreferences" disabled style="background-color: var(--color-background-soft); color: var(--color-text)" />
 			</a-form-item>
 			<a-form-item label="Location">
-				<a-input-number style="width: 35%; background-color: grey; color:black" v-model:value="profile.latitude" disabled />
-				<a-input-number style="width: 35%; margin-left: 5px; background-color: grey; color:black" v-model:value="profile.longitude" disabled/>
+				<a-input v-model:value="profile.location" style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
 			<a-form-item label="Interests" direction="vertical">
-				<a-input mode="tags" v-model:value="profile.interests" disabled style="background-color: grey; color:black" />
+				<a-input mode="tags" v-model:value="profile.interests" disabled style="background-color: var(--color-background-soft); color: var(--color-text)" />
 			</a-form-item>
 			<a-form-item label="Biography">
-				<a-textarea v-model:value="profile.biography" placeholder="Biography" :rows="4" disabled style="background-color: grey; color:black"/>
+				<a-textarea v-model:value="profile.biography" placeholder="Biography" :rows="4" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
 		</div>
 	</a-form>
@@ -131,7 +147,7 @@ onMounted(async () => {
 	margin-left: 1vw;
 	margin-right: 60vw;
 	margin-bottom: 15vh;
-	background-color: var(--color-background-soft);
+	background-color: var(--color-background-mute);
 	padding-top: 1vh;
 	padding-bottom: 1vh;
 }
