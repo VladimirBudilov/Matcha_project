@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web_API.DTOs;
 using Web_API.Helpers;
+using Web_API.Hubs;
 using Web_API.Hubs.Helpers;
 using Web_API.Hubs.Services;
 using Profile = DAL.Entities.Profile;

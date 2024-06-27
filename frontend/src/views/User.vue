@@ -35,13 +35,14 @@ const profile = ref<Profile>({
 })
 
 const GetProfile = async () => {
-	await axios.get('api/profiles/' + route.params.id).catch(() => {
+	await axios.get('api/profiles/' + route.params.id).catch( async () => {
 		message.error(`User was not found!!!`);
 	}).then(async (res) => {
 		if (res?.data) {
 			profile.value = res?.data
 			uploadUrl.value = axios.defaults.baseURL + 'api/FileManager/uploadPhoto/' + profile.value.profileId
 			console.log(profile.value)
+      await store?.connection?.invoke("SendNotificationToUser", Number(route.params.id)).catch(err => console.log(err.toString()));
 		}
 		if (profile.value.latitude && profile.value.longitude) {
 			const response = await fetch('https://geocode.maps.co/reverse?' + new URLSearchParams({

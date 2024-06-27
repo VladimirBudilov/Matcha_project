@@ -6,7 +6,6 @@ public static class FameRatingCalculator
     {
         if (views == 0) return 0;
 
-        // Fame rating formula
         var rating = (double)likes / views * 100;
         return (int)rating; 
     }
