@@ -32,7 +32,7 @@ public class FileManagerController(
     await file.CopyToAsync(memoryStream);
     
     
-    profileService.UploadPhotoAsync(userId, memoryStream.ToArray(), isMain);
+    await profileService.UploadPhotoAsync(userId, memoryStream.ToArray(), isMain);
     
     return Ok("File uploaded successfully");
     }
@@ -40,8 +40,7 @@ public class FileManagerController(
     [HttpDelete("deletePhoto/{userId:int}")]
     public async Task<IActionResult> DeletePhoto([FromRoute]int userId, [FromQuery]int photoId, [FromQuery] bool isMain = false)
     {
-        //validator.CheckUserAuth(userId, Actor.Claims);
-        //TODO implement deleting photo from database
+        //TODO add validation
         
         profileService.DeletePhotoASync(userId, photoId, isMain);
         return Ok("Photo deleted successfully");

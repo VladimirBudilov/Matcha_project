@@ -289,7 +289,7 @@ public class ProfileRepository(
         }
     }
 
-    public async Task<FiltersData> GetFiltersDataAsync(double? longitude, double? latitude)
+    public async Task<FiltersData> GetFiltersDataAsync(double? longitude, double? latitude, int id)
     {
         var query = new StringBuilder()
             .Append("select max(age) as max_age, min(age) as min_age, ")
@@ -299,11 +299,12 @@ public class ProfileRepository(
             .Append(
                 "max(calculate_distance(@profile_latitude, @profile_longitude, profiles.latitude, profiles.longitude)) as max_distance ")
             .Append("from profiles ")
-            .Append(" where profiles.is_active = TRUE");
+            .Append(" where profiles.is_active = TRUE AND profiles.profile_id != @profile_id ");
         var parameters = new Dictionary<string, object>
         {
-            { "@profile_latitude", (double)latitude },
-            { "@profile_longitude", (double)longitude }
+            { "@profile_latitude", (double)latitude! },
+            { "@profile_longitude", (double)longitude! },
+            { "@profile_id", id }
         };
         var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
         return entityCreator.CreateFiltersData(table.Rows[0]);

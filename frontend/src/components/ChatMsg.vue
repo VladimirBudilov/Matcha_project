@@ -40,7 +40,10 @@ const ReceiveMessage = async () => {
 const StartChat = async () => {
 	await connection.value?.invoke("StartChat", Number(chatId.value[1]))
 		.then((data) => {
-			message.open(data);
+			if(data != null)
+      {
+        message.open(data);
+      }
 		})
 		.catch(err => message.error(err.toString()));
 }
@@ -57,8 +60,8 @@ watch (
 	() => chatId.value[1],
 	async () => {
 		console.log('current', chatId.value);
-		await StartChat()
 		await GetMessages()
+    await StartChat()
 		await ReceiveMessage()
 	}
 )

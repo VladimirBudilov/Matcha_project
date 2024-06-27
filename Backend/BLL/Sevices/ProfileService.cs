@@ -144,7 +144,7 @@ public class ProfileService(
     {
         var user = await profileRepository.GetProfileByIdAsync(id);
         if (!user.IsActive) throw new ForbiddenActionException("update user profile first");
-        return await profileRepository.GetFiltersDataAsync(user.Longitude, user.Latitude);
+        return await profileRepository.GetFiltersDataAsync(user.Longitude, user.Latitude, id);
 
     }
 

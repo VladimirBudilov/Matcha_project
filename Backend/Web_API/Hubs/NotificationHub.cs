@@ -48,11 +48,6 @@ public class NotificationHub(
         var userNotifications = notificationService.GetNotifications(id);
         if(userNotifications.Count == 0) return;
         await Clients.Client(identifier).ReceiveNotifications(userNotifications);
-        ClearNotifications(id);
-    }
-    
-    public void ClearNotifications(int id)
-    {
         notificationService.ClearNotifications(id);
     }
 }

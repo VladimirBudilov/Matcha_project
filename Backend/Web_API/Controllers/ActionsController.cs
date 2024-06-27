@@ -46,11 +46,9 @@ public class ActionsController(
     [HttpPost("chat")]
     public async Task<ActionResult<ResponseDto<List<MessageResponseDto>>>> GetChat([FromBody]UserActionRequestDto userAction)
     {
-        //check that user is authorized
         validator.CheckId(userAction.producerId);
         validator.CheckId(userAction.consumerId);
         validator.CheckUserAuth(userAction.producerId, User.Claims);
-        //check that users are matched
         if (!await profileService.IsMatch(userAction.producerId, userAction.consumerId)) return BadRequest();
         
         var messages = await chatService.GetMessages(userAction.producerId, userAction.consumerId);

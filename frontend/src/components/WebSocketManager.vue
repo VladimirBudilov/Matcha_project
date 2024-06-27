@@ -16,13 +16,15 @@ onMounted(async () => {
   if (!store.connection) {
     const connection = createConnection();
     if (connection) {
-
         await connection.start();
         connection.on('ReceiveNotifications', function (notifications: []) {
           console.log(notifications)
           notifications.forEach((notification : Notification) => {
-            let content = notification.type + ' by ' + notification.actor;
-            message.success(content);
+            if(notification.type != null)
+            {
+              let content = notification.type + ' by ' + notification.actor;
+              message.success(content);
+            }
           });
         });
         let id: number = Number(localStorage.getItem('UserId'));

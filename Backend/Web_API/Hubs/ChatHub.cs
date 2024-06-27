@@ -1,5 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using BLL.Sevices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -44,12 +42,9 @@ public class ChatHub(
     
     public async Task StartChat(int inviteeId)
     {
-        //check that user can start chat
         var inviterId = claimsService.GetId(Context.User?.Claims);
         if(!await chatManager.CanChat(inviterId, inviteeId)) return;
-        //check that room exists
         var roomName = await chatManager.GetRoomName(inviterId, inviteeId);
-        //connect users to room
         await Groups.AddToGroupAsync(Context.ConnectionId, roomName.ToString());
     }
 
