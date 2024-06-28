@@ -63,6 +63,27 @@ public class ProfilesRepository(
             throw new DataAccessErrorException("Error while adding profile", e);
         }
     }
+   public async Task<Profile?> CreateProfileWithIdAsync(Profile entity)
+{
+        var query = new StringBuilder()
+            .Append("INSERT INTO profiles (profile_id, gender, age, sexual_preferences, biography, latitude, longitude, profile_picture_id, is_active) ")
+            .Append(" VALUES (@profile_id, @gender, @age, @sexual_preferences, @biography, @latitude, @longitude, @profile_picture_id, @is_active) ")
+            .Append("Returning profile_id");
+        var parameters = new Dictionary<string, object>()
+        {
+            { "@profile_id", entity.Id },
+            { "@gender", entity.Gender },
+            { "@age", entity.Age },
+            { "@sexual_preferences", entity.SexualPreferences },
+            { "@biography", entity.Biography },
+            { "@latitude", entity.Latitude },
+            { "@longitude", entity.Longitude },
+            { "@profile_picture_id", entity.ProfilePictureId },
+            { "@is_active", entity.IsActive }
+        };
+        var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
+        return table.Rows.Count > 0 ? entity : null;
+}
 
     public async Task<int> UpdateProfilePictureAsync(int userId, int pictureId)
     {
@@ -107,14 +128,14 @@ public class ProfilesRepository(
             };
 
             var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
-            /*var isActive = (bool)table.Rows[0]["is_active"];
+            var isActive = (bool)table.Rows[0]["is_active"];
             if (!isActive && !(await GetProfileAsync(entity.Id)).HasEmptyFields())
-            {*/
+            {
                 query = new StringBuilder()
                     .Append("UPDATE profiles SET is_active = TRUE ")
                     .Append(" WHERE profile_id = @profile_id");
                 await fetcher.GetTableAsync(query.ToString());
-            //}
+            }
 
             return entity;
         }

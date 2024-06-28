@@ -238,9 +238,7 @@ public class SeedData(
 
             foreach (var profile in Profiles)
             {
-                await _profilesRepository.CreateProfileAsync(profile);
-                await _profilesRepository.UpdateProfileAsync(profile);
-                await _profilesRepository.UpdateProfilePictureAsync(profile.Id, (int)profile.ProfilePictureId);
+                await _profilesRepository.CreateProfileWithIdAsync(profile);
             }
 
             for (var i = 1; i <= 500; i++)
@@ -263,7 +261,8 @@ public class SeedData(
                 await _usersRepository.CreateUserWithIdAsync(user);
             }
     }
-    public static string HashPassword(string password)
+
+    private static string HashPassword(string password)
     {
         return BCrypt.Net.BCrypt.HashPassword(password);
     }
