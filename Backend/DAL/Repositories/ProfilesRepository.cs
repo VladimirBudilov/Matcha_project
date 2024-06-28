@@ -5,7 +5,7 @@ using DAL.Helpers;
 
 namespace DAL.Repositories;
 
-public class ProfileRepository(
+public class ProfilesRepository(
     InterestsRepository interestsRepository,
     EntityCreator entityCreator,
     TableFetcher fetcher)
@@ -27,7 +27,7 @@ public class ProfileRepository(
         return null;
     }
 
-    public async Task<Profile> GetProfileByIdAsync(int id)
+    public async Task<Profile> GetProfileAsync(int id)
     {
         try
         {
@@ -107,14 +107,14 @@ public class ProfileRepository(
             };
 
             var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
-            var isActive = (bool)table.Rows[0]["is_active"];
-            if (!isActive && !(await GetProfileByIdAsync(entity.Id)).HasEmptyFields())
-            {
+            /*var isActive = (bool)table.Rows[0]["is_active"];
+            if (!isActive && !(await GetProfileAsync(entity.Id)).HasEmptyFields())
+            {*/
                 query = new StringBuilder()
                     .Append("UPDATE profiles SET is_active = TRUE ")
                     .Append(" WHERE profile_id = @profile_id");
                 await fetcher.GetTableAsync(query.ToString());
-            }
+            //}
 
             return entity;
         }

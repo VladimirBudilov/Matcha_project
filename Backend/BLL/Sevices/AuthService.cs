@@ -8,14 +8,14 @@ using Profile = DAL.Entities.Profile;
 
 namespace BLL.Sevices;
 
-public class AuthService(UserRepository userRepository,
-      ProfileRepository profileRepository,  IMapper mapper,
+public class AuthService(UsersRepository usersRepository,
+      ProfilesRepository profilesRepository,  IMapper mapper,
     PasswordManager passwordManager, EmailService emailService)
 {
     public async Task<string?> RegisterUserAsync(User user)
     {
-        var userByEmail = await userRepository.GetUserByEmailAsync(user.Email);
-        var userByUserName = await userRepository.GetUserByUserNameAsync(user.UserName);
+        var userByEmail = await usersRepository.GetUserByEmailAsync(user.Email);
+        var userByUserName = await usersRepository.GetUserByUserNameAsync(user.UserName);
         if (userByEmail != null || userByUserName != null) return null;
         user.Password = passwordManager.HashPassword(user.Password);
         user.EmailResetToken = emailService.GenerateEmailConfirmationToken();
@@ -23,21 +23,21 @@ public class AuthService(UserRepository userRepository,
         //TODO change when email service is ready
         user.IsVerified = true;
         
-        var res = await userRepository.CreateUserAsync(user);
-        userByUserName = await userRepository.GetUserByUserNameAsync(user.UserName);
+        var res = await usersRepository.CreateUserAsync(user);
+        userByUserName = await usersRepository.GetUserByUserNameAsync(user.UserName);
         var profile = new Profile()
         {
             Id = userByUserName.Id,
             Gender = "male",
             Age = 18,
         };
-        await profileRepository.CreateProfileAsync(profile);
+        await profilesRepository.CreateProfileAsync(profile);
         return res == null ? null : user.EmailResetToken;
     }
     
     public async Task<bool> AuthenticateUser(string username, string password)
     {
-        var user = await userRepository.GetUserByUserNameAsync(username);
+        var user = await usersRepository.GetUserByUserNameAsync(username);
         if (user == null) return false;
         var isValidPassword = passwordManager.VerifyPassword(password, user!.Password);
         return isValidPassword;
@@ -47,10 +47,10 @@ public class AuthService(UserRepository userRepository,
     {
         //TODO add validation
         
-        var user = await userRepository.GetUserByIdAsync(id);
+        var user = await usersRepository.GetUserByIdAsync(id);
         if (user.IsVerified) return false;
         user.IsVerified = false;
-        await userRepository.UpdateUserAsync(id, user);
+        await usersRepository.UpdateUserAsync(id, user);
         return true;
     }
     

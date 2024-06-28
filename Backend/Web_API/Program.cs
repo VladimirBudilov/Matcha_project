@@ -2,6 +2,7 @@ using System.Text;
 using BLL.Helpers;
 using BLL.Sevices;
 using DAL.Helpers;
+using DAL.Models;
 using DAL.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -21,13 +22,10 @@ builder.Services.AddScoped<ChatService>();
 builder.Services.AddSingleton<NotificationService>();
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-
 // Add a JWT Bearer Authorization header to Swagger UI
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -68,13 +66,13 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddSingleton<DatabaseSettings>();
 
-builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<ProfileRepository>();
+builder.Services.AddScoped<UsersRepository>();
+builder.Services.AddScoped<ProfilesRepository>();
 builder.Services.AddScoped<InterestsRepository>();
 builder.Services.AddScoped<PicturesRepository>();
 builder.Services.AddScoped<LikesRepository>();
 builder.Services.AddScoped<ProfileViewsRepository>();
-builder.Services.AddScoped<UserInterestsRepository>();
+builder.Services.AddScoped<UsersInterestsRepository>();
 builder.Services.AddScoped<RoomsRepository>();
 builder.Services.AddScoped<MessagesRepository>();
 
@@ -86,6 +84,8 @@ builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ActionService>();
 builder.Services.AddScoped<ClaimsService>();
+
+builder.Services.AddScoped<SeedData>();
 
 builder.Services.AddScoped<QueryBuilder>();
 builder.Services.AddScoped<EntityCreator>();
@@ -101,40 +101,44 @@ builder.Services.AddAutoMapper(typeof(AutomapperProfile));
 
 builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JwtConfig"));
 builder.Services.AddAuthentication(options =>
-    {    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(jwt =>
-{
-    var key = Encoding.ASCII.GetBytes(builder.Configuration[$"JwtConfig:Secret"] ?? throw new InvalidOperationException());    
-    jwt.SaveToken = true;
-    jwt.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        RequireExpirationTime = false,
-        ValidateLifetime = true
-    };
-    jwt.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
+        var key = Encoding.ASCII.GetBytes(builder.Configuration[$"JwtConfig:Secret"] ??
+                                          throw new InvalidOperationException());
+        jwt.SaveToken = true;
+        jwt.TokenValidationParameters = new TokenValidationParameters
         {
-            var accessToken = context.Request.Query["access_token"];
- 
-            // если запрос направлен хабу
-            var path = context.HttpContext.Request.Path;
-            if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/chat") || path.StartsWithSegments("/notification")))
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            RequireExpirationTime = false,
+            ValidateLifetime = true
+        };
+        jwt.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
             {
-                // получаем токен из строки запроса
-                context.Token = accessToken;
+                var accessToken = context.Request.Query["access_token"];
+
+                // если запрос направлен хабу
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) &&
+                    (path.StartsWithSegments("/chat") || path.StartsWithSegments("/notification")))
+                {
+                    // получаем токен из строки запроса
+                    context.Token = accessToken;
+                }
+
+                return Task.CompletedTask;
             }
-            return Task.CompletedTask;
-        }
-    };
-});
+        };
+    });
 
 builder.Services.AddAuthorization();
 

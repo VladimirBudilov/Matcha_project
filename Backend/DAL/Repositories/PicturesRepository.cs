@@ -27,7 +27,7 @@ public class PicturesRepository(
         return (from DataRow row in table.Rows select entityCreator.CreatePicture(row)).ToList();
     }
 
-    public async Task<int> UploadPhoto(int id, byte[] filePicture, int isMain)
+    public async Task<int> UploadPhoto(int userId, byte[] filePicture, int isMain)
     {
         var query = 
             "INSERT INTO pictures (user_id, picture_path, is_profile_picture)" +
@@ -35,9 +35,25 @@ public class PicturesRepository(
             "RETURNING picture_id;";
         var table = await fetcher.GetTableByParameter(query, new Dictionary<string, object>()
         {
-            { "@userId", id },
+            { "@userId", userId },
             { "@picture", filePicture },
             { "@isMain", isMain }
+
+        });
+        return (int)table.Rows[0]["picture_id"];
+    }
+    public async Task<int> UploadWithIdPhoto(int picture_id, int userId, byte[] filePicture, int isMain)
+    {
+        var query = 
+            "INSERT INTO pictures (picture_id, user_id, picture_path, is_profile_picture)" +
+            " VALUES (@picture_id, @userId, @picture, @isMain)" +
+            "RETURNING picture_id;";
+        var table = await fetcher.GetTableByParameter(query, new Dictionary<string, object>()
+        {
+            { "@userId", userId },
+            { "@picture", filePicture },
+            { "@isMain", isMain },
+            { "@picture_id", picture_id }
 
         });
         return (int)table.Rows[0]["picture_id"];

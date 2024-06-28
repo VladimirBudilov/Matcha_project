@@ -39,6 +39,23 @@ public sealed class InterestsRepository(
         };
         return interest;
     }
+    public async Task<Interest> CreateInterestWithIdAsync(int interest_id, string entity)
+    {
+       
+        var query = "INSERT INTO interests (interest_id, name) VALUES (@interest_id, @entity ) RETURNING interest_id";
+        var parameters = new Dictionary<string, object>
+        {
+            {"@entity", entity},
+            {"@interest_id", interest_id}
+        };
+        var table = await fetcher.GetTableByParameter(query, parameters);
+        var interest = new Interest
+        {
+            Name = entity,
+            InterestId = (int) table.Rows[0]["interest_id"]
+        };
+        return interest;
+    }
 
 
     public async Task<IEnumerable<Interest>> GetInterestsByUserIdAsync(int id)

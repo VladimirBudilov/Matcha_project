@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BLL.Sevices;
+using DAL.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -12,7 +13,7 @@ using Web_API.Hubs.Services;
 
 namespace Web_API.Controllers;
 
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route("api/[controller]")]
 [ApiController]
 public class ActionsController(
@@ -23,7 +24,8 @@ public class ActionsController(
     ClaimsService claimsService,
     ChatService chatService,
     IMapper mapper,
-    ProfileService profileService
+    ProfileService profileService,
+    SeedData seedData
     ) : ControllerBase
 {
     [HttpPost("like")]
@@ -61,5 +63,12 @@ public class ActionsController(
             Error = null,
         };
         return Ok(response);
+    }
+    
+    [HttpGet("seed")]
+    public async Task<IActionResult> Seed()
+    {
+        await seedData.Seed();
+        return Ok();
     }
 }

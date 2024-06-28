@@ -118,7 +118,7 @@ public class DtoValidator
     public void ValidateName(string username)
     {
         if (!(username.Length >= 3 && username.Length <= 20 &&
-              username.All(char.IsLetter)))
+              username.All(char.IsLetterOrDigit)))
         {
             throw new DataValidationException("Invalid username format. Must be between 3 and 20 characters long.");
         }

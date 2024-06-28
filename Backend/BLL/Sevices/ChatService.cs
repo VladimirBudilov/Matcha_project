@@ -6,17 +6,17 @@ namespace BLL.Sevices;
 public class ChatService(
     RoomsRepository roomsRepository,
     MessagesRepository messagesRepository,
-    UserRepository userRepository
+    UsersRepository usersRepository
     )
 {
     public async Task<List<Message>> GetMessages(int producerId, int consumerId)
     {
         var room = await roomsRepository.GetRoom(producerId, consumerId);
         var producerMessages = await messagesRepository.GetMessages(room, producerId);
-        var producer = await userRepository.GetUserByIdAsync(producerId);
+        var producer = await usersRepository.GetUserByIdAsync(producerId);
         producerMessages.ForEach(m => m.Author = producer!.UserName + " " + producer!.LastName);
         var consumerMessages = await messagesRepository.GetMessages(room, consumerId);
-        var consumer = await userRepository.GetUserByIdAsync(consumerId);
+        var consumer = await usersRepository.GetUserByIdAsync(consumerId);
         consumerMessages.ForEach(m => m.Author = consumer!.UserName + " " + consumer!.LastName);
         var messages = producerMessages.Concat(consumerMessages).ToList();
         messages.Sort((a, b) => a.Created_at.CompareTo(b.Created_at));

@@ -112,7 +112,7 @@ public class EntityCreator
     {
         return new UserInterest
         {
-            USerId = row.Field<int>("user_id"),
+            UserId = row.Field<int>("user_id"),
             InterestId = row.Field<int>("interest_id"),
         };
     }

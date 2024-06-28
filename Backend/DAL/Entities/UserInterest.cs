@@ -3,5 +3,5 @@
 public class UserInterest
 {
     public int InterestId { get; set; }
-    public int USerId { get; set; }
+    public int UserId { get; set; }
 }

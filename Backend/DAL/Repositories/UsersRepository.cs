@@ -8,7 +8,7 @@ using Npgsql;
 
 namespace DAL.Repositories;
 
-public class UserRepository(
+public class UsersRepository(
 
     EntityCreator entityCreator,
     TableFetcher fetcher,
@@ -72,6 +72,34 @@ public class UserRepository(
                 .Append("VALUES            (@userName, @firstName, @lastName, @email, @password,  @isVerified) Returning user_id");
             var parameters = new Dictionary<string, object>
             {
+                {"@userName", user.UserName},
+                {"@firstName", user.FirstName},
+                {"@lastName", user.LastName},
+                {"@email", user.Email},
+                {"@password", user.Password},
+                {"@isVerified", user.IsVerified}
+            };
+            
+            var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
+            var res = (int) table.Rows[0]["user_id"];
+            return res > 0 ? user : null;
+        }
+        catch (Exception e)
+        {
+            throw new DataAccessErrorException("Error while adding user", e);
+        }
+    }
+    
+    public async Task<User?> CreateUserWithIdAsync(User user)
+    {
+        try
+        {
+            var query = new StringBuilder()
+                .Append("INSERT INTO users (user_id , user_name, first_name, last_name, email, password,  is_verified) ")
+                .Append("VALUES            (@user_id, @userName, @firstName, @lastName, @email, @password,  @isVerified) Returning user_id");
+            var parameters = new Dictionary<string, object>
+            {
+                {"@user_id", user.Id},
                 {"@userName", user.UserName},
                 {"@firstName", user.FirstName},
                 {"@lastName", user.LastName},

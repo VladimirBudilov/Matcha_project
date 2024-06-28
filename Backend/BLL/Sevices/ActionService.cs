@@ -9,7 +9,7 @@ namespace BLL.Sevices;
 
 public class ActionService(
     LikesRepository likesRepository,
-    ProfileRepository userRepository,
+    ProfilesRepository userRepository,
     ProfileViewsRepository profileViewRepository,
     ServiceValidator validator
 )
@@ -55,7 +55,7 @@ public class ActionService(
 
     private async Task UpdateFameRating(int id)
     {
-        var user = await userRepository.GetProfileByIdAsync(id);
+        var user = await userRepository.GetProfileAsync(id);
         var userViews = await profileViewRepository.GetProfileViewsByUserIdAsync(id);
         var userLikes = await likesRepository.GetLikesByUserIdAsync(id);
         user.FameRating = FameRatingCalculator.Calculate(userLikes.Count(), userViews.Count());

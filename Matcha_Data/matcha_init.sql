@@ -5,7 +5,7 @@
 -- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
--- Started on 2024-06-01 18:31:49 UTC
+-- Started on 2024-06-28 20:12:06 UTC
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -84,7 +84,7 @@ $$;
 ALTER FUNCTION public.count_shared_elements(arr1 text[], arr2 text[]) OWNER TO postgres;
 
 --
--- TOC entry 233 (class 1255 OID 16495)
+-- TOC entry 233 (class 1255 OID 16387)
 -- Name: has_user_liked(integer, integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -101,7 +101,7 @@ $$;
 ALTER FUNCTION public.has_user_liked(liker_id integer, liked_id integer) OWNER TO postgres;
 
 --
--- TOC entry 234 (class 1255 OID 16496)
+-- TOC entry 234 (class 1255 OID 16388)
 -- Name: users_matched(integer, integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -126,7 +126,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- TOC entry 229 (class 1259 OID 16482)
+-- TOC entry 215 (class 1259 OID 16389)
 -- Name: messages; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -142,7 +142,7 @@ CREATE TABLE public.messages (
 ALTER TABLE public.messages OWNER TO postgres;
 
 --
--- TOC entry 228 (class 1259 OID 16481)
+-- TOC entry 216 (class 1259 OID 16394)
 -- Name: dialogs_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -159,7 +159,7 @@ ALTER SEQUENCE public.dialogs_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 3485 (class 0 OID 0)
--- Dependencies: 228
+-- Dependencies: 216
 -- Name: dialogs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -167,7 +167,7 @@ ALTER SEQUENCE public.dialogs_id_seq OWNED BY public.messages.id;
 
 
 --
--- TOC entry 215 (class 1259 OID 16389)
+-- TOC entry 217 (class 1259 OID 16395)
 -- Name: interests; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -180,7 +180,7 @@ CREATE TABLE public.interests (
 ALTER TABLE public.interests OWNER TO postgres;
 
 --
--- TOC entry 216 (class 1259 OID 16394)
+-- TOC entry 218 (class 1259 OID 16400)
 -- Name: interests_interest_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -197,7 +197,7 @@ ALTER SEQUENCE public.interests_interest_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 3486 (class 0 OID 0)
--- Dependencies: 216
+-- Dependencies: 218
 -- Name: interests_interest_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -205,7 +205,7 @@ ALTER SEQUENCE public.interests_interest_id_seq OWNED BY public.interests.intere
 
 
 --
--- TOC entry 217 (class 1259 OID 16395)
+-- TOC entry 219 (class 1259 OID 16401)
 -- Name: likes; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -218,7 +218,7 @@ CREATE TABLE public.likes (
 ALTER TABLE public.likes OWNER TO postgres;
 
 --
--- TOC entry 218 (class 1259 OID 16398)
+-- TOC entry 220 (class 1259 OID 16404)
 -- Name: pictures; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -233,7 +233,7 @@ CREATE TABLE public.pictures (
 ALTER TABLE public.pictures OWNER TO postgres;
 
 --
--- TOC entry 219 (class 1259 OID 16404)
+-- TOC entry 221 (class 1259 OID 16410)
 -- Name: pictures_picture_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -250,7 +250,7 @@ ALTER SEQUENCE public.pictures_picture_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 3487 (class 0 OID 0)
--- Dependencies: 219
+-- Dependencies: 221
 -- Name: pictures_picture_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -258,7 +258,7 @@ ALTER SEQUENCE public.pictures_picture_id_seq OWNED BY public.pictures.picture_i
 
 
 --
--- TOC entry 220 (class 1259 OID 16405)
+-- TOC entry 222 (class 1259 OID 16411)
 -- Name: profile_views; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -271,7 +271,7 @@ CREATE TABLE public.profile_views (
 ALTER TABLE public.profile_views OWNER TO postgres;
 
 --
--- TOC entry 221 (class 1259 OID 16408)
+-- TOC entry 223 (class 1259 OID 16414)
 -- Name: profiles; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -292,7 +292,7 @@ CREATE TABLE public.profiles (
 ALTER TABLE public.profiles OWNER TO postgres;
 
 --
--- TOC entry 222 (class 1259 OID 16416)
+-- TOC entry 224 (class 1259 OID 16422)
 -- Name: profiles_profile_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -309,7 +309,7 @@ ALTER SEQUENCE public.profiles_profile_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 3488 (class 0 OID 0)
--- Dependencies: 222
+-- Dependencies: 224
 -- Name: profiles_profile_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -317,7 +317,7 @@ ALTER SEQUENCE public.profiles_profile_id_seq OWNED BY public.profiles.profile_i
 
 
 --
--- TOC entry 227 (class 1259 OID 16475)
+-- TOC entry 225 (class 1259 OID 16423)
 -- Name: rooms; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -331,7 +331,7 @@ CREATE TABLE public.rooms (
 ALTER TABLE public.rooms OWNER TO postgres;
 
 --
--- TOC entry 226 (class 1259 OID 16474)
+-- TOC entry 226 (class 1259 OID 16426)
 -- Name: rooms_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -356,7 +356,7 @@ ALTER SEQUENCE public.rooms_id_seq OWNED BY public.rooms.id;
 
 
 --
--- TOC entry 223 (class 1259 OID 16417)
+-- TOC entry 227 (class 1259 OID 16427)
 -- Name: user_interests; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -369,7 +369,7 @@ CREATE TABLE public.user_interests (
 ALTER TABLE public.user_interests OWNER TO postgres;
 
 --
--- TOC entry 224 (class 1259 OID 16420)
+-- TOC entry 228 (class 1259 OID 16430)
 -- Name: users; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -390,7 +390,7 @@ CREATE TABLE public.users (
 ALTER TABLE public.users OWNER TO postgres;
 
 --
--- TOC entry 225 (class 1259 OID 16426)
+-- TOC entry 229 (class 1259 OID 16436)
 -- Name: users_user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -407,7 +407,7 @@ ALTER SEQUENCE public.users_user_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 3490 (class 0 OID 0)
--- Dependencies: 225
+-- Dependencies: 229
 -- Name: users_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -415,7 +415,7 @@ ALTER SEQUENCE public.users_user_id_seq OWNED BY public.users.user_id;
 
 
 --
--- TOC entry 3288 (class 2604 OID 16427)
+-- TOC entry 3289 (class 2604 OID 16437)
 -- Name: interests interest_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -423,7 +423,7 @@ ALTER TABLE ONLY public.interests ALTER COLUMN interest_id SET DEFAULT nextval('
 
 
 --
--- TOC entry 3298 (class 2604 OID 16485)
+-- TOC entry 3288 (class 2604 OID 16438)
 -- Name: messages id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -431,7 +431,7 @@ ALTER TABLE ONLY public.messages ALTER COLUMN id SET DEFAULT nextval('public.dia
 
 
 --
--- TOC entry 3289 (class 2604 OID 16428)
+-- TOC entry 3290 (class 2604 OID 16439)
 -- Name: pictures picture_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -439,7 +439,7 @@ ALTER TABLE ONLY public.pictures ALTER COLUMN picture_id SET DEFAULT nextval('pu
 
 
 --
--- TOC entry 3291 (class 2604 OID 16429)
+-- TOC entry 3292 (class 2604 OID 16440)
 -- Name: profiles profile_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -447,7 +447,7 @@ ALTER TABLE ONLY public.profiles ALTER COLUMN profile_id SET DEFAULT nextval('pu
 
 
 --
--- TOC entry 3297 (class 2604 OID 16478)
+-- TOC entry 3296 (class 2604 OID 16441)
 -- Name: rooms id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -455,7 +455,7 @@ ALTER TABLE ONLY public.rooms ALTER COLUMN id SET DEFAULT nextval('public.rooms_
 
 
 --
--- TOC entry 3295 (class 2604 OID 16430)
+-- TOC entry 3297 (class 2604 OID 16442)
 -- Name: users user_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -463,22 +463,18 @@ ALTER TABLE ONLY public.users ALTER COLUMN user_id SET DEFAULT nextval('public.u
 
 
 --
--- TOC entry 3465 (class 0 OID 16389)
--- Dependencies: 215
+-- TOC entry 3467 (class 0 OID 16395)
+-- Dependencies: 217
 -- Data for Name: interests; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.interests (interest_id, name) FROM stdin;
-1	hah
-4	lol
-7	hahhah
-9	st
 \.
 
 
 --
--- TOC entry 3467 (class 0 OID 16395)
--- Dependencies: 217
+-- TOC entry 3469 (class 0 OID 16401)
+-- Dependencies: 219
 -- Data for Name: likes; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -487,8 +483,8 @@ COPY public.likes (liker_user_id, liked_user_id) FROM stdin;
 
 
 --
--- TOC entry 3479 (class 0 OID 16482)
--- Dependencies: 229
+-- TOC entry 3465 (class 0 OID 16389)
+-- Dependencies: 215
 -- Data for Name: messages; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -497,8 +493,8 @@ COPY public.messages (id, room_id, sender_id, message, created_at) FROM stdin;
 
 
 --
--- TOC entry 3468 (class 0 OID 16398)
--- Dependencies: 218
+-- TOC entry 3470 (class 0 OID 16404)
+-- Dependencies: 220
 -- Data for Name: pictures; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -507,8 +503,8 @@ COPY public.pictures (picture_id, user_id, picture_path, is_profile_picture) FRO
 
 
 --
--- TOC entry 3470 (class 0 OID 16405)
--- Dependencies: 220
+-- TOC entry 3472 (class 0 OID 16411)
+-- Dependencies: 222
 -- Data for Name: profile_views; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -517,21 +513,18 @@ COPY public.profile_views (viewer_user_id, profile_user_id) FROM stdin;
 
 
 --
--- TOC entry 3471 (class 0 OID 16408)
--- Dependencies: 221
+-- TOC entry 3473 (class 0 OID 16414)
+-- Dependencies: 223
 -- Data for Name: profiles; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.profiles (profile_id, gender, age, sexual_preferences, biography, profile_picture_id, fame_rating, latitude, longitude, is_active) FROM stdin;
-9	male	18	male	amagay	6	30	40	40	t
-11	male	18	male	yamashina	23	50	40	40	t
-12	male	21	male	likeamerika	24	100	40	40	t
 \.
 
 
 --
--- TOC entry 3477 (class 0 OID 16475)
--- Dependencies: 227
+-- TOC entry 3475 (class 0 OID 16423)
+-- Dependencies: 225
 -- Data for Name: rooms; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -540,45 +533,37 @@ COPY public.rooms (id, user1, user2) FROM stdin;
 
 
 --
--- TOC entry 3473 (class 0 OID 16417)
--- Dependencies: 223
+-- TOC entry 3477 (class 0 OID 16427)
+-- Dependencies: 227
 -- Data for Name: user_interests; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.user_interests (user_id, interest_id) FROM stdin;
-9	1
-9	4
-11	1
-11	4
-12	7
 \.
 
 
 --
--- TOC entry 3474 (class 0 OID 16420)
--- Dependencies: 224
+-- TOC entry 3478 (class 0 OID 16430)
+-- Dependencies: 228
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.users (user_id, user_name, first_name, last_name, email, password, last_login_at, email_reset_token, jwt_reset_token, is_verified) FROM stdin;
-9	grib	vova	grib	grib@mail.com	$2b$10$m26LkwHrG3jr4qHsdu3R2.T2SzI9NvZMRe3cKoAVKlBLIuMw4owUO	\N	\N	\N	t
-11	mashina	ashot	mashina	mashina@mail.com	$2b$10$22u6/gjqtigm/ydVByyMKe.BNMa2MXD5Miw6wiNPdwGkHPb3EzGny	\N	\N	\N	t
-12	bruno	bruno	americo	bruno@mail.com	$2b$10$noIjqJvmLaO0s.HB0MPVT.gGmV1iWmnvfncxZEw9yxmfRKOvJmQtC	\N	\N	\N	t
 \.
 
 
 --
 -- TOC entry 3491 (class 0 OID 0)
--- Dependencies: 228
+-- Dependencies: 216
 -- Name: dialogs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.dialogs_id_seq', 1, false);
+SELECT pg_catalog.setval('public.dialogs_id_seq', 2, true);
 
 
 --
 -- TOC entry 3492 (class 0 OID 0)
--- Dependencies: 216
+-- Dependencies: 218
 -- Name: interests_interest_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -587,7 +572,7 @@ SELECT pg_catalog.setval('public.interests_interest_id_seq', 9, true);
 
 --
 -- TOC entry 3493 (class 0 OID 0)
--- Dependencies: 219
+-- Dependencies: 221
 -- Name: pictures_picture_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -596,7 +581,7 @@ SELECT pg_catalog.setval('public.pictures_picture_id_seq', 24, true);
 
 --
 -- TOC entry 3494 (class 0 OID 0)
--- Dependencies: 222
+-- Dependencies: 224
 -- Name: profiles_profile_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -609,12 +594,12 @@ SELECT pg_catalog.setval('public.profiles_profile_id_seq', 1, false);
 -- Name: rooms_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.rooms_id_seq', 2, true);
+SELECT pg_catalog.setval('public.rooms_id_seq', 3, true);
 
 
 --
 -- TOC entry 3496 (class 0 OID 0)
--- Dependencies: 225
+-- Dependencies: 229
 -- Name: users_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -622,7 +607,7 @@ SELECT pg_catalog.setval('public.users_user_id_seq', 20, true);
 
 
 --
--- TOC entry 3320 (class 2606 OID 16489)
+-- TOC entry 3300 (class 2606 OID 16444)
 -- Name: messages dialogs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -631,7 +616,7 @@ ALTER TABLE ONLY public.messages
 
 
 --
--- TOC entry 3300 (class 2606 OID 16434)
+-- TOC entry 3302 (class 2606 OID 16446)
 -- Name: interests interests_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -640,7 +625,7 @@ ALTER TABLE ONLY public.interests
 
 
 --
--- TOC entry 3302 (class 2606 OID 16436)
+-- TOC entry 3304 (class 2606 OID 16448)
 -- Name: likes likes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -649,7 +634,7 @@ ALTER TABLE ONLY public.likes
 
 
 --
--- TOC entry 3304 (class 2606 OID 16438)
+-- TOC entry 3306 (class 2606 OID 16450)
 -- Name: pictures pictures_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -658,7 +643,7 @@ ALTER TABLE ONLY public.pictures
 
 
 --
--- TOC entry 3306 (class 2606 OID 16440)
+-- TOC entry 3308 (class 2606 OID 16452)
 -- Name: profile_views profile_views_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -667,7 +652,7 @@ ALTER TABLE ONLY public.profile_views
 
 
 --
--- TOC entry 3308 (class 2606 OID 16442)
+-- TOC entry 3310 (class 2606 OID 16454)
 -- Name: profiles profiles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -676,7 +661,7 @@ ALTER TABLE ONLY public.profiles
 
 
 --
--- TOC entry 3318 (class 2606 OID 16480)
+-- TOC entry 3312 (class 2606 OID 16456)
 -- Name: rooms rooms_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -685,7 +670,7 @@ ALTER TABLE ONLY public.rooms
 
 
 --
--- TOC entry 3310 (class 2606 OID 16444)
+-- TOC entry 3314 (class 2606 OID 16458)
 -- Name: user_interests user_interests_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -694,7 +679,7 @@ ALTER TABLE ONLY public.user_interests
 
 
 --
--- TOC entry 3312 (class 2606 OID 16446)
+-- TOC entry 3316 (class 2606 OID 16460)
 -- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -703,7 +688,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 3314 (class 2606 OID 16448)
+-- TOC entry 3318 (class 2606 OID 16462)
 -- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -712,7 +697,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 3316 (class 2606 OID 16450)
+-- TOC entry 3320 (class 2606 OID 16464)
 -- Name: users users_user_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -721,7 +706,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 3321 (class 2606 OID 16490)
+-- TOC entry 3321 (class 2606 OID 16465)
 -- Name: messages dialogs_room_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -729,7 +714,7 @@ ALTER TABLE ONLY public.messages
     ADD CONSTRAINT dialogs_room_id_fkey FOREIGN KEY (room_id) REFERENCES public.rooms(id);
 
 
--- Completed on 2024-06-01 18:31:50 UTC
+-- Completed on 2024-06-28 20:12:06 UTC
 
 --
 -- PostgreSQL database dump complete

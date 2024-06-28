@@ -10,17 +10,17 @@ using Profile = DAL.Entities.Profile;
 namespace BLL.Sevices;
 
 public class ProfileService(
-    UserRepository userRepository,
-    ProfileRepository profileRepository,
+    UsersRepository usersRepository,
+    ProfilesRepository profilesRepository,
     PicturesRepository picturesRepository,
     InterestsRepository interestsRepository,
     LikesRepository likesRepository,
-    UserInterestsRepository userInterestsRepository,
+    UsersInterestsRepository usersInterestsRepository,
     IMapper mapper)
 {
     public async Task<User> GetFullProfileByIdAsync(int id)
     {
-        var user = await profileRepository.GetFullProfileAsync(id);
+        var user = await profilesRepository.GetFullProfileAsync(id);
         if (user == null) throw new DataValidationException("Actor not found");
 
         var builder = new ProfileBuilder();
@@ -34,10 +34,10 @@ public class ProfileService(
     public async Task<(long, List<User>)> GetFullProfilesAsync(SearchParameters search, SortParameters sort,
         PaginationParameters pagination, int id)
     {
-        var currentUser = await profileRepository.GetProfileByIdAsync(id);
+        var currentUser = await profilesRepository.GetProfileAsync(id);
         if(!currentUser.IsActive) throw new ForbiddenActionException("update user profile first");
         var tagsIds = await interestsRepository.GetUserInterestsByNamesAsync(search.CommonTags);
-        var (counter, users) = await profileRepository.GetFullProfilesAsync(search, sort, pagination, id, tagsIds);
+        var (counter, users) = await profilesRepository.GetFullProfilesAsync(search, sort, pagination, id, tagsIds);
         if (users == null) return (0, new List<User>());
         var builder = new ProfileBuilder();
         var usersList = new List<User>();
@@ -61,10 +61,10 @@ public class ProfileService(
         {
             if (!allInterests.Contains(interest.Name)) await interestsRepository.CreateInterestAsync(interest.Name);
         }
-        var currentProfile = await profileRepository.GetProfileByIdAsync(id);
+        var currentProfile = await profilesRepository.GetProfileAsync(id);
         if (currentProfile == null) throw new ObjectNotFoundException("Profile not found");
         profile.Id = id;
-        var res = await profileRepository.UpdateProfileAsync(profile);
+        var res = await profilesRepository.UpdateProfileAsync(profile);
         if (res == null) throw new ObjectNotFoundException("Profile not found");
         //add/update interests
         var userInterestsByNamesAsync = await interestsRepository
@@ -80,7 +80,7 @@ public class ProfileService(
         var isProfilePicture = isMain ? 1 : 0;
         if (isMain)
         {
-            var user = await profileRepository.GetProfileByIdAsync(userId);
+            var user = await profilesRepository.GetProfileAsync(userId);
             if (user.ProfilePictureId != null)
             {
                 await picturesRepository.DeletePhotoAsync(userId, (int)user.ProfilePictureId);
@@ -89,7 +89,7 @@ public class ProfileService(
         var pictureId = await picturesRepository.UploadPhoto(userId, filePicture, isProfilePicture);
         if (isMain)
         {
-            await profileRepository.UpdateProfilePictureAsync( userId, pictureId);
+            await profilesRepository.UpdateProfilePictureAsync( userId, pictureId);
         }
     }
 
@@ -100,10 +100,10 @@ public class ProfileService(
         await picturesRepository.DeletePhotoAsync(userId, photoId);
         if (isMain)
         {
-            var profile = profileRepository.GetProfileByIdAsync(userId).Result;
+            var profile = profilesRepository.GetProfileAsync(userId).Result;
             if (profile.ProfilePictureId == photoId)
             {
-                await profileRepository.UpdateProfilePictureAsync(userId, photoId);
+                await profilesRepository.UpdateProfilePictureAsync(userId, photoId);
             }
         }
     }
@@ -111,7 +111,7 @@ public class ProfileService(
     public async Task<List<Interest>> GetInterestsAsync()
     {
         var allInterests = await interestsRepository.GetInterestsAsync();
-        var usersInterests = await userInterestsRepository.GetAllUserInterestsAsync();
+        var usersInterests = await usersInterestsRepository.GetAllUserInterestsAsync();
         var usedInterests = usersInterests.Select(i => i.InterestId);
         foreach (var interest in allInterests)
         {
@@ -142,9 +142,9 @@ public class ProfileService(
 
     public async Task<FiltersData> GetFiltersAsync(int id)
     {
-        var user = await profileRepository.GetProfileByIdAsync(id);
+        var user = await profilesRepository.GetProfileAsync(id);
         if (!user.IsActive) throw new ForbiddenActionException("update user profile first");
-        return await profileRepository.GetFiltersDataAsync(user.Longitude, user.Latitude, id);
+        return await profilesRepository.GetFiltersDataAsync(user.Longitude, user.Latitude, id);
 
     }
 
