@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using BLL.Sevices;
-using DAL.Entities;
 using DAL.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web_API.DTOs;
 using Web_API.Helpers;
-using Web_API.Hubs;
 using Web_API.Hubs.Helpers;
 using Web_API.Hubs.Services;
 using Profile = DAL.Entities.Profile;
@@ -27,7 +25,6 @@ public class ProfilesController(
     UserService userService
 ) : ControllerBase
 {
-    // GET: api/profile
     [HttpPost]
     public async Task<ProfilesData> GetAllProfilesInfo(
         [FromBody] Parameters parameters)
@@ -50,7 +47,6 @@ public class ProfilesController(
         };
     }
 
-    // GET api/<UsersController>/5
     [HttpGet("{id:int}")]
     public async Task<FullProfileResponseDto> GetProfileFullDataById([FromRoute] int id)
     {
@@ -73,7 +69,6 @@ public class ProfilesController(
         return output;
     }
 
-    // PUT api/<UsersController>/5
     [HttpPut("{id:int}")]
     public async Task UpdateProfile([FromRoute] int id, [FromBody] ProfileDto profileCreation)
     {

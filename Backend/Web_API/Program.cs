@@ -15,7 +15,6 @@ using Web_API.Hubs.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddSignalR();
 builder.Services.AddScoped<ChatManager>();
 builder.Services.AddScoped<ChatService>();
