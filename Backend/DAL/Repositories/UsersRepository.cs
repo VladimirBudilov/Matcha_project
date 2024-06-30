@@ -46,7 +46,7 @@ public class UsersRepository(
         var query = new StringBuilder()
             .Append("INSERT INTO users (user_name, first_name, last_name, email, password,  is_verified, last_login_at) ")
             .Append(
-                "VALUES               (@userName, @firstName, @lastName, @email, @password,  @isVerified, last_login_at) Returning user_id");
+                "VALUES               (@userName, @firstName, @lastName, @email, @password,  @isVerified, @last_login_at) Returning user_id");
         var parameters = new Dictionary<string, object>
         {
             { "@userName", user.UserName },
