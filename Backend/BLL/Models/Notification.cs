@@ -16,5 +16,6 @@ public class NotificationType
     public static readonly string Unlike = "Unlike";
     public static readonly string View = "View";
     public static readonly string Online = "Online";
+    public static readonly string BlackListed = "BlackList";
 }
 

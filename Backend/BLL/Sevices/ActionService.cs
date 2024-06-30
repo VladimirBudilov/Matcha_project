@@ -11,6 +11,7 @@ public class ActionService(
     LikesRepository likesRepository,
     ProfilesRepository userRepository,
     ProfileViewsRepository profileViewRepository,
+    BlackListRepository blackListRepository,
     ServiceValidator validator
 )
 {
@@ -44,7 +45,7 @@ public class ActionService(
     {
         if (viewerId == viewedId) return false;
         await validator.CheckUserExistence([viewerId, viewedId]);
-        if(await profileViewRepository.GetView(viewerId, viewedId) != null) return true;
+        if (await profileViewRepository.GetView(viewerId, viewedId) != null) return true;
 
         await profileViewRepository.CreateProfileViewsAsync(new ProfileView()
             { ViewedId = viewedId, ViewerId = viewerId });
@@ -60,5 +61,25 @@ public class ActionService(
         var userLikes = await likesRepository.GetLikesByUserIdAsync(id);
         user.FameRating = FameRatingCalculator.Calculate(userLikes.Count(), userViews.Count());
         await userRepository.UpdateFameRatingAsync(user);
+    }
+
+    public async Task<bool> TryUpdateBlackListAsync(int actorId, int consumerId, bool shouldAdd)
+    {
+        await validator.CheckUserExistence(new[] { actorId, consumerId });
+        var blackList = await blackListRepository.GetFromBlackListByIdAsync(actorId);
+
+        if (!shouldAdd)
+        {
+            if (!(blackList.Any(x => x.BlacklistedUserId == consumerId))) return false;
+
+            await blackListRepository.DeleteFromBlackListAsync(actorId, consumerId);
+            return true;
+        }
+
+        if (blackList.Any(x => x.BlacklistedUserId == consumerId)) return false;
+
+        await blackListRepository.AddToBlackListAsync(new BlackList()
+            { UserId = actorId, BlacklistedUserId = consumerId });
+        return true;
     }
 }

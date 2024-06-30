@@ -78,8 +78,6 @@ const sendLike = async (profileId: number) => {
 			})
 		}
 	})
-
-  await store?.connection?.invoke("SendNotificationToUser", Number(profileId)).catch(err => console.log(err.toString()));
 }
 
 

@@ -9,14 +9,11 @@ namespace DAL.Repositories;
 public class ProfilesRepository(
     InterestsRepository interestsRepository,
     EntityCreator entityCreator,
-    TableFetcher fetcher,
-    ILogger<ProfilesRepository> logger
-)
+    TableFetcher fetcher)
 {
     public async Task<User?> GetFullProfileAsync(int id)
     {
-        try
-        {
+
             var query = new StringBuilder().Append("SELECT * FROM users")
                 .Append(" LEFT JOIN profiles ON users.user_id = profiles.profile_id")
                 .Append(" WHERE user_id = @id");
@@ -30,27 +27,16 @@ public class ProfilesRepository(
             }
 
             return null;
-        }
-        catch (Exception e)
-        {
-            logger.LogError(e, e.Message);
-            throw;
-        }
+
     }
 
     public async Task<Profile> GetProfileAsync(int id)
     {
-        try
-        {
+
             var dataTable =
                 await fetcher.GetTableByParameter("SELECT * FROM profiles WHERE profile_id = @id", "@id", id);
             return dataTable.Rows.Count > 0 ? entityCreator.CreateUserProfile(dataTable.Rows[0]) : null;
-        }
-        catch (Exception e)
-        {
-            logger.LogError(e, e.Message);
-            throw;
-        }
+
     }
 
     public async Task<Profile?> CreateProfileAsync(Profile entity)

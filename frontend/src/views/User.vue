@@ -42,7 +42,6 @@ const GetProfile = async () => {
 			profile.value = res?.data
 			uploadUrl.value = axios.defaults.baseURL + 'api/FileManager/uploadPhoto/' + profile.value.profileId
 			console.log(profile.value)
-      await store?.connection?.invoke("SendNotificationToUser", Number(route.params.id)).catch(err => console.log(err.toString()));
 		}
 		if (profile.value.latitude && profile.value.longitude) {
 			const response = await fetch('https://geocode.maps.co/reverse?' + new URLSearchParams({
@@ -61,8 +60,6 @@ const GetProfile = async () => {
 			}
 		}
 	});
-
-  await store.connection?.invoke("SendNotificationToUser", Number(route.params.id));
 }
 
 onMounted(async () => {

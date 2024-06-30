@@ -141,4 +141,13 @@ public class EntityCreator
             Created_at = row.Field<DateTime>("created_at")
         };
     }
+
+    public BlackList CreateBlackList(DataRow row)
+    {
+        return new BlackList
+        {
+            UserId = row.Field<int>("user_id"),
+            BlacklistedUserId = row.Field<int>("blocked_user_id")
+        };
+    }
 }

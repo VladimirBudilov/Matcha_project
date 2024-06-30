@@ -33,12 +33,15 @@ public class ActionsController(
         validator.CheckUserAuth(userAction.producerId, User.Claims);
 
         var (notificationType, output) = await actionService.LikeUser(userAction.producerId, userAction.consumerId);
+        var actor = await userService.GetUserByIdAsync(userAction.producerId);
+        
         notificationService.AddNotification(userAction.consumerId, new Notification()
         {
             Type = notificationType,
-            Message = "You have a new userAction",
-            Actor = (await userService.GetUserByIdAsync(userAction.producerId))!.UserName
+            Message = "You have been liked",
+            Actor = actor!.UserName + " " + actor!.LastName
         });
+        await notificationService.SendNotificationToUser(userAction.consumerId);
         return Ok(output);
     }
 
@@ -63,38 +66,25 @@ public class ActionsController(
         return Ok(response);
     }
     
-    /*[HttpPost("block")]
-    public async Task<IActionResult> BlockUser([FromBody] UserActionRequestDto userAction)
+    [HttpPost("block")]
+    public async Task<IActionResult> GetBlackList([FromBody] UserActionRequestDto userAction, [FromQuery] int add = 1)
     {
         validator.CheckId(userAction.producerId);
         validator.CheckId(userAction.consumerId);
         validator.CheckUserAuth(userAction.producerId, User.Claims);
 
-        var (notificationType, output) = await actionService.BlockUser(userAction.producerId, userAction.consumerId);
+        var shouldAdd = add != 0;
+        var wasAdded = await actionService.TryUpdateBlackListAsync(userAction.producerId, userAction.consumerId, shouldAdd);
+        if(!wasAdded) return BadRequest(); 
+        var actor = await userService.GetUserByIdAsync(userAction.producerId);
         notificationService.AddNotification(userAction.consumerId, new Notification()
         {
-            Type = notificationType,
-            Message = "You have a new userAction",
-            Actor = (await userService.GetUserByIdAsync(userAction.producerId))!.UserName
+            Type = NotificationType.BlackListed,
+            Message = "You have been blacklisted",
+            Actor = actor!.UserName + " " + actor!.LastName
         });
-        return Ok(output);
+        await notificationService.SendNotificationToUser(actor.Id);
+        return Ok();
     }
-    
-    [HttpPost("black-list")]
-    public async Task<IActionResult> GetBlackList([FromBody] UserActionRequestDto userAction)
-    {
-        validator.CheckId(userAction.producerId);
-        validator.CheckId(userAction.consumerId);
-        validator.CheckUserAuth(userAction.producerId, User.Claims);
-
-        var (notificationType, output) = await actionService.GetBlackList(userAction.producerId, userAction.consumerId);
-        notificationService.AddNotification(userAction.consumerId, new Notification()
-        {
-            Type = notificationType,
-            Message = "You have a new userAction",
-            Actor = (await userService.GetUserByIdAsync(userAction.producerId))!.UserName
-        });
-        return Ok(output);
-    }*/
         
 }

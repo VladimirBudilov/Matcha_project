@@ -10,8 +10,7 @@ namespace DAL.Repositories;
 
 public sealed class InterestsRepository(
     EntityCreator entityCreator,
-    TableFetcher fetcher,
-    ParameterInjector injector)
+    TableFetcher fetcher)
 {
     public async Task<List<Interest>> GetInterestsAsync()
     {

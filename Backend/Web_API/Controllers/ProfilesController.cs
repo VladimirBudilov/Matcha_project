@@ -56,12 +56,14 @@ public class ProfilesController(
         var viewerId = claimsService.GetId(User.Claims);
         if (await actionService.TryViewUser(viewerId, id))
         {
+            var actor = await userService.GetUserByIdAsync(viewerId);
             notificationService.AddNotification(id, new Notification()
             {
-                Actor = (await userService.GetUserByIdAsync(viewerId))!.UserName,
+                Actor = actor!.UserName + " " + actor!.LastName,
                 Message = "You have a new view",
                 Type = NotificationType.View,
             });
+            await notificationService.SendNotificationToUser(id);
         }
 
         var model = await profileService.GetFullProfileByIdAsync(id);
@@ -87,6 +89,7 @@ public class ProfilesController(
 
         return Ok(output);
     }
+
     [HttpGet("filters")]
     public async Task<IActionResult> GetFilters()
     {
@@ -95,14 +98,14 @@ public class ProfilesController(
 
         return Ok(output);
     }
-    
+
     [HttpPost("online/{id:int}")]
     public async Task<IActionResult> GetOnlineProfiles([FromRoute] int id)
     {
         var isUserOnline = notificationService.IsUserOnline(id);
         var user = await userService.GetUserByIdAsync(id);
         var output = new IsUserOnlineDto(isUserOnline, !isUserOnline ? user!.LastLogin : null);
-        
+
         return Ok(output);
     }
 }
