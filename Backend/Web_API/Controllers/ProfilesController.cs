@@ -27,7 +27,7 @@ public class ProfilesController(
 ) : ControllerBase
 {
     [HttpPost]
-    public async Task<ProfilesData> GetAllProfilesInfo(
+    public async Task<ProfilesData> GetProfilesAsync(
         [FromBody] Parameters parameters)
     {
         var id = claimsService.GetId(User.Claims);
@@ -36,7 +36,7 @@ public class ProfilesController(
         validator.CheckPaginationParameters(parameters.Pagination);
 
         var (amountOfPages, output) =
-            await profileService.GetFullProfilesAsync(parameters.Search, parameters.Sort, parameters.Pagination, id);
+            await profileService.GetProfilesAsync(parameters.Search, parameters.Sort, parameters.Pagination, id);
         output = await profileService.CheckUsersLikes(output, id);
         var profiles = mapper.Map<List<ProfileResponse>>(output);
         return new ProfilesData()
@@ -49,10 +49,13 @@ public class ProfilesController(
     }
 
     [HttpGet("{id:int}")]
-    public async Task<FullProfileResponseDto> GetProfileFullDataById([FromRoute] int id)
+    public async Task<IActionResult> GetProfileByIdAsync([FromRoute] int id)
     {
         validator.CheckId(id);
-
+        
+        var userIsBlocked = await actionService.CheckIfUserIsBlocked(claimsService.GetId(User.Claims), id);
+        if(userIsBlocked) return Forbid("You are blocked by this user");
+        
         var viewerId = claimsService.GetId(User.Claims);
         if (await actionService.TryViewUser(viewerId, id))
         {
@@ -69,17 +72,19 @@ public class ProfilesController(
         var model = await profileService.GetFullProfileByIdAsync(id);
         model = await profileService.CheckUserLike(model, viewerId);
         var output = mapper.Map<FullProfileResponseDto>(model);
-        return output;
+        return Ok(output);
     }
 
     [HttpPut("{id:int}")]
-    public async Task UpdateProfile([FromRoute] int id, [FromBody] ProfileDto profileCreation)
+    public async Task<IActionResult> UpdateProfile([FromRoute] int id, [FromBody] ProfileDto profileCreation)
     {
         validator.CheckUserAuth(id, User.Claims);
         validator.CheckId(id);
         validator.ProfileRequestDto(profileCreation);
         var model = mapper.Map<Profile>(profileCreation);
+        
         await profileService.UpdateProfileAsync(id, model);
+        return Ok();
     }
 
     [HttpGet("interests")]

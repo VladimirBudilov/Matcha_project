@@ -128,7 +128,7 @@ public class ProfilesRepository(
 
     public async Task<(long, IEnumerable<User>?)> GetFullProfilesAsync(SearchParameters searchParams,
         SortParameters sortParams,
-        PaginationParameters pagination, int id, List<Interest> tagsIds)
+        PaginationParameters pagination, int id, List<Interest> tagsIds, IEnumerable<int> blockedUsers)
     {
         var profile = (await GetFullProfileAsync(id))!.Profile;
 
@@ -152,7 +152,7 @@ public class ProfilesRepository(
         };
 
         //add filters
-        ApplyFilters(searchParams, tagsIds, parameters, ref queryBuilder);
+        ApplyFilters(searchParams, tagsIds, parameters, ref queryBuilder, blockedUsers);
         //add group by
         ApplyOrdering(sortParams, ref queryBuilder);
         //add pagination
@@ -218,7 +218,7 @@ public class ProfilesRepository(
     private static void ApplyFilters(SearchParameters searchParams,
         List<Interest> tagsIds,
         Dictionary<string, object> parameters,
-        ref QueryBuilder queryBuilder)
+        ref QueryBuilder queryBuilder, IEnumerable<int> blockedUsers)
     {
         queryBuilder.Where($"users.user_id != @profile_id AND profiles.is_active = TRUE AND users.is_verified = TRUE ");
         if (searchParams.MaxDistance != null)
@@ -238,6 +238,12 @@ public class ProfilesRepository(
         {
             queryBuilder.Where(" AND interests.interest_id = ANY(@commonTags) ");
             parameters.Add("@commonTags", tagsIds.Select(x => x.InterestId).ToArray());
+        }
+        
+        if(blockedUsers.Any())
+        {
+            queryBuilder.Where(" AND users.user_id NOT IN @blockedUsers ");
+            parameters.Add("@blockedUsers", blockedUsers.ToArray());
         }
 
         if (searchParams.MinAge != null && searchParams.MaxAge != null)

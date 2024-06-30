@@ -74,6 +74,7 @@ builder.Services.AddScoped<ProfileViewsRepository>();
 builder.Services.AddScoped<UsersInterestsRepository>();
 builder.Services.AddScoped<RoomsRepository>();
 builder.Services.AddScoped<MessagesRepository>();
+builder.Services.AddScoped<BlackListRepository>();
 
 builder.Services.AddScoped<ServiceValidator>();
 builder.Services.AddScoped<UserService>();

@@ -66,6 +66,7 @@ public class ActionService(
     public async Task<bool> TryUpdateBlackListAsync(int actorId, int consumerId, bool shouldAdd)
     {
         await validator.CheckUserExistence(new[] { actorId, consumerId });
+        
         var blackList = await blackListRepository.GetFromBlackListByIdAsync(actorId);
 
         if (!shouldAdd)
@@ -81,5 +82,13 @@ public class ActionService(
         await blackListRepository.AddToBlackListAsync(new BlackList()
             { UserId = actorId, BlacklistedUserId = consumerId });
         return true;
+    }
+
+    public async Task<bool> CheckIfUserIsBlocked(int getId, int id)
+    {
+        await validator.CheckUserExistence(new[] { getId, id });
+        
+        var blackList = await blackListRepository.GetFromBlackListByIdAsync(id);
+        return blackList.Any(x => x.BlacklistedUserId == getId);
     }
 }

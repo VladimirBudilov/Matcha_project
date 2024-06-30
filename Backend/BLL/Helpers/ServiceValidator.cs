@@ -14,7 +14,7 @@ public class ServiceValidator(
         foreach (var id in ints)
         {
             var userExist = await usersRepository.GetUserByIdAsync(id);
-            if (userExist == null) throw new DataValidationException($"Invalid Actor Id {id}");
+            if (userExist == null) throw new DataValidationException($"Invalid user Id {id}");
         }
     }
 }

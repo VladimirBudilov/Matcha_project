@@ -10,12 +10,13 @@ using Profile = DAL.Entities.Profile;
 namespace BLL.Sevices;
 
 public class ProfileService(
-    UsersRepository usersRepository,
     ProfilesRepository profilesRepository,
     PicturesRepository picturesRepository,
     InterestsRepository interestsRepository,
     LikesRepository likesRepository,
     UsersInterestsRepository usersInterestsRepository,
+    BlackListRepository blackListRepository,
+    ServiceValidator validator,
     IMapper mapper)
 {
     public async Task<User> GetFullProfileByIdAsync(int id)
@@ -31,14 +32,17 @@ public class ProfileService(
         return builder.Build();
     }
 
-    public async Task<(long, List<User>)> GetFullProfilesAsync(SearchParameters search, SortParameters sort,
+    public async Task<(long, List<User>)> GetProfilesAsync(SearchParameters search, SortParameters sort,
         PaginationParameters pagination, int id)
     {
         var currentUser = await profilesRepository.GetProfileAsync(id);
         if(!currentUser.IsActive) throw new ForbiddenActionException("update user profile first");
+        
         var tagsIds = await interestsRepository.GetUserInterestsByNamesAsync(search.CommonTags);
         search.SexualPreferences ??= currentUser.SexualPreferences;
-        var (counter, users) = await profilesRepository.GetFullProfilesAsync(search, sort, pagination, id, tagsIds);
+        
+        var blockedUsers = (await blackListRepository.GetFromBlackListByIdAsync(id)).Select(x=> x.BlacklistedUserId);
+        var (counter, users) = await profilesRepository.GetFullProfilesAsync(search, sort, pagination, id, tagsIds, blockedUsers);
         if (users == null) return (0, new List<User>());
         var builder = new ProfileBuilder();
         var usersList = new List<User>();
@@ -96,8 +100,6 @@ public class ProfileService(
 
     public async Task DeletePhotoASync(int userId, int photoId, bool isMain)
     {
-        //TODO add validation
-        
         await picturesRepository.DeletePhotoAsync(userId, photoId);
         if (isMain)
         {
@@ -146,7 +148,6 @@ public class ProfileService(
         var user = await profilesRepository.GetProfileAsync(id);
         if (!user.IsActive) throw new ForbiddenActionException("update user profile first");
         return await profilesRepository.GetFiltersDataAsync(user.Longitude, user.Latitude, id);
-
     }
 
     public async Task<bool> IsMatch(int producerId, int consumerId)
