@@ -51,8 +51,3 @@ public class NotificationHub(
         notificationService.ClearNotifications(id);
     }
 }
-
-public interface INotificationHub
-{
-    Task ReceiveNotifications(List<Notification> notifications);
-}

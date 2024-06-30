@@ -1,9 +1,10 @@
 ﻿using System.Collections.Concurrent;
+using Microsoft.AspNetCore.SignalR;
 using Web_API.Hubs.Helpers;
 
 namespace Web_API.Hubs.Services;
 
-public class NotificationService
+public class NotificationService(IHubContext<NotificationHub, INotificationHub> hubContext)
 {
     private ConcurrentDictionary<int, string> UsersOnline { get; set; } = new();
     private ConcurrentDictionary<int, List<Notification>> UsersNotification { get; set; } = new();
@@ -52,5 +53,15 @@ public class NotificationService
     {
         if (!UsersOnline.ContainsKey(userId)) return string.Empty;
         return UsersOnline[userId];
+    }
+
+    public async Task SendNotificationToUser(int userId)
+    {
+        var identifier = GetIdentifier(userId);
+        if(!GetUsersId().Contains(userId)) return;
+        var userNotifications = GetNotifications(userId);
+        if(userNotifications.Count == 0) return;
+        await hubContext.Clients.Client(identifier).ReceiveNotifications(userNotifications);
+        ClearNotifications(userId);
     }
 }

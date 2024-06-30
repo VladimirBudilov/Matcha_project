@@ -2,6 +2,7 @@ using BLL.Sevices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Web_API.Hubs.Helpers;
 using Web_API.Hubs.Services;
 
 namespace Web_API.Hubs;
@@ -12,7 +13,8 @@ public class ChatHub(
     ILogger<ChatHub> logger,
     ClaimsService claimsService,
     UserService userService,
-    ChatService chatService
+    ChatService chatService,
+    NotificationService notificationService
     
 ) : Hub<IChat>
 {
@@ -36,8 +38,14 @@ public class ChatHub(
         var roomName = await chatManager.GetRoomName(inviterId, inviteeId);
         var user = await userService.GetUserByIdAsync(inviterId);
         await chatService.AddMessage(inviterId, roomName, message);
+        notificationService.AddNotification(inviteeId, new Notification()
+        {
+            Actor = user.FirstName + " " + user.LastName,
+            Message = "Sent you a message",
+            Type = NotificationType.ChatMessage
+        });
         await Clients.Group(roomName.ToString()).ReceiveMessage(user!.FirstName, message);
-
+        await notificationService.SendNotificationToUser(inviteeId);
     }
     
     public async Task StartChat(int inviteeId)

@@ -165,9 +165,9 @@ public class SeedData(
                 await _usersInterestsRepository.AddUserInterestAsync(userInterest);
             }
 
-            string projectDirectory = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).FullName).FullName;
-            string maleFolderPath = Path.Combine(projectDirectory, "Matcha_Data", "male");
-            string femaleFolderPath = Path.Combine(projectDirectory, "Matcha_Data", "female");
+            string projectDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            string maleFolderPath = Path.Combine(projectDirectory, "male");
+            string femaleFolderPath = Path.Combine(projectDirectory, "female");
             string[] maleImageNames = Directory.GetFiles(maleFolderPath);
             string[] femaleImageNames = Directory.GetFiles(femaleFolderPath);
             var maleImages = new List<byte[]>();

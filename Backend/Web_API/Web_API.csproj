@@ -15,9 +15,4 @@
 	  <ProjectReference Include="..\BLL\BLL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Hubs\Helpers\" />
-    <Folder Include="Hubs\Services\" />
-  </ItemGroup>
-
 </Project>

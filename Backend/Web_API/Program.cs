@@ -143,11 +143,6 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-app.UseDefaultFiles();
-app.UseStaticFiles();
-
-// Configure the HTTP request pipeline.
-
 app.UseCors("SignalRCorsPolicy");
 app.UseSwagger();
 app.UseSwaggerUI();
