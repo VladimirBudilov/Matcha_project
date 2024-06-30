@@ -4,9 +4,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace DAL.Repositories;
 
-public class RoomsRepository(
-    DatabaseSettings databaseSettings,
-    TableFetcher fetcher)
+public class RoomsRepository(TableFetcher fetcher)
 {
     public async Task<int> GetRoom(int inviterId, int invitedId)
     {

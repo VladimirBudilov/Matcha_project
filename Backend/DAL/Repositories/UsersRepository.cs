@@ -9,12 +9,9 @@ using Npgsql;
 namespace DAL.Repositories;
 
 public class UsersRepository(
-
     EntityCreator entityCreator,
-    TableFetcher fetcher,
-    ParameterInjector injector)
+    TableFetcher fetcher)
 {
-    
     #region GettingData
 
     public async Task<User?> GetUserByIdAsync(int id)
@@ -58,8 +55,7 @@ public class UsersRepository(
         {
             throw new DataAccessErrorException("Error while getting user by username", e);
         }
-    } 
-    
+    }
 
     #endregion
 
@@ -69,19 +65,20 @@ public class UsersRepository(
         {
             var query = new StringBuilder()
                 .Append("INSERT INTO users (user_name, first_name, last_name, email, password,  is_verified) ")
-                .Append("VALUES            (@userName, @firstName, @lastName, @email, @password,  @isVerified) Returning user_id");
+                .Append(
+                    "VALUES               (@userName, @firstName, @lastName, @email, @password,  @isVerified) Returning user_id");
             var parameters = new Dictionary<string, object>
             {
-                {"@userName", user.UserName},
-                {"@firstName", user.FirstName},
-                {"@lastName", user.LastName},
-                {"@email", user.Email},
-                {"@password", user.Password},
-                {"@isVerified", user.IsVerified}
+                { "@userName", user.UserName },
+                { "@firstName", user.FirstName },
+                { "@lastName", user.LastName },
+                { "@email", user.Email },
+                { "@password", user.Password },
+                { "@isVerified", user.IsVerified }
             };
-            
+
             var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
-            var res = (int) table.Rows[0]["user_id"];
+            var res = (int)table.Rows[0]["user_id"];
             return res > 0 ? user : null;
         }
         catch (Exception e)
@@ -89,27 +86,29 @@ public class UsersRepository(
             throw new DataAccessErrorException("Error while adding user", e);
         }
     }
-    
+
     public async Task<User?> CreateUserWithIdAsync(User user)
     {
         try
         {
             var query = new StringBuilder()
-                .Append("INSERT INTO users (user_id , user_name, first_name, last_name, email, password,  is_verified) ")
-                .Append("VALUES            (@user_id, @userName, @firstName, @lastName, @email, @password,  @isVerified) Returning user_id");
+                .Append(
+                    "INSERT INTO users (user_id , user_name, first_name, last_name, email, password,  is_verified) ")
+                .Append(
+                    "VALUES            (@user_id, @userName, @firstName, @lastName, @email, @password,  @isVerified) Returning user_id");
             var parameters = new Dictionary<string, object>
             {
-                {"@user_id", user.Id},
-                {"@userName", user.UserName},
-                {"@firstName", user.FirstName},
-                {"@lastName", user.LastName},
-                {"@email", user.Email},
-                {"@password", user.Password},
-                {"@isVerified", user.IsVerified}
+                { "@user_id", user.Id },
+                { "@userName", user.UserName },
+                { "@firstName", user.FirstName },
+                { "@lastName", user.LastName },
+                { "@email", user.Email },
+                { "@password", user.Password },
+                { "@isVerified", user.IsVerified }
             };
-            
+
             var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
-            var res = (int) table.Rows[0]["user_id"];
+            var res = (int)table.Rows[0]["user_id"];
             return res > 0 ? user : null;
         }
         catch (Exception e)
@@ -128,25 +127,24 @@ public class UsersRepository(
 
             var parameters = new Dictionary<string, object>
             {
-                {"@userName", user.UserName},
-                {"@firstName", user.FirstName},
-                {"@lastName", user.LastName},
-                {"@email", user.Email},
-                {"@isVerified", user.IsVerified},
-                {"@user_id", id}
+                { "@userName", user.UserName },
+                { "@firstName", user.FirstName },
+                { "@lastName", user.LastName },
+                { "@email", user.Email },
+                { "@isVerified", user.IsVerified },
+                { "@user_id", id }
             };
-            
+
             if (user.Password != null)
             {
                 query.Append(" ,password = @password");
                 parameters.Add("@password", user.Password);
-
             }
+
             query.Append("WHERE user_id = @user_id");
-            
-            
-            
-            var res = await fetcher.GetTableByParameter(query.ToString(), parameters); 
+
+
+            var res = await fetcher.GetTableByParameter(query.ToString(), parameters);
             return res.Rows.Count > 0 ? user : null;
         }
         catch (Exception e)

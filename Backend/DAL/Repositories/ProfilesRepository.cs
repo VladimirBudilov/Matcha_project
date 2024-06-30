@@ -2,29 +2,40 @@
 using System.Text;
 using DAL.Entities;
 using DAL.Helpers;
+using Microsoft.Extensions.Logging;
 
 namespace DAL.Repositories;
 
 public class ProfilesRepository(
     InterestsRepository interestsRepository,
     EntityCreator entityCreator,
-    TableFetcher fetcher)
+    TableFetcher fetcher,
+    ILogger<ProfilesRepository> logger
+    )
 {
     public async Task<User?> GetFullProfileAsync(int id)
     {
-        var query = new StringBuilder().Append("SELECT * FROM users")
-            .Append(" LEFT JOIN profiles ON users.user_id = profiles.profile_id")
-            .Append(" WHERE user_id = @id");
-        var userInfo = await fetcher.GetTableByParameter(query.ToString(), "@id", id);
-        if (userInfo.Rows.Count > 0)
+        try
         {
-            var userInfoRow = userInfo.Rows[0];
-            var user = entityCreator.CreateUser(userInfoRow);
-            user.Profile = entityCreator.CreateUserProfile(userInfoRow);
-            return user;
-        }
+            var query = new StringBuilder().Append("SELECT * FROM users")
+                .Append(" LEFT JOIN profiles ON users.user_id = profiles.profile_id")
+                .Append(" WHERE user_id = @id");
+            var userInfo = await fetcher.GetTableByParameter(query.ToString(), "@id", id);
+            if (userInfo.Rows.Count > 0)
+            {
+                var userInfoRow = userInfo.Rows[0];
+                var user = entityCreator.CreateUser(userInfoRow);
+                user.Profile = entityCreator.CreateUserProfile(userInfoRow);
+                return user;
+            }
 
-        return null;
+            return null;
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, e.Message);
+            throw;
+        }
     }
 
     public async Task<Profile> GetProfileAsync(int id)
@@ -37,7 +48,8 @@ public class ProfilesRepository(
         }
         catch (Exception e)
         {
-            throw new DataAccessErrorException("Error while getting profile by id", e);
+            logger.LogError(e, e.Message);
+            throw;
         }
     }
 
@@ -45,7 +57,7 @@ public class ProfilesRepository(
     {
         try
         {
-            var query =new StringBuilder()
+            var query = new StringBuilder()
                 .Append("INSERT INTO profiles (profile_id, gender, age) ")
                 .Append(" VALUES (@profile_id, @gender, @age) ")
                 .Append("Returning profile_id");
@@ -60,30 +72,42 @@ public class ProfilesRepository(
         }
         catch (Exception e)
         {
-            throw new DataAccessErrorException("Error while adding profile", e);
+            logger.LogError(e, e.Message);
+            throw;
         }
     }
-   public async Task<Profile?> CreateProfileWithIdAsync(Profile entity)
-{
-        var query = new StringBuilder()
-            .Append("INSERT INTO profiles (profile_id, gender, age, sexual_preferences, biography, latitude, longitude, profile_picture_id, is_active) ")
-            .Append(" VALUES (@profile_id, @gender, @age, @sexual_preferences, @biography, @latitude, @longitude, @profile_picture_id, @is_active) ")
-            .Append("Returning profile_id");
-        var parameters = new Dictionary<string, object>()
+
+    public async Task<Profile?> CreateProfileWithIdAsync(Profile entity)
+    {
+        try
         {
-            { "@profile_id", entity.Id },
-            { "@gender", entity.Gender },
-            { "@age", entity.Age },
-            { "@sexual_preferences", entity.SexualPreferences },
-            { "@biography", entity.Biography },
-            { "@latitude", entity.Latitude },
-            { "@longitude", entity.Longitude },
-            { "@profile_picture_id", entity.ProfilePictureId },
-            { "@is_active", entity.IsActive }
-        };
-        var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
-        return table.Rows.Count > 0 ? entity : null;
-}
+            var query = new StringBuilder()
+                .Append(
+                    "INSERT INTO profiles (profile_id, gender, age, sexual_preferences, biography, latitude, longitude, profile_picture_id, is_active) ")
+                .Append(
+                    " VALUES (@profile_id, @gender, @age, @sexual_preferences, @biography, @latitude, @longitude, @profile_picture_id, @is_active) ")
+                .Append("Returning profile_id");
+            var parameters = new Dictionary<string, object>()
+            {
+                { "@profile_id", entity.Id },
+                { "@gender", entity.Gender },
+                { "@age", entity.Age },
+                { "@sexual_preferences", entity.SexualPreferences },
+                { "@biography", entity.Biography },
+                { "@latitude", entity.Latitude },
+                { "@longitude", entity.Longitude },
+                { "@profile_picture_id", entity.ProfilePictureId },
+                { "@is_active", entity.IsActive }
+            };
+            var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
+            return table.Rows.Count > 0 ? entity : null;
+        }
+        catch (Exception e)
+        { 
+            logger.LogError(e, e.Message);
+            throw;
+        }
+    }
 
     public async Task<int> UpdateProfilePictureAsync(int userId, int pictureId)
     {
@@ -100,7 +124,8 @@ public class ProfilesRepository(
         }
         catch (Exception e)
         {
-            throw new DataAccessErrorException("Error while updating profile photo", e);
+            logger.LogError(e, e.Message);
+            throw;
         }
     }
 
@@ -141,7 +166,8 @@ public class ProfilesRepository(
         }
         catch (Exception e)
         {
-            throw new DataAccessErrorException("Error while updating profile", e);
+            logger.LogError(e, e.Message);
+            throw;
         }
     }
 
@@ -150,69 +176,78 @@ public class ProfilesRepository(
         PaginationParameters pagination, int id, List<Interest> tagsIds)
     {
         var profile = (await GetFullProfileAsync(id))!.Profile;
-        /*try
-        {*/
-        var userInterests = await interestsRepository.GetInterestsByUserIdAsync(id);
-        var userInterestsIds = userInterests.Select(interest => interest.InterestId).ToArray();
-        var queryBuilder = new QueryBuilder();
-        queryBuilder
-            .Select(" users.user_id as user_id, users.*, profiles.*, ")
-            .Select("calculate_distance(@profile_latitude, @profile_longitude, profiles.latitude, profiles.longitude) as distance, ")
-            .Select("count_common_elements(@userInterests, ARRAY_AGG(interests.interest_id)) AS common_interests ")
-            .From("users JOIN profiles ON users.user_id = profiles.profile_id ")
-            .From("LEFT JOIN user_interests ON user_interests.user_id = users.user_id ")
-            .From("LEFT JOIN interests ON user_interests.interest_id = interests.interest_id ");
-        var parameters = new Dictionary<string, object>
+        try
         {
-            { "@profile_latitude", (double)profile.Latitude },
-            { "@profile_longitude", (double)profile.Longitude },
-            { "@userInterests", userInterestsIds },
-            {"@profile_id", id}
+            var userInterests = await interestsRepository.GetInterestsByUserIdAsync(id);
+            var userInterestsIds = userInterests.Select(interest => interest.InterestId).ToArray();
+            var queryBuilder = new QueryBuilder();
+            queryBuilder
+                .Select(" users.user_id as user_id, users.*, profiles.*, ")
+                .Select(
+                    "calculate_distance(@profile_latitude, @profile_longitude, profiles.latitude, profiles.longitude) as distance, ")
+                .Select("count_common_elements(@userInterests, ARRAY_AGG(interests.interest_id)) AS common_interests ")
+                .From("users JOIN profiles ON users.user_id = profiles.profile_id ")
+                .From("LEFT JOIN user_interests ON user_interests.user_id = users.user_id ")
+                .From("LEFT JOIN interests ON user_interests.interest_id = interests.interest_id ");
+            var parameters = new Dictionary<string, object>
+            {
+                { "@profile_latitude", (double)profile.Latitude },
+                { "@profile_longitude", (double)profile.Longitude },
+                { "@userInterests", userInterestsIds },
+                { "@profile_id", id }
+            };
 
-        };
+            //add filters
+            ApplyFilters(searchParams, tagsIds, parameters, ref queryBuilder);
+            //add group by
+            ApplyOrdering(sortParams, ref queryBuilder);
+            //add pagination
+            var numberOfUsers = await GetNumberOfUsers(queryBuilder, parameters);
+            if (numberOfUsers == 0) return (0, new List<User>());
 
-        //add filters
-        ApplyFilters(searchParams, tagsIds, parameters, ref queryBuilder);
-        //add group by
-        ApplyOrdering(sortParams, ref queryBuilder);
-        //add pagination
-        var numberOfUsers = await GetNumberOfUsers(queryBuilder, parameters);
-        if (numberOfUsers == 0) return (0, new List<User>());
+            queryBuilder.Limit(" @pageSize ");
+            queryBuilder.Offset(" @offset ");
+            parameters.Add("@pageSize", pagination.PageSize);
+            parameters.Add("@offset", (pagination.PageNumber - 1) * pagination.PageSize);
 
-        queryBuilder.Limit(" @pageSize ");
-        queryBuilder.Offset(" @offset ");
-        parameters.Add("@pageSize", pagination.PageSize);
-        parameters.Add("@offset", (pagination.PageNumber - 1) * pagination.PageSize);
+            var query = queryBuilder.Build();
 
-        var query = queryBuilder.Build();
-        
-        var table = await fetcher.GetTableByParameter(query, parameters);
-        var users = new List<User>();
-        foreach (DataRow row in table.Rows)
-        {
-            var user = entityCreator.CreateUser(row);
-            user.Profile = entityCreator.CreateUserProfile(row);
-            users.Add(user);
+            var table = await fetcher.GetTableByParameter(query, parameters);
+            var users = new List<User>();
+            foreach (DataRow row in table.Rows)
+            {
+                var user = entityCreator.CreateUser(row);
+                user.Profile = entityCreator.CreateUserProfile(row);
+                users.Add(user);
+            }
+
+            return (numberOfUsers, users);
         }
-
-        return (numberOfUsers, users);
-        /*}
         catch (Exception e)
         {
-            throw new DataAccessErrorException("Error while getting full profiles", e);
-        }*/
+            logger.LogError(e, e.Message);
+            throw;
+        }
     }
 
     private async Task<long> GetNumberOfUsers(QueryBuilder queryBuilder,
         Dictionary<string, object> parameters)
     {
-        var counter = new QueryBuilder()
-            .Select("Count(*) ")
-            .From($" ({queryBuilder.Build()})");
-        var query = counter.Build();
-        var countCommand = await fetcher.GetTableByParameter(query , parameters);
-        var count = (long)countCommand.Rows[0][0];
-        return count;
+        try
+        {
+            var counter = new QueryBuilder()
+                .Select("Count(*) ")
+                .From($" ({queryBuilder.Build()})");
+            var query = counter.Build();
+            var countCommand = await fetcher.GetTableByParameter(query, parameters);
+            var count = (long)countCommand.Rows[0][0];
+            return count;
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, e.Message);
+            throw;
+        }
     }
 
     private static void ApplyOrdering(SortParameters sortParams, ref QueryBuilder queryBuilder)
@@ -306,30 +341,37 @@ public class ProfilesRepository(
         }
         catch (Exception e)
         {
-            throw new DataAccessErrorException("Error while updating fame rating", e);
+            logger.LogError(e, e.Message);
+            throw;
         }
     }
 
     public async Task<FiltersData> GetFiltersDataAsync(double? longitude, double? latitude, int id)
     {
-        var query = new StringBuilder()
-            .Append("select max(age) as max_age, min(age) as min_age, ")
-            .Append("min(fame_rating) as min_fame_rating, max(fame_rating) as max_fame_rating, ")
-            .Append(
-                "min(calculate_distance(@profile_latitude, @profile_longitude, profiles.latitude, profiles.longitude)) as min_distance, ")
-            .Append(
-                "max(calculate_distance(@profile_latitude, @profile_longitude, profiles.latitude, profiles.longitude)) as max_distance ")
-            .Append("from profiles ")
-            .Append(" where profiles.is_active = TRUE AND profiles.profile_id != @profile_id ");
-        var parameters = new Dictionary<string, object>
+        try
         {
-            { "@profile_latitude", (double)latitude! },
-            { "@profile_longitude", (double)longitude! },
-            { "@profile_id", id }
-        };
-        var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
-        return entityCreator.CreateFiltersData(table.Rows[0]);
+            var query = new StringBuilder()
+                .Append("select max(age) as max_age, min(age) as min_age, ")
+                .Append("min(fame_rating) as min_fame_rating, max(fame_rating) as max_fame_rating, ")
+                .Append(
+                    "min(calculate_distance(@profile_latitude, @profile_longitude, profiles.latitude, profiles.longitude)) as min_distance, ")
+                .Append(
+                    "max(calculate_distance(@profile_latitude, @profile_longitude, profiles.latitude, profiles.longitude)) as max_distance ")
+                .Append("from profiles ")
+                .Append(" where profiles.is_active = TRUE AND profiles.profile_id != @profile_id ");
+            var parameters = new Dictionary<string, object>
+            {
+                { "@profile_latitude", (double)latitude! },
+                { "@profile_longitude", (double)longitude! },
+                { "@profile_id", id }
+            };
+            var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
+            return entityCreator.CreateFiltersData(table.Rows[0]);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, e.Message);
+            throw;
+        }
     }
-
-    
 }

@@ -10,13 +10,6 @@ public class UsersInterestsRepository(
     EntityCreator entityCreator,
     TableFetcher fetcher)
 {
-    public async Task<UserInterest> DeleteUserInterestAsync(int id)
-    {
-        var query = "DELETE FROM user_interests WHERE user_interest_id = @id RETURNING *";
-        var table = await fetcher.GetTableByParameter(query, "@id", id);
-        return entityCreator.CreateUserInterest(table.Rows[0]);
-    }
-
     public async Task<IEnumerable<UserInterest>> GetAllUserInterestsAsync()
     {
         var query = "SELECT * FROM user_interests";
