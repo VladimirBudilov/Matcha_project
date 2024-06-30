@@ -10,7 +10,7 @@ public class PicturesRepository(
     EntityCreator entityCreator,
     TableFetcher fetcher)
 {
-    public async Task<Picture> GetProfilePictureAsync(int? id)
+    public async Task<Picture> GetProfileAsync(int? id)
     {
         if (id == null) return null;
         var query = "SELECT * FROM pictures WHERE picture_id = @id";
@@ -19,10 +19,10 @@ public class PicturesRepository(
         return entityCreator.CreatePicture(table.Rows[0]);
     }
 
-    public async Task<IEnumerable<Picture>> GetPicturesByUserIdAsync(int id)
+    public async Task<IEnumerable<Picture>> GetPicturesByUserIdAsync(int userId)
     {
-        var query = "SELECT * FROM pictures WHERE user_id = @id AND is_profile_picture = 0";
-        var table = await fetcher.GetTableByParameter(query, "@id", id);
+        var query = "SELECT * FROM pictures WHERE user_id = @userId AND is_profile_picture = 0";
+        var table = await fetcher.GetTableByParameter(query, "@userId", userId);
 
         return (from DataRow row in table.Rows select entityCreator.CreatePicture(row)).ToList();
     }

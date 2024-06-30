@@ -26,7 +26,7 @@ public class ProfileService(
         var builder = new ProfileBuilder();
         builder.AddMainData(user);
         builder.AddProfilePictures(await picturesRepository.GetPicturesByUserIdAsync(user.Id));
-        builder.AddMainProfilePicture(await picturesRepository.GetProfilePictureAsync(user.Profile?.ProfilePictureId));
+        builder.AddMainProfilePicture(await picturesRepository.GetProfileAsync(user.Profile?.ProfilePictureId));
         builder.AddUserInterests(await interestsRepository.GetInterestsByUserIdAsync(id));
         return builder.Build();
     }
@@ -46,7 +46,7 @@ public class ProfileService(
         {
             builder.AddMainData(user);
             builder.AddMainProfilePicture(
-                await picturesRepository.GetProfilePictureAsync(user.Profile?.ProfilePictureId));
+                await picturesRepository.GetProfileAsync(user.Profile?.ProfilePictureId));
             builder.AddUserInterests(await interestsRepository.GetInterestsByUserIdAsync(user.Id));
             usersList.Add(builder.Build());
         }
@@ -82,7 +82,7 @@ public class ProfileService(
         if (isMain)
         {
             var user = await profilesRepository.GetProfileAsync(userId);
-            if (user.ProfilePictureId != null)
+            if (user.ProfilePictureId != 501)
             {
                 await picturesRepository.DeletePhotoAsync(userId, (int)user.ProfilePictureId);
             }

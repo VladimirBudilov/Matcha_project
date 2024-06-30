@@ -12,15 +12,12 @@ namespace Web_API.Controllers;
 [ApiController]
 public class FileManagerController(
     DtoValidator validator,
-    ProfileService profileService,
-    ClaimsService claimsService
+    ProfileService profileService
     ) : ControllerBase
 {
   [HttpPost("uploadPhoto/{userId:int}")]
     public async Task<IActionResult> UploadPhoto([FromRoute]int userId, IFormFile file, [FromQuery] bool isMain = false)
     {
-        //TODO add validation
-        
     if (file == null || file.Length == 0)
     {
         return BadRequest("File is null or empty");
@@ -40,8 +37,8 @@ public class FileManagerController(
     [HttpDelete("deletePhoto/{userId:int}")]
     public async Task<IActionResult> DeletePhoto([FromRoute]int userId, [FromQuery]int photoId, [FromQuery] bool isMain = false)
     {
-        //TODO add validation
-        
+        validator.CheckUserAuth(userId, User.Claims);
+
         profileService.DeletePhotoASync(userId, photoId, isMain);
         return Ok("Photo deleted successfully");
     }

@@ -210,6 +210,16 @@ public class SeedData(
                     femaleImageIndex = (femaleImageIndex + 1) % femaleImagesCount;
                 }
             }
+            
+            var defaultPicture = new Picture()
+            {
+                Id = 501,
+                UserId = 0,
+                PicturePath = File.ReadAllBytes(Path.Combine(projectDirectory, "default.jpg")),
+                IsProfilePicture = true
+            };
+            
+            pictures.Add(defaultPicture);
 
             foreach (var picture in pictures)
             {

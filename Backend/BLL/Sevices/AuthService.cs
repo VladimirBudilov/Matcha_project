@@ -28,6 +28,7 @@ public class AuthService(UsersRepository usersRepository,
             Id = userByUserName.Id,
             Gender = "male",
             Age = 18,
+            ProfilePictureId = 501,
         };
         await profilesRepository.CreateProfileAsync(profile);
         return res == null ? null : user.EmailResetToken;
