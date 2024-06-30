@@ -78,4 +78,9 @@ public class UserService(
         if (res == null)
             throw new DataAccessErrorException("Actor not found. You can't update password for user that doesn't exist");
     }
+
+    public async Task<IEnumerable<User>> GetAllUserAsync()
+    {
+        return await usersRepository.GetAllUsersAsync();
+    }
 }

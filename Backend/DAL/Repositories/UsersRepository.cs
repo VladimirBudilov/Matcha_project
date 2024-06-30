@@ -168,4 +168,17 @@ public class UsersRepository(
             throw new DataAccessErrorException("Error while deleting user", e);
         }
     }
+
+    public async Task<IEnumerable<User>> GetAllUsersAsync()
+    {
+        try
+        {
+            var dataTable = await fetcher.GetTableAsync("SELECT * FROM users");
+            return dataTable.Rows.Count > 0 ? entityCreator.CreateUsers(dataTable) : new List<User>();
+        }
+        catch (Exception e)
+        {
+            throw new DataAccessErrorException("Error while getting all users", e);
+        }
+    }
 }
