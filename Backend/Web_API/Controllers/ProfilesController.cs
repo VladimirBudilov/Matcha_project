@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web_API.DTOs;
+using Web_API.DTOs.Request;
 using Web_API.Helpers;
 using Web_API.Hubs.Helpers;
 using Web_API.Hubs.Services;
@@ -92,6 +93,16 @@ public class ProfilesController(
         var id = claimsService.GetId(User.Claims);
         var output = await profileService.GetFiltersAsync(id);
 
+        return Ok(output);
+    }
+    
+    [HttpPost("online/{id:int}")]
+    public async Task<IActionResult> GetOnlineProfiles([FromRoute] int id)
+    {
+        var isUserOnline = notificationService.IsUserOnline(id);
+        var user = await userService.GetUserByIdAsync(id);
+        var output = new IsUserOnlineDto(isUserOnline, !isUserOnline ? user!.LastLogin : null);
+        
         return Ok(output);
     }
 }

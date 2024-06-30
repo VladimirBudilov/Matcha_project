@@ -12,7 +12,8 @@ namespace Web_API.Hubs;
 public class NotificationHub(
     ILogger<ChatHub> logger,
     ClaimsService claimsService,
-    NotificationService notificationService
+    NotificationService notificationService,
+    UserService userService
 ) : Hub<INotificationHub>
 {
     public override Task OnConnectedAsync()
@@ -20,6 +21,7 @@ public class NotificationHub(
         var userId = claimsService.GetId(Context.User?.Claims);
         var identifier = Context.ConnectionId!;
         notificationService.AddOnlineUser(userId, identifier);
+        userService.UpdateLastLogin(userId).Wait();
         logger.LogInformation($"Actor {userId} online");
         GetNotifications().Wait();
         return base.OnConnectedAsync();

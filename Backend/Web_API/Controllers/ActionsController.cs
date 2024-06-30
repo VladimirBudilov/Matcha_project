@@ -62,4 +62,39 @@ public class ActionsController(
         };
         return Ok(response);
     }
+    
+    /*[HttpPost("block")]
+    public async Task<IActionResult> BlockUser([FromBody] UserActionRequestDto userAction)
+    {
+        validator.CheckId(userAction.producerId);
+        validator.CheckId(userAction.consumerId);
+        validator.CheckUserAuth(userAction.producerId, User.Claims);
+
+        var (notificationType, output) = await actionService.BlockUser(userAction.producerId, userAction.consumerId);
+        notificationService.AddNotification(userAction.consumerId, new Notification()
+        {
+            Type = notificationType,
+            Message = "You have a new userAction",
+            Actor = (await userService.GetUserByIdAsync(userAction.producerId))!.UserName
+        });
+        return Ok(output);
+    }
+    
+    [HttpPost("black-list")]
+    public async Task<IActionResult> GetBlackList([FromBody] UserActionRequestDto userAction)
+    {
+        validator.CheckId(userAction.producerId);
+        validator.CheckId(userAction.consumerId);
+        validator.CheckUserAuth(userAction.producerId, User.Claims);
+
+        var (notificationType, output) = await actionService.GetBlackList(userAction.producerId, userAction.consumerId);
+        notificationService.AddNotification(userAction.consumerId, new Notification()
+        {
+            Type = notificationType,
+            Message = "You have a new userAction",
+            Actor = (await userService.GetUserByIdAsync(userAction.producerId))!.UserName
+        });
+        return Ok(output);
+    }*/
+        
 }

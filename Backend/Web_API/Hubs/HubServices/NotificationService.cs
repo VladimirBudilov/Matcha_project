@@ -64,4 +64,9 @@ public class NotificationService(IHubContext<NotificationHub, INotificationHub> 
         await hubContext.Clients.Client(identifier).ReceiveNotifications(userNotifications);
         ClearNotifications(userId);
     }
+
+    public bool IsUserOnline(int id)
+    {
+        return UsersOnline.ContainsKey(id);
+    }
 }

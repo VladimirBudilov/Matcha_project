@@ -83,4 +83,10 @@ public class UserService(
     {
         return await usersRepository.GetAllUsersAsync();
     }
+
+    public async Task UpdateLastLogin(int userId)
+    {
+        var lastLogin = DateTime.Now;
+        await usersRepository.UpdateLastLogin(userId, lastLogin);
+    }
 }

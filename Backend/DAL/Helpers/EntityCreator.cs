@@ -37,6 +37,7 @@ public class EntityCreator
             LastName = row.Field<string>("last_name"),
             Email = row.Field<string>("email"),
             Password = row.Field<string>("password"),
+            LastLogin = row.Field<string?>("last_login_at"),
             EmailResetToken = row.Field<string?>("email_reset_token"),
             JwtResetToken = row.Field<string?>("jwt_reset_token"),
         };

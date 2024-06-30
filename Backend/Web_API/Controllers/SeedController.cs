@@ -19,7 +19,7 @@ public class SeedController(
         if (secretKey != 42) return BadRequest();
 
         var users = await userService.GetAllUserAsync();
-        if (!users.Any()) return BadRequest();
+        if (users.Count() != 0) return BadRequest();
         
         await seedData.Seed();
         return Ok();

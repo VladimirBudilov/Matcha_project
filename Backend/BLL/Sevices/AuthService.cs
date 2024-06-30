@@ -21,6 +21,7 @@ public class AuthService(UsersRepository usersRepository,
         //TODO change when email service is ready
         user.IsVerified = true;
         
+        user.LastLogin = DateTime.Now.ToString();
         var res = await usersRepository.CreateUserAsync(user);
         userByUserName = await usersRepository.GetUserByUserNameAsync(user.UserName);
         var profile = new Profile()
