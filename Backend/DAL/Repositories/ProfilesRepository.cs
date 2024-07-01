@@ -230,7 +230,7 @@ public class ProfilesRepository(
 
         if (searchParams.SexualPreferences != null)
         {
-            queryBuilder.Where($" AND sexual_preferences = @sexualPreferences ");
+            queryBuilder.Where($" AND gender = @sexualPreferences ");
             parameters.Add("@sexualPreferences", searchParams.SexualPreferences);
         }
 
