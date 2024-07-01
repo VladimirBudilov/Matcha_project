@@ -98,7 +98,7 @@ const SubmitChanges = async () => {
 		await checkAtr(userName.value, profile.value.userName) ||
 		await checkAtr(firstName.value, profile.value.firstName) ||
 		await checkAtr(lastName.value, profile.value.lastName) ||
-		await checkAtr(email.value, '')
+		await checkAtr(email.value, profile.value.email ? profile.value.email : '')
 	) {
 		await axios.put('api/Users/' + profile.value.profileId, profile.value).catch((res) => {
 			errorMsg.value = 'Error'
