@@ -29,11 +29,6 @@ export const SignUpStore = defineStore('SignUp', () => {
       total: 0
     },
     search: {
-      maxDistance: 0,
-      minFameRating: 0,
-      maxFameRating: 0,
-      minAge: 0,
-      maxAge: 0,
       commonTags: [],
     }
   })
@@ -86,16 +81,17 @@ interface sort {
 interface pagination {
   pageNumber: number,
   pageSize: number
-  total: number
+  total: number,
+  amountOfPages?: number
 }
 
 interface search {
   sexualPreferences?: string,
-  maxDistance: number,
-  minFameRating: number,
-  maxFameRating: number,
-  maxAge: number,
-  minAge: number,
+  maxDistance?: number,
+  minFameRating?: number,
+  maxFameRating?: number,
+  maxAge?: number,
+  minAge?: number,
   isLikedUser?: boolean,
   commonTags: Array<string>,
   isMatched?: boolean

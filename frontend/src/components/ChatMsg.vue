@@ -20,7 +20,6 @@ const GetMessages = async () => {
 
 	await axios.post('api/actions/chat',  {producerId: chatId.value[0], consumerId: chatId.value[1]})
 	.then((res) => {
-		console.log(res.data);
 		messages.value = res.data.data;
 		messages.value.forEach(el => el.datetime = dayjs(el.date).format('YYYY-MM-DD HH:mm:ss'))
 	})
@@ -59,7 +58,6 @@ const SendMsg = async () => {
 watch (
 	() => chatId.value[1],
 	async () => {
-		console.log('current', chatId.value);
 		await GetMessages()
     await StartChat()
 		await ReceiveMessage()

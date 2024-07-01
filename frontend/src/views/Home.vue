@@ -2,12 +2,9 @@
 import axios from 'axios';
 import { onMounted, ref, watch } from 'vue';
 import { message } from 'ant-design-vue';
-import {useNotificationStore} from '@/stores/NotoficationStore'
 import { SignUpStore } from '@/stores/SignUpStore';
 import ParamsGetProfile from '@/components/ParamsGetProfile.vue'
 import { storeToRefs } from 'pinia';
-
-const store = useNotificationStore();
 
 const profiles = storeToRefs(SignUpStore()).profiles
 const getFilters = storeToRefs(SignUpStore()).getFilters
@@ -18,34 +15,38 @@ const GetFilters = async () => {
 		if (res.response.data) {
 			message.error(res.response.data)
 		}
-	}).then ((res) => {
+	}).then (async (res) => {
 		if (res?.data) {
 			getFilters.value = res.data
-			getFilters.value.maxDistance = Math.floor(getFilters.value.maxDistance)
+			getFilters.value.maxDistance = await Math.floor(getFilters.value.maxDistance)
 		}
 	})
-}
 
-const GetProfile = async () => {
 	getProfileParams.value.search.maxDistance = getFilters.value.maxDistance
 	getProfileParams.value.search.minAge = getFilters.value.minAge
 	getProfileParams.value.search.maxAge = getFilters.value.maxAge
 	getProfileParams.value.search.minFameRating = getFilters.value.minFameRating
 	getProfileParams.value.search.maxFameRating = getFilters.value.maxFameRating
 
-	console.log(getProfileParams.value)
+
+	getProfileParams.value.search.isMatched = false
+	await GetProfile()
+}
+
+const GetProfile = async () => {
+
+
 	await axios.post('api/profiles', getProfileParams.value).catch((res) => {
 		if (res.response) {
 			message.error(`Fill out the profile!`);
 		}
-	}).then((res) => {
+	}).then( async (res) => {
 		if (res?.data){
 			profiles.value = res.data.profiles
 			if (getProfileParams.value.pagination.pageSize) {
 				getProfileParams.value.pagination.total = getProfileParams.value.pagination.pageSize * res.data.amountOfPages
 			}
 
-			console.log(profiles.value)
 		}
 	})
 }
@@ -57,7 +58,6 @@ onMounted(async () => {
 		localStorage.setItem('UserId', String(res?.data))
 	})
 	await GetFilters()
-	await GetProfile()
 })
 
 const sendLike = async (profileId: number) => {
@@ -84,10 +84,10 @@ const sendLike = async (profileId: number) => {
 watch(
 	() => getProfileParams.value.pagination.pageNumber,
 	async () => {
-		console.log('current', getProfileParams.value.pagination.pageNumber);
 		await GetProfile()
 	}
 );
+
 
 </script>
 

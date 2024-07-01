@@ -13,7 +13,6 @@ const LogoutButtonTurnOn = () => {
 	axios.get('api/auth/logout').then(() => {
     if(connection?.state === HubConnectionState.Connected)
     {
-      console.log(connection.state)
       connection.stop()
     }
 		localStorage.removeItem('token')

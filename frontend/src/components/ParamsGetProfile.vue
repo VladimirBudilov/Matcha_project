@@ -18,8 +18,8 @@ const sortMainParam = [{label: 'Distance', value: 0},
 const sort = [{label: 'Ascending', value:'ASC'},
 	{label: 'Descending', value: 'DESC'}]
 
-const age = ref<[number, number]>([getProfileParams.value.search.minAge, getProfileParams.value.search.maxAge])
-const rating = ref<[number, number]>([getProfileParams.value.search.minFameRating, getProfileParams.value.search.maxFameRating])
+const age = ref<[number, number]>([getProfileParams.value.search.minAge ? getProfileParams.value.search.minAge : 18, getProfileParams.value.search.maxAge ? getProfileParams.value.search.maxAge : 99])
+const rating = ref<[number, number]>([getProfileParams.value.search.minFameRating ? getProfileParams.value.search.minFameRating : 0, getProfileParams.value.search.maxFameRating ? getProfileParams.value.search.maxFameRating : 100])
 
 const GetProfile = async () => {
 	getProfileParams.value.search.minAge = Math.min(age.value[0], age.value[1])
@@ -38,9 +38,9 @@ const GetProfile = async () => {
 	}).then((res) => {
 		if (res?.data){
 			profiles.value = res.data.profiles
-			console.log(res.data)
-			console.log(res.data.profiles)
-			console.log(profiles.value)
+			if (getProfileParams.value.pagination.pageSize) {
+				getProfileParams.value.pagination.total = getProfileParams.value.pagination.pageSize * res.data.amountOfPages
+			}
 		}
 	})
 }

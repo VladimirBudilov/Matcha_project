@@ -34,7 +34,6 @@ const profile = ref<Profile>({
 const interests = ref<Interests[]>([])
 const GetInterests = async () => {
 	await axios.get('api/profiles/interests').then((res) => {
-		console.log(res)
 		interests.value = res.data
 		interests.value.forEach((element) => {
 			element.value = element.name
@@ -165,7 +164,7 @@ const headers = {
 
 const handleChange = async (info: UploadChangeParam) => {
   if (info.file.status !== 'uploading') {
-    console.log(info.file, info.fileList);
+
   }
   if (info.file.status === 'done') {
     message.success(`${info.file.name} file uploaded successfully`);

@@ -52,7 +52,6 @@ const onFinish = async (values: any) => {
 		if (errorMsg.value == '' && loginRes.token) {
 			IsLogin.value = true
 			localStorage.setItem("token", loginRes.token)
-      console.log("login");
 
       axios.defaults.headers.common.Authorization = 'Bearer ' + loginRes.token;
       window.location.assign('https://' + window.location.host)

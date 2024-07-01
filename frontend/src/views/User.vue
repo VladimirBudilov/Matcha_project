@@ -4,9 +4,6 @@ import { message } from 'ant-design-vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import {type Profile} from '@/stores/SignUpStore'
-import { useNotificationStore} from '@/stores/NotoficationStore'
-
-const store = useNotificationStore();
 
 const componentDisabled = ref(true);
 const uploadUrl = ref('')
@@ -41,7 +38,6 @@ const GetProfile = async () => {
 		if (res?.data) {
 			profile.value = res?.data
 			uploadUrl.value = axios.defaults.baseURL + 'api/FileManager/uploadPhoto/' + profile.value.profileId
-			console.log(profile.value)
 		}
 		if (profile.value.latitude && profile.value.longitude) {
 			const response = await fetch('https://geocode.maps.co/reverse?' + new URLSearchParams({

@@ -51,7 +51,6 @@ const GetProfile = async () => {
 	getProfileParams.value.search.maxFameRating = getFilters.value.maxFameRating
 	getProfileParams.value.search.isMatched = true
 
-	console.log(getProfileParams.value)
 	await axios.post('api/profiles', getProfileParams.value).catch((res) => {
 		if (res.response.data) {
 			message.error(res.response.data)
@@ -66,7 +65,6 @@ const GetProfile = async () => {
 				getProfileParams.value.pagination.total = getProfileParams.value.pagination.pageSize * res.data.amountOfPages
 			}
 
-			console.log(profiles.value)
 		}
 	})
 }
@@ -74,7 +72,7 @@ const GetProfile = async () => {
 const LeaveChat = async () => {
 	await connection.value?.invoke("LeaveChat", chatId.value[1])
         .then(() => {
-            console.log('Chat left')
+            message.success('Chat left')
         })
         .catch(err => console.error(err.toString()));
 }
@@ -85,23 +83,20 @@ const setChatId = async (userId : number) => {
 	}
 	chatId.value[0] = Number(localStorage.getItem('UserId'))
 	chatId.value[1] = userId
-	console.log("set ids for chat" + chatId.value)
 }
 
 onMounted(async () => {
 	await GetFilters();
 	await GetProfile();
 	connection.value = createConnection();
-  connection.value.start().catch(err => message.error(err.toString()));
-  connection.value.on("ReceiveMessage", (user, message) => {
-        console.log('Message received by ' + user + ' ' + message);
+	connection.value.start().catch(err => message.error(err.toString()));
+	connection.value.on("ReceiveMessage", (user, message) => {
     });
 })
 
 watch(
 	() => getProfileParams.value.pagination.pageNumber,
 	async () => {
-		console.log('current', getProfileParams.value.pagination.pageNumber);
 		await GetProfile()
 	}
 );
@@ -152,6 +147,7 @@ watch(
 #pagination-users-chat {
 	position: relative;
 	margin-top: 10vh;
+	width: 50%;
 	bottom: 3vh;
 	padding-top: 2vh;
 	padding-bottom: 2vh;
