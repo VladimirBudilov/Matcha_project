@@ -80,6 +80,25 @@ const sendLike = async (profileId: number) => {
 	})
 }
 
+const block = async (profileId: number) => {
+	await axios.post('api/actions/block', {producerId: Number(localStorage.getItem('UserId')), consumerId: profileId}).catch((res) => {
+		message.error(`Error: ${res.response.data.error} ${localStorage.getItem('UserId')}`);
+	}).then((res) => {
+		if (res?.data) {
+			if (res?.data) {
+				message.success(`You blocked!`);
+			}
+			else {
+				message.success(`You unblocked!`);
+			}
+			profiles.value = profiles.value.filter(el => {
+				el.profileId === profileId
+			})
+		}
+	})
+
+}
+
 
 watch(
 	() => getProfileParams.value.pagination.pageNumber,
@@ -131,14 +150,23 @@ watch(
 					</p>
 				</template>
 			</a-card-meta>
-			<div id="card-button-like">
+			<div>
+				<div id="card-button-like-block">
 				<a-button v-if="el.hasLike" size='large' type="primary" @click="sendLike(el.profileId)">
 					like
 				</a-button>
 				<a-button v-else size='large' @click="sendLike(el.profileId)">
 					like
 				</a-button>
+				<span id="card-button-block">
+					<a-button size='large' @click="block(el.profileId)">
+						block
+					</a-button>
+				</span>
+
 			</div>
+			</div>
+
 		</a-card>
 	</div>
 	</a-space>
@@ -169,11 +197,17 @@ watch(
 	width: 30vw;
 }
 
-#card-button-like {
+#card-button-like-block {
 	position: relative;
 	padding-top: 3%;
 	padding-bottom: 5%;
-	padding-left: 40%;
+	padding-left: 20%;
+}
+
+#card-button-block {
+	position: relative;
+	width: fit-content;
+	padding-left: 10%;
 }
 
 #pagination-users {

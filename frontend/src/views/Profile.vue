@@ -9,6 +9,16 @@ import {type Profile, type Interests} from '@/stores/SignUpStore'
 const componentDisabled = ref(false);
 const uploadUrl = ref('')
 const errorMsg = ref('')
+const userName = ref('')
+const firstName = ref('')
+const lastName = ref('')
+const email = ref('')
+
+const checkAtr = async (str1 : string, str2 : string) => {
+	if (str1 != str2)
+		return false
+	return true
+}
 
 const profile = ref<Profile>({
 	"profileId": 0,
@@ -53,6 +63,11 @@ const GetProfile = async () => {
 		profile.value = res?.data
 		uploadUrl.value = axios.defaults.baseURL + 'api/FileManager/uploadPhoto/' + profile.value.profileId
 
+		userName.value = profile.value.userName
+		firstName.value = profile.value.firstName
+		lastName.value = profile.value.lastName
+
+
 		if (profile.value.latitude && profile.value.longitude) {
 			const response = await fetch('https://geocode.maps.co/reverse?' + new URLSearchParams({
 				lat: profile.value.latitude.toString(),
@@ -79,32 +94,50 @@ onMounted(async () => {
 
 const SubmitChanges = async () => {
 	errorMsg.value = ''
-	await axios.put('api/profiles/' + profile.value.profileId, profile.value).catch((res) => {
-		errorMsg.value = 'Error'
-		if (res.response.data.errors) {
-			if (res.response.data.errors.Biography) {
-				message.error('The Biography field is required.')
-			}
-			if (res.response.data.errors.Location) {
-				message.error('The Location field is required.')
-			}
-			if (res.response.data.errors.SexualPreferences) {
-				message.error('The Sexual preferences field is required.')
-			}
-		}
-		else if (res.response.data.error) {
+	if (
+		await checkAtr(userName.value, profile.value.userName) ||
+		await checkAtr(firstName.value, profile.value.firstName) ||
+		await checkAtr(lastName.value, profile.value.lastName) ||
+		await checkAtr(email.value, '')
+	) {
+		await axios.put('api/Users/' + profile.value.profileId, profile.value).catch((res) => {
+			errorMsg.value = 'Error'
 			message.error(res.response.data.error)
-		}
-		else {
-			message.error(res.response.data)
-		}
-		message.error(errorMsg.value)
-	}).then((res) => {
-		if (errorMsg.value == '') {
-			message.success("Success")
-		}
+		}).then((res) => {
+			if (errorMsg.value == '') {
+				message.success("Success")
+			}})
+	}
 
-	})
+	if (errorMsg.value === '') {
+		await axios.put('api/profiles/' + profile.value.profileId, profile.value).catch((res) => {
+			errorMsg.value = 'Error'
+			if (res.response.data.errors) {
+				if (res.response.data.errors.Biography) {
+					message.error('The Biography field is required.')
+				}
+				if (res.response.data.errors.Location) {
+					message.error('The Location field is required.')
+				}
+				if (res.response.data.errors.SexualPreferences) {
+					message.error('The Sexual preferences field is required.')
+				}
+			}
+			else if (res.response.data.error) {
+				message.error(res.response.data.error)
+			}
+			else {
+				message.error(res.response.data)
+			}
+			message.error(errorMsg.value)
+		}).then((res) => {
+			if (errorMsg.value == '') {
+				message.success("Success")
+			}
+
+		})
+	}
+
 }
 
 
@@ -204,13 +237,16 @@ const DeletePicture = async (picureId: number) => {
 				<a-input-number v-model:value="profile.fameRating" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
 			<a-form-item label="Username">
-				<a-input v-model:value="profile.userName" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
+				<a-input v-model:value="profile.userName"/>
 			</a-form-item>
 			<a-form-item label="First Name">
-				<a-input v-model:value="profile.firstName" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
+				<a-input v-model:value="profile.firstName"/>
 			</a-form-item>
 			<a-form-item label="Last Name">
-				<a-input v-model:value="profile.lastName" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
+				<a-input v-model:value="profile.lastName"/>
+			</a-form-item>
+			<a-form-item label="Email">
+				<a-input v-model:value="profile.email"/>
 			</a-form-item>
 		</div>
 		<div class="Optional-info">

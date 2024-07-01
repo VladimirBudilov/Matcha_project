@@ -56,6 +56,7 @@ export interface Profile {
   userName: string,
   firstName: string,
   lastName: string,
+  email?: string
   gender: string | null,
   sexualPreferences: string | null,
   biography: string | null,
@@ -67,7 +68,9 @@ export interface Profile {
   profilePicture: ProfilePicture,
   pictures: Array<ProfilePicture>,
   interests: Array<string>,
-  hasLike?: boolean
+  hasLike?: boolean,
+  hasBlock?: boolean,
+  hasOnline?: boolean
 }
 
 interface sort {
