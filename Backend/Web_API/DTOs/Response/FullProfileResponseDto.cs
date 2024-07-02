@@ -21,7 +21,7 @@ public record    FullProfileResponseDto
     public bool HasLike { get; init; } = false;
     public double Distance { get; init; } = 0;
     
-    public string LastSeen { get; set; } = "";
+    public string LastLogin { get; set; } = "";
     public bool IsOnline { get; set; } = false;
     public string Email { get; set; } = "";
 }
