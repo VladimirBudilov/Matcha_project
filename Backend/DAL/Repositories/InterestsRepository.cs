@@ -30,7 +30,7 @@ public sealed class InterestsRepository(
        
         var query = "INSERT INTO interests (name) VALUES ( @entity ) RETURNING interest_id";
         var parameters = new Dictionary<string, object> {{"@entity", entity}};
-        var table = await fetcher.GetTableByParameter(query, parameters);
+        var table = await fetcher.GetTableByParameterAsync(query, parameters);
         var interest = new Interest
         {
             Name = entity,
@@ -47,7 +47,7 @@ public sealed class InterestsRepository(
             {"@entity", entity},
             {"@interest_id", interest_id}
         };
-        var table = await fetcher.GetTableByParameter(query, parameters);
+        var table = await fetcher.GetTableByParameterAsync(query, parameters);
         var interest = new Interest
         {
             Name = entity,
@@ -64,7 +64,7 @@ public sealed class InterestsRepository(
             .Append("SELECT interests.name, interests.interest_id FROM interests")
             .Append(" JOIN user_interests ON interests.interest_id = user_interests.interest_id")
             .Append(" WHERE user_interests.user_id = @id");
-        var table = await fetcher.GetTableByParameter(query.ToString(), "@id", id);
+        var table = await fetcher.GetTableByParameterAsync(query.ToString(), "@id", id);
         foreach (DataRow row in table.Rows)
         {
             var interest = entityCreator.CreateInterests(row);
@@ -77,7 +77,7 @@ public sealed class InterestsRepository(
     public async Task UpdateUserInterestsAsync(int userId, List<Interest> profileInterests)
     {
         var query = "DELETE FROM user_interests WHERE user_id = @id";
-        await fetcher.GetTableByParameter(query, "@id", userId);
+        await fetcher.GetTableByParameterAsync(query, "@id", userId);
         if(profileInterests.Count == 0) return;
         
         var queryBuilder = new StringBuilder("INSERT INTO user_interests (user_id, interest_id) VALUES ");
@@ -93,7 +93,7 @@ public sealed class InterestsRepository(
         queryBuilder.Length--;
         queryBuilder.Append(';');
 
-        await fetcher.GetTableByParameter(queryBuilder.ToString(), parameters);
+        await fetcher.GetTableByParameterAsync(queryBuilder.ToString(), parameters);
     }
 
     public async Task<List<Interest>> GetUserInterestsByNamesAsync(List<string> select)
@@ -117,6 +117,6 @@ public sealed class InterestsRepository(
     public async Task DeleteInterestByIdAsync(int id)
     {
         var query = "DELETE FROM interests WHERE interest_id = @id";
-        await fetcher.GetTableByParameter(query, "@id", id);
+        await fetcher.GetTableByParameterAsync(query, "@id", id);
     }
 }

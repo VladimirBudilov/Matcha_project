@@ -1,8 +1,8 @@
-﻿namespace Web_API.DTOs;
+﻿namespace Web_API.DTOs.Response;
 
 public record ProfileResponse()
 {
-    public long ProfileId { get; init; } = 0;
+    public int ProfileId { get; init; } = 0;
     public string FirstName { get; init; } = "";
     public string LastName { get; init; } = "";
     public string Gender { get; init; } = "";
@@ -16,4 +16,8 @@ public record ProfileResponse()
     
     public bool HasLike { get; init; } = false;
     public double Distance { get; set; }
+    
+    public string LastSeen { get; set; } = "";
+    public bool IsOnlineUser { get; set; } = false;
+    public bool IsBlockedUSer { get; set; } = false;
 };

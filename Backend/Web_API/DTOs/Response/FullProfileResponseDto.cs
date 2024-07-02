@@ -1,10 +1,8 @@
-﻿using DAL.Entities;
-
-namespace Web_API.DTOs;
+﻿namespace Web_API.DTOs.Response;
 
 public record    FullProfileResponseDto
 {
-    public long ProfileId { get; init; } = 0;
+    public long ProfileId { get; init; }
     public string UserName { get; init; } = "";
     public string FirstName { get; init; } = "";
     public string LastName { get; init; } = "";
@@ -22,4 +20,8 @@ public record    FullProfileResponseDto
     
     public bool HasLike { get; init; } = false;
     public double Distance { get; init; } = 0;
+    
+    public string LastSeen { get; set; } = "";
+    public bool IsOnline { get; set; } = false;
+    public string Email { get; set; } = "";
 }

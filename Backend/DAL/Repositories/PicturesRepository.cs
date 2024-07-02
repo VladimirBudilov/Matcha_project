@@ -14,7 +14,7 @@ public class PicturesRepository(
     {
         if (id == null) return null;
         var query = "SELECT * FROM pictures WHERE picture_id = @id";
-        var table = await fetcher.GetTableByParameter(query, "@id", (int)id);
+        var table = await fetcher.GetTableByParameterAsync(query, "@id", (int)id);
         if (table.Rows.Count == 0) return null;
         return entityCreator.CreatePicture(table.Rows[0]);
     }
@@ -22,7 +22,7 @@ public class PicturesRepository(
     public async Task<IEnumerable<Picture>> GetPicturesByUserIdAsync(int userId)
     {
         var query = "SELECT * FROM pictures WHERE user_id = @userId AND is_profile_picture = 0";
-        var table = await fetcher.GetTableByParameter(query, "@userId", userId);
+        var table = await fetcher.GetTableByParameterAsync(query, "@userId", userId);
 
         return (from DataRow row in table.Rows select entityCreator.CreatePicture(row)).ToList();
     }
@@ -33,7 +33,7 @@ public class PicturesRepository(
             "INSERT INTO pictures (user_id, picture_path, is_profile_picture)" +
             " VALUES (@userId, @picture, @isMain)" +
             "RETURNING picture_id;";
-        var table = await fetcher.GetTableByParameter(query, new Dictionary<string, object>()
+        var table = await fetcher.GetTableByParameterAsync(query, new Dictionary<string, object>()
         {
             { "@userId", userId },
             { "@picture", filePicture },
@@ -48,7 +48,7 @@ public class PicturesRepository(
             "INSERT INTO pictures (picture_id, user_id, picture_path, is_profile_picture)" +
             " VALUES (@picture_id, @userId, @picture, @isMain)" +
             "RETURNING picture_id;";
-        var table = await fetcher.GetTableByParameter(query, new Dictionary<string, object>()
+        var table = await fetcher.GetTableByParameterAsync(query, new Dictionary<string, object>()
         {
             { "@userId", userId },
             { "@picture", filePicture },
@@ -62,7 +62,7 @@ public class PicturesRepository(
     public async Task DeletePhotoAsync(int userId, int photoId)
     {
         var query = "DELETE FROM pictures WHERE user_id = @userId AND picture_id = @photoId";
-        await fetcher.GetTableByParameter(query,
+        await fetcher.GetTableByParameterAsync(query,
             new Dictionary<string, object>
             {
                 { "@userId", userId },

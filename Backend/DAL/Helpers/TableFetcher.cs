@@ -7,7 +7,7 @@ public class TableFetcher(DatabaseSettings settings)
 {
     private readonly string connectionString = settings.ConnectionString;
     
-    public async Task<DataTable> GetTableByParameter(string sqlQuery,
+    public async Task<DataTable> GetTableByParameterAsync(string sqlQuery,
         string parameterName,
         int parameter)
     {
@@ -25,7 +25,7 @@ public class TableFetcher(DatabaseSettings settings)
         return table;
     }
         
-    public  async Task<DataTable> GetTableByParameter( string sqlQuery,
+    public  async Task<DataTable> GetTableByParameterAsync( string sqlQuery,
         string parameterName,
         string parameter)
     {
@@ -58,7 +58,7 @@ public class TableFetcher(DatabaseSettings settings)
         return table;
     }
 
-    public async Task<DataTable> GetTableByParameter( string query, Dictionary<string, object> parameters)
+    public async Task<DataTable> GetTableByParameterAsync( string query, Dictionary<string, object> parameters)
     {
         await using var connection = new NpgsqlConnection(connectionString);
         await connection.OpenAsync();

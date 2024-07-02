@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using DAL.Helpers;
 using Web_API.DTOs;
+using Web_API.DTOs.Request;
 
 namespace Web_API.Helpers;
 

@@ -1,4 +1,4 @@
-﻿namespace Web_API.DTOs;
+﻿namespace Web_API.DTOs.Request;
 
 public record UserRegistrationDto
 {

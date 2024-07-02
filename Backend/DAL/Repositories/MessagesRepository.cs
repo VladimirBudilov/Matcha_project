@@ -21,7 +21,7 @@ public class MessagesRepository(
             { "@text", message.Content },
             { "@created_at", message.Created_at }
         };
-        await fetcher.GetTableByParameter(query.ToString(), parameters);
+        await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
         return message;
     }
     
@@ -35,7 +35,7 @@ public class MessagesRepository(
             { "@room_id", room },
             { "@producer_id", producerId }
         };
-        var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
+        var table = await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
         return (from DataRow row in table.Rows select entityCreator.CreateMessage(row)).ToList();
     }
 }

@@ -3,6 +3,7 @@ using BLL.Helpers;
 using DAL.Entities;
 using DAL.Helpers;
 using DAL.Repositories;
+using Web_API.Helpers;
 
 namespace BLL.Sevices;
 
@@ -30,6 +31,11 @@ public class UserService(
     
     public async Task<User?> UpdateUserAsync(int id, User userModel)
     {
+        //validate new mail that such mail doesn't exist
+        var userByEmail = await usersRepository.GetUserByEmailAsync(userModel.Email);
+        if (userByEmail != null && userByEmail.Id != id)
+            throw new DataValidationException("User with such email already exists");
+        
         var user = await usersRepository.GetUserByIdAsync(id);
         if (user == null) throw new ObjectNotFoundException("Actor not found. You can't update user that doesn't exist");
         user.UserName = userModel.UserName;
@@ -57,7 +63,6 @@ public class UserService(
 
     public async Task<User?> GetUserByEmailAsync(string email)
     {
-        //TODO add validation
         var output = await usersRepository.GetUserByEmailAsync(email);
         if (output == null)
             throw new ObjectNotFoundException(

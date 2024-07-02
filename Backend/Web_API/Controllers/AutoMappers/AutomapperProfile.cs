@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using DAL.Entities;
 using Web_API.DTOs;
+using Web_API.DTOs.Request;
+using Web_API.DTOs.Response;
 using Profile = AutoMapper.Profile;
 using EntityProfile = DAL.Entities.Profile;
 

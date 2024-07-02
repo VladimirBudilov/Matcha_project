@@ -17,7 +17,7 @@ public class ProfilesRepository(
             var query = new StringBuilder().Append("SELECT * FROM users")
                 .Append(" LEFT JOIN profiles ON users.user_id = profiles.profile_id")
                 .Append(" WHERE user_id = @id");
-            var userInfo = await fetcher.GetTableByParameter(query.ToString(), "@id", id);
+            var userInfo = await fetcher.GetTableByParameterAsync(query.ToString(), "@id", id);
             if (userInfo.Rows.Count > 0)
             {
                 var userInfoRow = userInfo.Rows[0];
@@ -30,11 +30,11 @@ public class ProfilesRepository(
 
     }
 
-    public async Task<Profile> GetProfileAsync(int id)
+    public async Task<Profile>    GetProfileAsync(int id)
     {
 
             var dataTable =
-                await fetcher.GetTableByParameter("SELECT * FROM profiles WHERE profile_id = @id", "@id", id);
+                await fetcher.GetTableByParameterAsync("SELECT * FROM profiles WHERE profile_id = @id", "@id", id);
             return dataTable.Rows.Count > 0 ? entityCreator.CreateUserProfile(dataTable.Rows[0]) : null;
 
     }
@@ -52,7 +52,7 @@ public class ProfilesRepository(
             { "@profile_picture_id", entity.ProfilePictureId },
             { "age", entity.Age }
         };
-        var table = await fetcher.GetTableByParameter(query.ToString(), parametrs);
+        var table = await fetcher.GetTableByParameterAsync(query.ToString(), parametrs);
         return table.Rows.Count > 0 ? entity : null;
     }
 
@@ -76,7 +76,7 @@ public class ProfilesRepository(
             { "@profile_picture_id", entity.ProfilePictureId },
             { "@is_active", entity.IsActive }
         };
-        var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
+        var table = await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
         return table.Rows.Count > 0 ? entity : null;
     }
 
@@ -84,7 +84,7 @@ public class ProfilesRepository(
     {
         var query =
             "UPDATE profiles SET profile_picture_id = @profile_picture_id WHERE profile_id = @profile_id RETURNING profile_picture_id";
-        var table = await fetcher.GetTableByParameter(query, new Dictionary<string, object>
+        var table = await fetcher.GetTableByParameterAsync(query, new Dictionary<string, object>
         {
             { "@profile_picture_id", pictureId },
             { "@profile_id", userId }
@@ -113,7 +113,7 @@ public class ProfilesRepository(
             { "@longitude", entity.Longitude }
         };
 
-        var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
+        var table = await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
         var isActive = (bool)table.Rows[0]["is_active"];
         if (!isActive && !(await GetProfileAsync(entity.Id)).HasEmptyFields())
         {
@@ -128,7 +128,7 @@ public class ProfilesRepository(
 
     public async Task<(long, IEnumerable<User>?)> GetFullProfilesAsync(SearchParameters searchParams,
         SortParameters sortParams,
-        PaginationParameters pagination, int id, List<Interest> tagsIds, IEnumerable<int> blockedUsers)
+        PaginationParameters pagination, int id, List<Interest> tagsIds)
     {
         var profile = (await GetFullProfileAsync(id))!.Profile;
 
@@ -152,7 +152,7 @@ public class ProfilesRepository(
         };
 
         //add filters
-        ApplyFilters(searchParams, tagsIds, parameters, ref queryBuilder, blockedUsers);
+        ApplyFilters(searchParams, tagsIds, parameters, ref queryBuilder);
         //add group by
         ApplyOrdering(sortParams, ref queryBuilder);
         //add pagination
@@ -166,7 +166,7 @@ public class ProfilesRepository(
 
         var query = queryBuilder.Build();
 
-        var table = await fetcher.GetTableByParameter(query, parameters);
+        var table = await fetcher.GetTableByParameterAsync(query, parameters);
         var users = new List<User>();
         foreach (DataRow row in table.Rows)
         {
@@ -185,7 +185,7 @@ public class ProfilesRepository(
             .Select("Count(*) ")
             .From($" ({queryBuilder.Build()})");
         var query = counter.Build();
-        var countCommand = await fetcher.GetTableByParameter(query, parameters);
+        var countCommand = await fetcher.GetTableByParameterAsync(query, parameters);
         var count = (long)countCommand.Rows[0][0];
         return count;
     }
@@ -218,7 +218,7 @@ public class ProfilesRepository(
     private static void ApplyFilters(SearchParameters searchParams,
         List<Interest> tagsIds,
         Dictionary<string, object> parameters,
-        ref QueryBuilder queryBuilder, IEnumerable<int> blockedUsers)
+        ref QueryBuilder queryBuilder)
     {
         queryBuilder.Where($"users.user_id != @profile_id AND profiles.is_active = TRUE AND users.is_verified = TRUE ");
         if (searchParams.MaxDistance != null)
@@ -240,12 +240,6 @@ public class ProfilesRepository(
             parameters.Add("@commonTags", tagsIds.Select(x => x.InterestId).ToArray());
         }
         
-        if(blockedUsers.Any())
-        {
-            queryBuilder.Where(" AND users.user_id NOT IN @blockedUsers ");
-            parameters.Add("@blockedUsers", blockedUsers.ToArray());
-        }
-
         if (searchParams.MinAge != null && searchParams.MaxAge != null)
         {
             queryBuilder.Where($" AND age BETWEEN @minAge AND @maxAge ");
@@ -281,7 +275,7 @@ public class ProfilesRepository(
             { "@fame_rating", user.FameRating },
             { "@profile_id", user.Id }
         };
-        await fetcher.GetTableByParameter(query, parameters);
+        await fetcher.GetTableByParameterAsync(query, parameters);
     }
 
     public async Task<FiltersData> GetFiltersDataAsync(double? longitude, double? latitude, int id)
@@ -301,7 +295,7 @@ public class ProfilesRepository(
             { "@profile_longitude", (double)longitude! },
             { "@profile_id", id }
         };
-        var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
+        var table = await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
         return entityCreator.CreateFiltersData(table.Rows[0]);
     }
 }

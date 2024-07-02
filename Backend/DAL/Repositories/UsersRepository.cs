@@ -12,13 +12,13 @@ public class UsersRepository(
 
     public async Task<User?> GetUserByIdAsync(int id)
     {
-        var dataTable = await fetcher.GetTableByParameter("SELECT * FROM users WHERE user_id = @id", "@id", id);
+        var dataTable = await fetcher.GetTableByParameterAsync("SELECT * FROM users WHERE user_id = @id", "@id", id);
         return dataTable.Rows.Count > 0 ? entityCreator.CreateUser(dataTable.Rows[0]) : null;
     }
 
     public async Task<User?> GetUserByEmailAsync(string email)
     {
-        var dataTable = await fetcher.GetTableByParameter(
+        var dataTable = await fetcher.GetTableByParameterAsync(
             "SELECT * FROM users WHERE email = @email", "@email",
             email);
         return dataTable.Rows.Count > 0 ? entityCreator.CreateUser(dataTable.Rows[0]) : null;
@@ -28,7 +28,7 @@ public class UsersRepository(
     {
         try
         {
-            var dataTable = await fetcher.GetTableByParameter(
+            var dataTable = await fetcher.GetTableByParameterAsync(
                 "SELECT * FROM users WHERE user_name = @userName",
                 "@userName", userName);
             return dataTable.Rows.Count > 0 ? entityCreator.CreateUser(dataTable.Rows[0]) : null;
@@ -44,7 +44,8 @@ public class UsersRepository(
     public async Task<User?> CreateUserAsync(User user)
     {
         var query = new StringBuilder()
-            .Append("INSERT INTO users (user_name, first_name, last_name, email, password,  is_verified, last_login_at) ")
+            .Append(
+                "INSERT INTO users (user_name, first_name, last_name, email, password,  is_verified, last_login_at) ")
             .Append(
                 "VALUES               (@userName, @firstName, @lastName, @email, @password,  @isVerified, @last_login_at) Returning user_id");
         var parameters = new Dictionary<string, object>
@@ -58,7 +59,7 @@ public class UsersRepository(
             { "@last_login_at", user.LastLogin }
         };
 
-        var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
+        var table = await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
         var res = (int)table.Rows[0]["user_id"];
         return res > 0 ? user : null;
     }
@@ -82,7 +83,7 @@ public class UsersRepository(
             { "@last_login_at", user.LastLogin }
         };
 
-        var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
+        var table = await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
         var res = (int)table.Rows[0]["user_id"];
         return res > 0 ? user : null;
     }
@@ -91,7 +92,7 @@ public class UsersRepository(
     {
         var query = new StringBuilder()
             .Append("UPDATE users SET user_name = @userName, first_name = @firstName, ")
-            .Append("last_name = @lastName, email = @email, is_verified = @isVerified Returning user_id");
+            .Append("last_name = @lastName, email = @email, is_verified = @isVerified ");
 
         var parameters = new Dictionary<string, object>
         {
@@ -105,21 +106,22 @@ public class UsersRepository(
 
         if (user.Password != null)
         {
-            query.Append(" ,password = @password");
+            query.Append(" ,password = @password ");
             parameters.Add("@password", user.Password);
         }
 
-        query.Append("WHERE user_id = @user_id");
+        query.Append(" WHERE user_id = @user_id ")
+            .Append(" Returning user_id");
 
 
-        var res = await fetcher.GetTableByParameter(query.ToString(), parameters);
+        var res = await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
         return res.Rows.Count > 0 ? user : null;
     }
 
     public async Task<User?> DeleteUserAsync(int id)
     {
         var query = "DELETE FROM users WHERE user_id = @id Returning user_id";
-        var table = await fetcher.GetTableByParameter(query, "@id", id);
+        var table = await fetcher.GetTableByParameterAsync(query, "@id", id);
         return table.Rows.Count > 0 ? new User() : null;
     }
 
@@ -139,6 +141,6 @@ public class UsersRepository(
             { "@user_id", userId }
         };
 
-        await fetcher.GetTableByParameter(query, parameters);
+        await fetcher.GetTableByParameterAsync(query, parameters);
     }
 }

@@ -21,7 +21,7 @@ public class ProfileViewsRepository(
             {"@profile_user_id", entity.ViewedId},
             {"@viewer_user_id", entity.ViewerId}
         };
-        await fetcher.GetTableByParameter(query.ToString(), parameters);
+        await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
         return entity;
     }
 
@@ -29,7 +29,7 @@ public class ProfileViewsRepository(
     {
 
         var query = "SELECT * FROM profile_views WHERE profile_user_id = @id";
-        var table = await fetcher.GetTableByParameter(query, "@id", likedId);
+        var table = await fetcher.GetTableByParameterAsync(query, "@id", likedId);
 
         return (from DataRow row in table.Rows select entityCreator.CreateProfileViews(row)).ToList();
 
@@ -41,7 +41,7 @@ public class ProfileViewsRepository(
         var query = new StringBuilder()
             .Append("SELECT * FROM profile_views ")
             .Append(" WHERE profile_user_id = @profile_user_id AND viewer_user_id = @viewer_user_id");
-        var table = await fetcher.GetTableByParameter(query.ToString(), new Dictionary<string, object>
+        var table = await fetcher.GetTableByParameterAsync(query.ToString(), new Dictionary<string, object>
         {
             {"@profile_user_id", viewedId},
             {"@viewer_user_id", viewerId}

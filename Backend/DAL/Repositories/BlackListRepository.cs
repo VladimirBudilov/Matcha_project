@@ -20,7 +20,7 @@ public class BlackListRepository(
                     { "@user_id", entity.UserId },
                     { "@blocked_user_id", entity.BlacklistedUserId }
                 };
-            await fetcher.GetTableByParameter(query.ToString(), parameters);
+            await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
             return entity;
 
     }
@@ -36,7 +36,7 @@ public class BlackListRepository(
                 { "@user_id", userId },
                 { "@blocked_user_id", blacklistedUserId }
             };
-            await fetcher.GetTableByParameter(query.ToString(), parameters);
+            await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
             return new BlackList { UserId = userId, BlacklistedUserId = blacklistedUserId };
     }
     
@@ -49,7 +49,7 @@ public class BlackListRepository(
         {
             { "@user_id", id }
         };
-        var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
+        var table = await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
         return (from DataRow row in table.Rows select entityCreator.CreateBlackList(row)).ToList();
     }
 }

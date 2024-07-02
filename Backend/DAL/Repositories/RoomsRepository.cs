@@ -17,7 +17,7 @@ public class RoomsRepository(TableFetcher fetcher)
             { "@inviterId", inviterId },
             { "@invitedId", invitedId }
         };
-        var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
+        var table = await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
         return table.Rows.Count == 0 ? 0 : (int)table.Rows[0]["id"];
     }
     
@@ -32,7 +32,7 @@ public class RoomsRepository(TableFetcher fetcher)
             { "@inviterId", inviterId },
             { "@invitedId", invitedId }
         };
-        var table = await fetcher.GetTableByParameter(query.ToString(), parameters);
+        var table = await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
         return (int)table.Rows[0]["id"];
     }
 }

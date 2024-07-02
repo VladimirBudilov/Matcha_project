@@ -24,7 +24,7 @@ public class LikesRepository(
                     { "@liker_user_id", entity.LikerId },
                     { "@liked_user_id", entity.LikedId }
                 };
-            await fetcher.GetTableByParameter(query.ToString(), parameters);
+            await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
             return entity;
         }
         catch (Exception e)
@@ -46,7 +46,7 @@ public class LikesRepository(
                 { "@liker_user_id", likerId },
                 { "@liked_user_id", likedId }
             };
-            await fetcher.GetTableByParameter(query.ToString(), parameters);
+            await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
             return new Like { LikerId = likerId, LikedId = likedId };
         }
         catch (Exception e)
@@ -62,7 +62,7 @@ public class LikesRepository(
         {
             var output = new List<Like>();
             var query = "SELECT * FROM likes WHERE liked_user_id = @id";
-            var table = await fetcher.GetTableByParameter(query, "@id", id);
+            var table = await fetcher.GetTableByParameterAsync(query, "@id", id);
             foreach (DataRow row in table.Rows)
             {
                 var like = entityCreator.CreateLikes(row);
@@ -82,7 +82,7 @@ public class LikesRepository(
         try
         {
             var query = "SELECT * FROM likes WHERE liker_user_id = @viewer_id AND liked_user_id = @user_id";
-            var table = await fetcher.GetTableByParameter(
+            var table = await fetcher.GetTableByParameterAsync(
                 query, new Dictionary<string, object>
                 {
                     { "@viewer_id", viewerId },
@@ -101,7 +101,7 @@ public class LikesRepository(
     {
         var query = "SELECT * FROM likes WHERE liker_user_id = @liker_user_id AND liked_user_id = @liked_user_id";
 
-        var table = await fetcher.GetTableByParameter(query, new Dictionary<string, object>
+        var table = await fetcher.GetTableByParameterAsync(query, new Dictionary<string, object>
         {
             { "@liker_user_id", likerId },
             { "@liked_user_id", likedId }

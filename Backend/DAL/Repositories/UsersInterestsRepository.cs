@@ -21,7 +21,7 @@ public class UsersInterestsRepository(
     public async Task<UserInterest> AddUserInterestAsync(UserInterest userInterest)
     {
         var query = "INSERT INTO user_interests (user_id, interest_id) VALUES (@userId, @interestId) RETURNING *";
-        var table = await fetcher.GetTableByParameter(query,
+        var table = await fetcher.GetTableByParameterAsync(query,
             new Dictionary<string, object>()
             {
                 { "@userId", userInterest.UserId },

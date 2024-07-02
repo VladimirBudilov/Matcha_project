@@ -41,8 +41,7 @@ public class ProfileService(
         var tagsIds = await interestsRepository.GetUserInterestsByNamesAsync(search.CommonTags);
         search.SexualPreferences ??= currentUser.SexualPreferences;
         
-        var blockedUsers = (await blackListRepository.GetFromBlackListByIdAsync(id)).Select(x=> x.BlacklistedUserId);
-        var (counter, users) = await profilesRepository.GetFullProfilesAsync(search, sort, pagination, id, tagsIds, blockedUsers);
+        var (counter, users) = await profilesRepository.GetFullProfilesAsync(search, sort, pagination, id, tagsIds);
         if (users == null) return (0, new List<User>());
         var builder = new ProfileBuilder();
         var usersList = new List<User>();

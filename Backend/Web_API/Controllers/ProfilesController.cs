@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web_API.DTOs;
 using Web_API.DTOs.Request;
+using Web_API.DTOs.Response;
 using Web_API.Helpers;
 using Web_API.Hubs.Helpers;
 using Web_API.Hubs.Services;
@@ -39,6 +40,17 @@ public class ProfilesController(
             await profileService.GetProfilesAsync(parameters.Search, parameters.Sort, parameters.Pagination, id);
         output = await profileService.CheckUsersLikes(output, id);
         var profiles = mapper.Map<List<ProfileResponse>>(output);
+        foreach (var profile in profiles.Where(profile => notificationService.IsUserOnline(profile.ProfileId)))
+        {
+            profile.IsOnlineUser = true;
+        }
+
+        var blockedId = await actionService.GetBlockedUsers(id);
+        foreach (var profile in profiles.Where( u => blockedId.Contains(u.ProfileId)))
+        {
+            profile.IsBlockedUSer = true;
+        }
+        
         return new ProfilesData()
         {
             Profiles = profiles,
@@ -52,14 +64,14 @@ public class ProfilesController(
     public async Task<IActionResult> GetProfileByIdAsync([FromRoute] int id)
     {
         validator.CheckId(id);
-        
-        var userIsBlocked = await actionService.CheckIfUserIsBlocked(claimsService.GetId(User.Claims), id);
+
+        var actorId = claimsService.GetId(User.Claims);
+        var userIsBlocked = await actionService.CheckIfUserIsBlocked(actorId, id);
         if(userIsBlocked) return Forbid("You are blocked by this user");
         
-        var viewerId = claimsService.GetId(User.Claims);
-        if (await actionService.TryViewUser(viewerId, id))
+        if (await actionService.TryViewUser(actorId, id))
         {
-            var actor = await userService.GetUserByIdAsync(viewerId);
+            var actor = await userService.GetUserByIdAsync(actorId);
             notificationService.AddNotification(id, new Notification()
             {
                 Actor = actor!.UserName + " " + actor!.LastName,
@@ -70,8 +82,10 @@ public class ProfilesController(
         }
 
         var model = await profileService.GetFullProfileByIdAsync(id);
-        model = await profileService.CheckUserLike(model, viewerId);
+        model = await profileService.CheckUserLike(model, actorId);
         var output = mapper.Map<FullProfileResponseDto>(model);
+        if(notificationService.IsUserOnline(id)) output.IsOnline = true;
+        if (output.ProfileId != actorId) output.Email = string.Empty;
         return Ok(output);
     }
 
