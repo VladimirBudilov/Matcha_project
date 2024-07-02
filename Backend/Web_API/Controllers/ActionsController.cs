@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BLL.Sevices;
+using DAL.Entities;
 using DAL.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -23,7 +24,8 @@ public class ActionsController(
     UserService userService,
     ChatService chatService,
     IMapper mapper,
-    ProfileService profileService
+    ProfileService profileService,
+    ClaimsService claimsService
 ) : ControllerBase
 {
     [HttpPost("like")]
@@ -83,7 +85,38 @@ public class ActionsController(
             Actor = actor!.UserName + " " + actor!.LastName
         });
         await notificationService.SendNotificationToUser(actor.Id);
-        return Ok();
+        return Ok(new Like()
+        {
+            LikerId = actor.Id,
+            LikedId = userAction.consumerId,
+            IsLiked = wasAdded
+        });
+    }
+    
+    //get all users that in black list
+    [HttpGet("blacklist")]
+    public async Task<IActionResult> GetBlackList()
+    {
+        var id = claimsService.GetId(User.Claims);
+        var blockedUsersId = await actionService.GetBlockedUsersIdASync(id);
+        var output = new List<FullProfileResponseDto>();
+        foreach (var userId in blockedUsersId)
+        {
+            var user = await userService.GetUserByIdAsync(userId);
+            if (user == null) continue;
+            var model = await profileService.GetFullProfileByIdAsync(userId);
+            model = await profileService.CheckUserLike(model, id);
+            var profile = mapper.Map<FullProfileResponseDto>(model);
+            if(notificationService.IsUserOnline(userId)) profile.isOnlineUser = true;
+            output.Add(profile);
+        }
+        var response = new ResponseDto<List<FullProfileResponseDto>>()
+        {
+            Data = output,
+            Success = true,
+            Error = null,
+        };
+        return Ok(response);
     }
         
 }

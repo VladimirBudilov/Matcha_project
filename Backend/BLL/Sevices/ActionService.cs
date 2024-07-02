@@ -65,7 +65,7 @@ public class ActionService(
 
     public async Task<bool> TryUpdateBlackListAsync(int actorId, int consumerId)
     {
-        if (!await CheckIfUserIsBlocked(consumerId, actorId))
+        if (await CheckIfUserIsBlocked(consumerId, actorId))
         {
             await blackListRepository.DeleteFromBlackListAsync(actorId, consumerId);
             return false;
@@ -84,7 +84,7 @@ public class ActionService(
         return blackList.Any(x => x.BlacklistedUserId == blockedId);
     }
 
-    public async Task<List<int>> GetBlockedUsers(int userId)
+    public async Task<List<int>> GetBlockedUsersIdASync(int userId)
     {
         var blackList = await blackListRepository.GetFromBlackListByIdAsync(userId);
         return blackList.Select(x => x.BlacklistedUserId).ToList();

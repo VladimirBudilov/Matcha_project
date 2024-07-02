@@ -22,6 +22,6 @@ public record    FullProfileResponseDto
     public double Distance { get; init; } = 0;
     
     public string LastLogin { get; set; } = "";
-    public bool IsOnline { get; set; } = false;
+    public bool isOnlineUser { get; set; } = false;
     public string Email { get; set; } = "";
 }

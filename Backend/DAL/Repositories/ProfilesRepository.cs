@@ -128,7 +128,7 @@ public class ProfilesRepository(
 
     public async Task<(long, IEnumerable<User>?)> GetFullProfilesAsync(SearchParameters searchParams,
         SortParameters sortParams,
-        PaginationParameters pagination, int id, List<Interest> tagsIds)
+        PaginationParameters pagination, int id, List<Interest> tagsIds, List<int> blackList)
     {
         var profile = (await GetFullProfileAsync(id))!.Profile;
 
@@ -152,7 +152,7 @@ public class ProfilesRepository(
         };
 
         //add filters
-        ApplyFilters(searchParams, tagsIds, parameters, ref queryBuilder);
+        ApplyFilters(searchParams, tagsIds, parameters, ref queryBuilder, blackList);
         //add group by
         ApplyOrdering(sortParams, ref queryBuilder);
         //add pagination
@@ -218,9 +218,16 @@ public class ProfilesRepository(
     private static void ApplyFilters(SearchParameters searchParams,
         List<Interest> tagsIds,
         Dictionary<string, object> parameters,
-        ref QueryBuilder queryBuilder)
+        ref QueryBuilder queryBuilder, List<int> blackList)
     {
         queryBuilder.Where($"users.user_id != @profile_id AND profiles.is_active = TRUE AND users.is_verified = TRUE ");
+        
+        if (blackList.Count != 0)
+        {
+            queryBuilder.Where(" AND users.user_id != Any(@blackList) ");
+            parameters.Add("@blackList", blackList.ToArray());
+        }
+        
         if (searchParams.MaxDistance != null)
         {
             queryBuilder.Where(

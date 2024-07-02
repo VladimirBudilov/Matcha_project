@@ -19,5 +19,4 @@ public record ProfileResponse()
     
     public string LastSeen { get; set; } = "";
     public bool IsOnlineUser { get; set; } = false;
-    public bool IsBlockedUSer { get; set; } = false;
 };

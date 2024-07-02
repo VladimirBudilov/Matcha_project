@@ -33,7 +33,7 @@ public class ProfileService(
     }
 
     public async Task<(long, List<User>)> GetProfilesAsync(SearchParameters search, SortParameters sort,
-        PaginationParameters pagination, int id)
+        PaginationParameters pagination, int id, List<int> blackList)
     {
         var currentUser = await profilesRepository.GetProfileAsync(id);
         if(!currentUser.IsActive) throw new ForbiddenActionException("update user profile first");
@@ -41,7 +41,7 @@ public class ProfileService(
         var tagsIds = await interestsRepository.GetUserInterestsByNamesAsync(search.CommonTags);
         search.SexualPreferences ??= currentUser.SexualPreferences;
         
-        var (counter, users) = await profilesRepository.GetFullProfilesAsync(search, sort, pagination, id, tagsIds);
+        var (counter, users) = await profilesRepository.GetFullProfilesAsync(search, sort, pagination, id, tagsIds, blackList);
         if (users == null) return (0, new List<User>());
         var builder = new ProfileBuilder();
         var usersList = new List<User>();

@@ -30,7 +30,7 @@ public class BlackListRepository(
 
             var query = new StringBuilder()
                 .Append("DELETE FROM black_list WHERE user_id = @user_id")
-                .Append(" AND blacklisted_user_id = @blocked_user_id");
+                .Append(" AND blocked_user_id = @blocked_user_id");
             var parameters = new Dictionary<string, object>
             {
                 { "@user_id", userId },

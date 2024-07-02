@@ -36,19 +36,14 @@ public class ProfilesController(
         validator.CheckSortParameters(parameters.Sort);
         validator.CheckPaginationParameters(parameters.Pagination);
 
+        var blackList = await actionService.GetBlockedUsersIdASync(id);
         var (amountOfPages, output) =
-            await profileService.GetProfilesAsync(parameters.Search, parameters.Sort, parameters.Pagination, id);
+            await profileService.GetProfilesAsync(parameters.Search, parameters.Sort, parameters.Pagination, id, blackList);
         output = await profileService.CheckUsersLikes(output, id);
         var profiles = mapper.Map<List<ProfileResponse>>(output);
         foreach (var profile in profiles.Where(profile => notificationService.IsUserOnline(profile.ProfileId)))
         {
             profile.IsOnlineUser = true;
-        }
-
-        var blockedId = await actionService.GetBlockedUsers(id);
-        foreach (var profile in profiles.Where( u => blockedId.Contains(u.ProfileId)))
-        {
-            profile.IsBlockedUSer = true;
         }
         
         return new ProfilesData()
@@ -84,7 +79,7 @@ public class ProfilesController(
         var model = await profileService.GetFullProfileByIdAsync(id);
         model = await profileService.CheckUserLike(model, actorId);
         var output = mapper.Map<FullProfileResponseDto>(model);
-        if(notificationService.IsUserOnline(id)) output.IsOnline = true;
+        if(notificationService.IsUserOnline(id)) output.isOnlineUser = true;
         if (output.ProfileId != actorId) output.Email = string.Empty;
         return Ok(output);
     }
