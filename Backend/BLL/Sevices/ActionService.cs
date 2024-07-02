@@ -63,32 +63,24 @@ public class ActionService(
         await userRepository.UpdateFameRatingAsync(user);
     }
 
-    public async Task<bool> TryUpdateBlackListAsync(int actorId, int consumerId, bool shouldAdd)
+    public async Task<bool> TryUpdateBlackListAsync(int actorId, int consumerId)
     {
-        await validator.CheckUserExistence(new[] { actorId, consumerId });
-        
-        var blackList = await blackListRepository.GetFromBlackListByIdAsync(actorId);
-
-        if (!shouldAdd)
+        if (!await CheckIfUserIsBlocked(consumerId, actorId))
         {
-            if (!(blackList.Any(x => x.BlacklistedUserId == consumerId))) return false;
-
             await blackListRepository.DeleteFromBlackListAsync(actorId, consumerId);
-            return true;
+            return false;
         }
-
-        if (blackList.Any(x => x.BlacklistedUserId == consumerId)) return false;
-
+        
         await blackListRepository.AddToBlackListAsync(new BlackList()
             { UserId = actorId, BlacklistedUserId = consumerId });
         return true;
     }
 
-    public async Task<bool> CheckIfUserIsBlocked(int getId, int id)
+    public async Task<bool> CheckIfUserIsBlocked(int blockedId, int userId)
     {
-        await validator.CheckUserExistence(new[] { getId, id });
+        await validator.CheckUserExistence(new[] { blockedId, userId });
         
-        var blackList = await blackListRepository.GetFromBlackListByIdAsync(id);
-        return blackList.Any(x => x.BlacklistedUserId == getId);
+        var blackList = await blackListRepository.GetFromBlackListByIdAsync(userId);
+        return blackList.Any(x => x.BlacklistedUserId == blockedId);
     }
 }

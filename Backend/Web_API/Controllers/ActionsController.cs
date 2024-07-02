@@ -67,20 +67,18 @@ public class ActionsController(
     }
     
     [HttpPost("block")]
-    public async Task<IActionResult> GetBlackList([FromBody] UserActionRequestDto userAction, [FromQuery] int add = 1)
+    public async Task<IActionResult> GetBlackList([FromBody] UserActionRequestDto userAction)
     {
         validator.CheckId(userAction.producerId);
         validator.CheckId(userAction.consumerId);
         validator.CheckUserAuth(userAction.producerId, User.Claims);
-
-        var shouldAdd = add != 0;
-        var wasAdded = await actionService.TryUpdateBlackListAsync(userAction.producerId, userAction.consumerId, shouldAdd);
-        if(!wasAdded) return BadRequest(); 
+            
+        var wasAdded = await actionService.TryUpdateBlackListAsync(userAction.producerId, userAction.consumerId);
         var actor = await userService.GetUserByIdAsync(userAction.producerId);
         notificationService.AddNotification(userAction.consumerId, new Notification()
         {
             Type = NotificationType.BlackListed,
-            Message = "You have been blacklisted",
+            Message = wasAdded ? "You have been blacklisted" : "You have been unblocked",
             Actor = actor!.UserName + " " + actor!.LastName
         });
         await notificationService.SendNotificationToUser(actor.Id);
