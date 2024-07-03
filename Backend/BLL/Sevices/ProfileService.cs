@@ -165,7 +165,7 @@ public class ProfileService(
         var users = new List<User>();
         foreach (var view in views)
         {
-            var user = await GetFullProfileByIdAsync(view.ViewedId);
+            var user = await GetFullProfileByIdAsync(view.ViewerId);
             users.Add(user);
         }
         
