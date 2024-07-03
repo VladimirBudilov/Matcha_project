@@ -13,30 +13,26 @@ public class ProfilesRepository(
 {
     public async Task<User?> GetFullProfileAsync(int id)
     {
+        var query = new StringBuilder().Append("SELECT * FROM users")
+            .Append(" LEFT JOIN profiles ON users.user_id = profiles.profile_id")
+            .Append(" WHERE user_id = @id");
+        var userInfo = await fetcher.GetTableByParameterAsync(query.ToString(), "@id", id);
+        if (userInfo.Rows.Count > 0)
+        {
+            var userInfoRow = userInfo.Rows[0];
+            var user = entityCreator.CreateUser(userInfoRow);
+            user.Profile = entityCreator.CreateUserProfile(userInfoRow);
+            return user;
+        }
 
-            var query = new StringBuilder().Append("SELECT * FROM users")
-                .Append(" LEFT JOIN profiles ON users.user_id = profiles.profile_id")
-                .Append(" WHERE user_id = @id");
-            var userInfo = await fetcher.GetTableByParameterAsync(query.ToString(), "@id", id);
-            if (userInfo.Rows.Count > 0)
-            {
-                var userInfoRow = userInfo.Rows[0];
-                var user = entityCreator.CreateUser(userInfoRow);
-                user.Profile = entityCreator.CreateUserProfile(userInfoRow);
-                return user;
-            }
-
-            return null;
-
+        return null;
     }
 
-    public async Task<Profile>    GetProfileAsync(int id)
+    public async Task<Profile> GetProfileAsync(int id)
     {
-
-            var dataTable =
-                await fetcher.GetTableByParameterAsync("SELECT * FROM profiles WHERE profile_id = @id", "@id", id);
-            return dataTable.Rows.Count > 0 ? entityCreator.CreateUserProfile(dataTable.Rows[0]) : null;
-
+        var dataTable =
+            await fetcher.GetTableByParameterAsync("SELECT * FROM profiles WHERE profile_id = @id", "@id", id);
+        return dataTable.Rows.Count > 0 ? entityCreator.CreateUserProfile(dataTable.Rows[0]) : null;
     }
 
     public async Task<Profile?> CreateProfileAsync(Profile entity)
@@ -220,18 +216,18 @@ public class ProfilesRepository(
         Dictionary<string, object> parameters,
         ref QueryBuilder queryBuilder, List<int> blackList)
     {
-        queryBuilder.Where($"users.user_id != @profile_id AND profiles.is_active = TRUE AND users.is_verified = TRUE ");
-        
+        queryBuilder.Where(" users.user_id != @profile_id AND profiles.is_active = TRUE AND users.is_verified = TRUE ");
+
         if (blackList.Count != 0)
         {
             queryBuilder.Where(" AND users.user_id != Any(@blackList) ");
             parameters.Add("@blackList", blackList.ToArray());
         }
-        
+
         if (searchParams.MaxDistance != null)
         {
             queryBuilder.Where(
-                $"AND calculate_distance(latitude,longitude,@profile_latitude, @profile_longitude) <= @maxDistance ");
+                " AND calculate_distance(latitude,longitude,@profile_latitude, @profile_longitude) <= @maxDistance ");
             parameters.Add("@maxDistance", searchParams.MaxDistance);
         }
 
@@ -243,10 +239,22 @@ public class ProfilesRepository(
 
         if (searchParams.CommonTags.Count != 0)
         {
-            queryBuilder.Where(" AND interests.interest_id = ANY(@commonTags) ");
-            parameters.Add("@commonTags", tagsIds.Select(x => x.InterestId).ToArray());
+            var commonTagsArray = tagsIds.Select(x => x.InterestId).ToArray();
+            var commonTagsCount = commonTagsArray.Length;
+
+            queryBuilder.Where("""
+            AND (
+                           SELECT COUNT(DISTINCT interest_id)
+                           FROM user_interests
+                           WHERE user_interests.user_id = users.user_id
+                           AND interest_id = ANY(@commonTags)
+                       ) = @commonTagsCount 
+           """);
+
+            parameters.Add("@commonTags", commonTagsArray);
+            parameters.Add("@commonTagsCount", commonTagsCount);
         }
-        
+
         if (searchParams.MinAge != null && searchParams.MaxAge != null)
         {
             queryBuilder.Where($" AND age BETWEEN @minAge AND @maxAge ");

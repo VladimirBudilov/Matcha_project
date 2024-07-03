@@ -160,7 +160,7 @@ public class DtoValidator
 
     private void ValidateTag(string tag)
     {
-        if (!(tag.Length >= 3 && tag.Length <= 20 && tag.All(x => char.IsLetter(x) || x == '_')))
+        if (!(tag.Length >= 3 && tag.Length <= 50 && tag.All(x => char.IsLetter(x) || x == '_')))
         {
             throw new DataValidationException("Invalid tag format.");
         }
