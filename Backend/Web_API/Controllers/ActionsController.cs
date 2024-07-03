@@ -93,11 +93,11 @@ public class ActionsController(
         });
     }
     
-    //get all users that in black list
     [HttpGet("blacklist")]
     public async Task<IActionResult> GetBlackList()
     {
         var id = claimsService.GetId(User.Claims);
+        
         var blockedUsersId = await actionService.GetBlockedUsersIdASync(id);
         var output = new List<FullProfileResponseDto>();
         foreach (var userId in blockedUsersId)
@@ -116,6 +116,30 @@ public class ActionsController(
             Success = true,
             Error = null,
         };
+        return Ok(response);
+    }
+    
+    [HttpGet("viewed")]
+    public async Task<IActionResult> GetViewedProfiles()
+    {
+        var id = claimsService.GetId(User.Claims);
+        var viewedProfiles = await profileService.GetViewedProfilesAsync(id);
+        var output = new List<FullProfileResponseDto>();
+        foreach (var profile in viewedProfiles)
+        {
+            var model = await profileService.CheckUserLike(profile, id);
+            var profileDto = mapper.Map<FullProfileResponseDto>(model);
+            if(notificationService.IsUserOnline(profile.Id)) profileDto.isOnlineUser = true;
+            output.Add(profileDto);
+        }
+        
+        var response = new ResponseDto<List<FullProfileResponseDto>>()
+        {
+            Data = output,
+            Success = true,
+            Error = null,
+        };
+        
         return Ok(response);
     }
         

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections;
+using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using BLL.Helpers;
 using DAL.Entities;
@@ -17,6 +18,7 @@ public class ProfileService(
     UsersInterestsRepository usersInterestsRepository,
     BlackListRepository blackListRepository,
     ServiceValidator validator,
+    ProfileViewsRepository profileViewsRepository,
     IMapper mapper)
 {
     public async Task<User> GetFullProfileByIdAsync(int id)
@@ -155,5 +157,18 @@ public class ProfileService(
         var consumerLikes = await likesRepository.GetLikesByUserIdAsync(consumerId);
         return producerLikes.Any(l => l.LikerId == consumerId) &&
                consumerLikes.Any(l => l.LikerId == producerId);
+    }
+
+    public async Task<List<User>> GetViewedProfilesAsync(int id)
+    {
+        var views=  await profileViewsRepository.GetProfileViewsByUserIdAsync(id);
+        var users = new List<User>();
+        foreach (var view in views)
+        {
+            var user = await GetFullProfileByIdAsync(view.ViewedId);
+            users.Add(user);
+        }
+        
+        return users;
     }
 }

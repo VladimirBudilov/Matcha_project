@@ -32,9 +32,7 @@ public class ProfileViewsRepository(
         var table = await fetcher.GetTableByParameterAsync(query, "@id", likedId);
 
         return (from DataRow row in table.Rows select entityCreator.CreateProfileViews(row)).ToList();
-
-
-    }
+      }
 
     public async Task<ProfileView?> GetView(int viewerId, int viewedId)
     {
