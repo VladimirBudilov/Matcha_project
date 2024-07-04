@@ -90,15 +90,15 @@ interface pagination {
 }
 
 interface search {
-  sexualPreferences?: string,
+  sexualPreferences?: string | null,
   maxDistance?: number,
   minFameRating?: number,
   maxFameRating?: number,
   maxAge?: number,
   minAge?: number,
-  isLikedUser?: boolean,
+  isLikedUser?: boolean | null,
   commonTags: Array<string>,
-  isMatched?: boolean
+  isMatched?: boolean | null
 }
 
 interface GetProfileParams {

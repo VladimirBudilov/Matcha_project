@@ -32,7 +32,9 @@ const GetFilters = async () => {
 	getProfileParams.value.search.maxFameRating = getFilters.value.maxFameRating
 
 
-	getProfileParams.value.search.isMatched = false
+	getProfileParams.value.search.isMatched = null
+	getProfileParams.value.search.isLikedUser = null
+	getProfileParams.value.search.sexualPreferences = null
 	await GetProfile()
 }
 

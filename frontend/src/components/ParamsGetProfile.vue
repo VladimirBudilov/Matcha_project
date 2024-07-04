@@ -18,6 +18,14 @@ const sortMainParam = [{label: 'Distance', value: 0},
 const sort = [{label: 'Ascending', value:'ASC'},
 	{label: 'Descending', value: 'DESC'}]
 
+const selectTrueFalse = [{label: 'Yes', value: true},
+	{label: 'No', value: false},
+	{label: 'No matter', value: null}]
+
+const genders = [{value: 'male', label: 'Male'} ,
+	{value: 'female', label: 'Female'},
+	{label: 'No matter', value: null}]
+
 const age = ref<[number, number]>([getProfileParams.value.search.minAge ? getProfileParams.value.search.minAge : 18, getProfileParams.value.search.maxAge ? getProfileParams.value.search.maxAge : 99])
 const rating = ref<[number, number]>([getProfileParams.value.search.minFameRating ? getProfileParams.value.search.minFameRating : 0, getProfileParams.value.search.maxFameRating ? getProfileParams.value.search.maxFameRating : 100])
 
@@ -68,7 +76,7 @@ watch (
 	}
 )
 
-const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Female'}]
+
 
 </script>
 
@@ -94,10 +102,20 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 							></a-select>
 						</a-form-item>
 						<a-form-item label="Is matched">
-							<a-checkbox v-model:checked="getProfileParams.search.isMatched"></a-checkbox>
+							<a-select
+							v-model:value="getProfileParams.search.isMatched"
+							:options="selectTrueFalse"
+							size="middle"
+							placeholder="Please select"
+							></a-select>
 						</a-form-item>
 						<a-form-item label="Is liked user">
-							<a-checkbox v-model:checked="getProfileParams.search.isLikedUser"></a-checkbox>
+							<a-select
+							v-model:value="getProfileParams.search.isLikedUser"
+							:options="selectTrueFalse"
+							size="middle"
+							placeholder="Please select"
+							></a-select>
 						</a-form-item>
 
 						<a-button id="button-get-profile" type="primary" html-type="signup" @click="GetProfile">Search</a-button>
