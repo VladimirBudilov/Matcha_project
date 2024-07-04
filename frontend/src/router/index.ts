@@ -7,6 +7,7 @@ import Chat from '@/views/Chat.vue'
 import User from '@/views/User.vue'
 import Block from '@/views/Block.vue'
 import Views from '@/views/Views.vue'
+import axios from 'axios'
 
 
 const router = createRouter({
@@ -59,6 +60,10 @@ router.beforeEach(async (to, from) => {
   let status = 0;
   if (localStorage.getItem('token')) {
     status = 1
+
+    await axios.get('api/auth/get-id').catch(() => {
+      status = 0
+    })
   }
 
   if (status == 0 && to.name !== 'login') {
