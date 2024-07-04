@@ -75,7 +75,7 @@ const GetProfile = async () => {
 const LeaveChat = async () => {
 	await connection.value?.invoke("LeaveChat", chatId.value[1])
         .then(() => {
-            message.success('Chat left')
+
         })
         .catch(err => console.error(err.toString()));
 }
@@ -110,10 +110,9 @@ onMounted(async () => {
 	await GetFilters();
 	await GetProfile();
 	getProfileParams.value.pagination.pageNumber = 1
+	chatId.value[1] = 0
 	connection.value = createConnection();
 	connection.value.start().catch(err => message.error(err.toString()));
-	connection.value.on("ReceiveMessage", (user, message) => {
-    });
 })
 
 watch(

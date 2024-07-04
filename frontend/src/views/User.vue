@@ -58,6 +58,22 @@ const GetProfile = async () => {
 	});
 }
 
+const sendLike = async (profileId: number) => {
+	await axios.post('api/actions/like', {producerId: Number(localStorage.getItem('UserId')), consumerId: profileId}).catch((res) => {
+		message.error(`Error: ${res.response.data.error} ${localStorage.getItem('UserId')}`);
+	}).then((res) => {
+		if (res?.data) {
+			if (res?.data.isLiked) {
+				message.success(`You have liked!`);
+			}
+			else {
+				message.success(`You have removed you like!`);
+			}
+			profile.value.hasLike = !profile.value.hasLike
+		}
+	})
+}
+
 onMounted(async () => {
 	await GetProfile()
 })
@@ -66,15 +82,17 @@ onMounted(async () => {
 </script>
 
 <template>
-	test
 	<a-card id="User">
 		<a-form
 	:label-col="{ span: 5 }"
 	:wrapper-col="{ span: 12 }"
     layout="horizontal"
-    :disabled="componentDisabled"
+    :disabled="false"
   	>
 		<div class="Main-info">
+
+			<a-button v-if="!profile.hasLike" id="user-like-button" type="primary" html-type="signup" @click="sendLike(profile.profileId)">Like</a-button>
+			<a-button v-else id="user-like-button" html-type="signup" @click="sendLike(profile.profileId)">Like</a-button>
 			<a-form-item label="ID">
 				<a-input-number v-model:value="profile.profileId" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
@@ -147,6 +165,12 @@ onMounted(async () => {
 	overflow: auto;
 	padding-top: 1vh;
 	padding-bottom: 1vh;
+}
+
+#user-like-button {
+	position: absolute;
+	padding-left: 1vw;
+	z-index: 1;
 }
 
 </style>

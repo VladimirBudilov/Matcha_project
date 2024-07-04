@@ -16,21 +16,31 @@ const chatId = storeToRefs(SignUpStore()).chatId
 const msg = ref<string>('')
 
 const GetMessages = async () => {
-	messages.value
-
 	await axios.post('api/actions/chat',  {producerId: chatId.value[0], consumerId: chatId.value[1]})
 	.then((res) => {
 		messages.value = res.data.data;
 		messages.value.forEach(el => el.datetime = dayjs(el.date).format('YYYY-MM-DD HH:mm:ss'))
 	})
 	.catch(err => message.error(err.toString()));
+	const document_chat = document.getElementById('chat-msg')
+	if (document_chat) {
+		document_chat.scrollTop = document_chat.scrollHeight + 20
+
+	}
+
 }
 
 const ReceiveMessage = async () => {
 	if (connection.value) {
 		connection.value.on("ReceiveMessage", (user, message) => {
       		messages.value.push({ author: user, content: message, datetime: dayjs().format('YYYY-MM-DD HH:mm:ss') });
-    	});
+				const document_chat = document.getElementById('chat-msg')
+				if (document_chat) {
+					setTimeout(() => {
+						document_chat.scrollTop = document_chat.scrollHeight + 20
+					}, 100)
+				}
+			});
 	}
 
 
@@ -55,12 +65,19 @@ const SendMsg = async () => {
 	}
 }
 
+onMounted(async () => {
+	messages.value = []
+})
+
 watch (
 	() => chatId.value[1],
 	async () => {
-		await GetMessages()
-    	await StartChat()
-		await ReceiveMessage()
+		if (chatId.value[1]) {
+			await GetMessages()
+			await StartChat()
+			await ReceiveMessage()
+		}
+
 	}
 )
 
@@ -76,7 +93,7 @@ watch (
 				:data-source="messages"
 				>
 					<template #renderItem="{ item }">
-						<a-list-item>
+						<a-list-item class="ant-list-item-custom">
 							<a-comment>
 								<template #author>{{ item.author }}</template>
 								<template #content>
