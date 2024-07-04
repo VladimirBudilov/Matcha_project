@@ -71,7 +71,7 @@ export interface Profile {
   hasLike?: boolean,
   hasBlock?: boolean,
   isOnlineUser?: boolean
-  lastSeen?: string
+  lastLogin?: string
 }
 
 interface sort {
