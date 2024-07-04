@@ -131,8 +131,8 @@ watch(
 					</p>
 					<p v-else style="color: red;">
 						Offline
-						<span style="color: grey;" v-if="el.lastLogin">
-							last was seen {{ dayjs(el.lastLogin).format('YYYY-MM-DD HH:mm:ss') }}
+						<span style="color: grey;" v-if="el.lastSeen">
+							last was seen {{ dayjs(el.lastSeen).format('YYYY-MM-DD HH:mm:ss') }}
 						</span>
 					</p>
 					<p>
