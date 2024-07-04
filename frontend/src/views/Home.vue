@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import axios from 'axios';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { onMounted, ref, watch } from 'vue';
 import { message } from 'ant-design-vue';
 import { SignUpStore } from '@/stores/SignUpStore';
 import ParamsGetProfile from '@/components/ParamsGetProfile.vue'
 import { storeToRefs } from 'pinia';
+dayjs.extend(relativeTime);
 
 const profiles = storeToRefs(SignUpStore()).profiles
 const getFilters = storeToRefs(SignUpStore()).getFilters
@@ -128,6 +131,9 @@ watch(
 					</p>
 					<p v-else style="color: red;">
 						Offline
+						<span style="color: grey;" v-if="el.lastLogin">
+							last was seen {{ dayjs(el.lastLogin).format('YYYY-MM-DD HH:mm:ss') }}
+						</span>
 					</p>
 					<p>
 						Age: {{ el.age }}
