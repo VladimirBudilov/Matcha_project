@@ -73,115 +73,138 @@ const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Fema
 </script>
 
 <template>
-	<a-card id="input-params-get-profile">
-		<div id="input-form-get-profile">
-			<a-form
-		:label-col="{ span: 10 }"
-		:wrapper-col="{ span: 30 }"
-		layout="horizontal"
-		:disabled="false"
-		id="input-form-get-profile-check-box"
-		>
-			<a-form-item label="Sexual preferences">
-				<a-select
-				v-model:value="getProfileParams.search.sexualPreferences"
-				:options="genders"
-				size="middle"
-				placeholder="Please select"
-				></a-select>
-			</a-form-item>
-			<a-form-item label="Is matched">
-				<a-checkbox v-model:checked="getProfileParams.search.isMatched"></a-checkbox>
-			</a-form-item>
-			<a-form-item label="Is liked user">
-				<a-checkbox v-model:checked="getProfileParams.search.isLikedUser"></a-checkbox>
-			</a-form-item>
+	<div id="input-params-get-profile-collapse-main">
+		<a-collapse>
+			<a-collapse-panel key="1" header="Filter and sort">
 
-			<a-button id="button-get-profile" type="primary" html-type="signup" @click="GetProfile">Search</a-button>
+					<div id="input-form-get-profile">
+						<a-form
+						:label-col="{ span: 10 }"
+						:wrapper-col="{ span: 30 }"
+						layout="horizontal"
+						:disabled="false"
+						id="input-form-get-profile-check-box"
+						>
+						<a-form-item label="Sexual preferences">
+							<a-select
+							v-model:value="getProfileParams.search.sexualPreferences"
+							:options="genders"
+							size="middle"
+							placeholder="Please select"
+							></a-select>
+						</a-form-item>
+						<a-form-item label="Is matched">
+							<a-checkbox v-model:checked="getProfileParams.search.isMatched"></a-checkbox>
+						</a-form-item>
+						<a-form-item label="Is liked user">
+							<a-checkbox v-model:checked="getProfileParams.search.isLikedUser"></a-checkbox>
+						</a-form-item>
 
-		</a-form>
-		<a-form
-		:label-col="{ span: 10 }"
-		:wrapper-col="{ span: 15 }"
-		layout="horizontal"
-		:disabled="false"
-		id="input-form-get-profile-middle"
-		>
-		<a-form-item label="Interests" direction="vertical">
-				<a-select
-				v-model:value="getProfileParams.search.commonTags"
-				:options="interests"
-				mode="tags"
-				size="middle"
-				placeholder="Please select"
-				></a-select>
-		</a-form-item>
-		<a-form-item label="Distance">
-				<a-slider v-model:value="getProfileParams.search.maxDistance" :min=getFilters?.minDistance :max=getFilters?.maxDistance />
-			</a-form-item>
-			<a-form-item label="Age">
-				<a-slider v-model:value="age" range :min=getFilters?.minAge :max=getFilters?.maxAge />
-			</a-form-item>
-			<a-form-item label="Rating">
-				<a-slider v-model:value="rating" range :min=getFilters?.minFameRating :max=getFilters?.maxFameRating />
-			</a-form-item>
-		</a-form>
-		<a-form
-		:label-col="{ span: 10 }"
-		:wrapper-col="{ span: 15 }"
-		layout="horizontal"
-		:disabled="false"
-		id="input-form-get-profile-sort"
-		>
-		<a-form-item label="Sort location">
-			<a-select
-				v-model:value="getProfileParams.sort.sortLocation"
-				:options="sort"
-				size="middle"
-				placeholder="Please select"
-				></a-select>
-		</a-form-item>
-		<a-form-item label="Sort fame rating">
-			<a-select
-				v-model:value="getProfileParams.sort.sortFameRating"
-				:options="sort"
-				size="middle"
-				placeholder="Please select"
-				></a-select>
-		</a-form-item>
-		<a-form-item label="Sort age">
-			<a-select
-				v-model:value="getProfileParams.sort.sortAge"
-				:options="sort"
-				size="middle"
-				placeholder="Please select"
-				></a-select>
-		</a-form-item>
-		<a-form-item label="Sort common tags">
-			<a-select
-				v-model:value="getProfileParams.sort.sortCommonTags"
-				:options="sort"
-				size="middle"
-				placeholder="Please select"
-				></a-select>
-		</a-form-item>
-		<a-form-item label="Sorting main parameter">
-			<a-select
-				v-model:value="getProfileParams.sort.sortingMainParameter"
-				:options="sortMainParam"
-				size="middle"
-				placeholder="Please select"
-				></a-select>
-		</a-form-item>
-		</a-form>
-		</div>
+						<a-button id="button-get-profile" type="primary" html-type="signup" @click="GetProfile">Search</a-button>
 
-	</a-card>
+						</a-form>
+						<a-form
+						:label-col="{ span: 10 }"
+						:wrapper-col="{ span: 15 }"
+						layout="horizontal"
+						:disabled="false"
+						id="input-form-get-profile-middle"
+						>
+						<a-form-item label="Interests" direction="vertical">
+								<a-select
+								v-model:value="getProfileParams.search.commonTags"
+								:options="interests"
+								mode="tags"
+								size="middle"
+								placeholder="Please select"
+								></a-select>
+						</a-form-item>
+						<a-form-item label="Distance">
+								<a-slider v-model:value="getProfileParams.search.maxDistance" :min=getFilters?.minDistance :max=getFilters?.maxDistance />
+							</a-form-item>
+							<a-form-item label="Age">
+								<a-slider v-model:value="age" range :min=getFilters?.minAge :max=getFilters?.maxAge />
+							</a-form-item>
+							<a-form-item label="Rating">
+								<a-slider v-model:value="rating" range :min=getFilters?.minFameRating :max=getFilters?.maxFameRating />
+							</a-form-item>
+						</a-form>
+						<a-form
+						:label-col="{ span: 10 }"
+						:wrapper-col="{ span: 15 }"
+						layout="horizontal"
+						:disabled="false"
+						id="input-form-get-profile-sort"
+						>
+						<a-form-item label="Sort location">
+							<a-select
+								v-model:value="getProfileParams.sort.sortLocation"
+								:options="sort"
+								size="middle"
+								placeholder="Please select"
+								></a-select>
+						</a-form-item>
+						<a-form-item label="Sort fame rating">
+							<a-select
+								v-model:value="getProfileParams.sort.sortFameRating"
+								:options="sort"
+								size="middle"
+								placeholder="Please select"
+								></a-select>
+						</a-form-item>
+						<a-form-item label="Sort age">
+							<a-select
+								v-model:value="getProfileParams.sort.sortAge"
+								:options="sort"
+								size="middle"
+								placeholder="Please select"
+								></a-select>
+						</a-form-item>
+						<a-form-item label="Sort common tags">
+							<a-select
+								v-model:value="getProfileParams.sort.sortCommonTags"
+								:options="sort"
+								size="middle"
+								placeholder="Please select"
+								></a-select>
+						</a-form-item>
+						<a-form-item label="Sorting main parameter">
+							<a-select
+								v-model:value="getProfileParams.sort.sortingMainParameter"
+								:options="sortMainParam"
+								size="middle"
+								placeholder="Please select"
+								></a-select>
+						</a-form-item>
+						</a-form>
+					</div>
+
+
+			</a-collapse-panel>
+		</a-collapse>
+	</div>
+
+
 
 
 </template>
 
 <style>
+#input-params-get-profile-collapse-main {
+	position: relative;
+	margin-top: 7vh;
+	background-color: var(--color-background);
+	color: var(--color-text)
+}
+
+.css-dev-only-do-not-override-16pw25h.ant-collapse>.ant-collapse-item >.ant-collapse-header {
+	color: var(--color-text)
+}
+
+.css-dev-only-do-not-override-16pw25h.ant-collapse .ant-collapse-content {
+	background-color: var(--color-background-soft);
+}
+
 #input-params-get-profile {
 	position: relative;
 	margin-top: 7vh;

@@ -34,8 +34,6 @@ const GetFilters = async () => {
 }
 
 const GetProfile = async () => {
-
-
 	await axios.post('api/profiles', getProfileParams.value).catch((res) => {
 		if (res.response) {
 			message.error(`Fill out the profile!`);
@@ -46,7 +44,6 @@ const GetProfile = async () => {
 			if (getProfileParams.value.pagination.pageSize) {
 				getProfileParams.value.pagination.total = getProfileParams.value.pagination.pageSize * res.data.amountOfPages
 			}
-
 		}
 	})
 }
@@ -87,13 +84,12 @@ const block = async (profileId: number) => {
 		if (res?.data) {
 			if (res?.data) {
 				message.success(`You blocked!`);
+				profiles.value.forEach(function(item, index, object) {
+					if (item.profileId == profileId) {
+						object.splice(index, 1);
+					}
+				})
 			}
-			else {
-				message.success(`You unblocked!`);
-			}
-			profiles.value = profiles.value.filter(el => {
-				el.profileId === profileId
-			})
 		}
 	})
 
@@ -121,12 +117,18 @@ watch(
 		<a-card id="profile-card" :span="8">
 			<a-card-meta>
 				<template #avatar>
-					<a-image
+					<a-image v-if="typeof(el.profilePicture) === 'string'"
 					:src="'data:image/*' + ';base64,' + el.profilePicture" />
 				</template>
 			</a-card-meta>
 			<a-card-meta :title="el.firstName + ' ' + el.lastName" style="padding-top: 1%;">
 				<template #description>
+					<p v-if="el.isOnlineUser" style="color: green;">
+						Online
+					</p>
+					<p v-else style="color: red;">
+						Offline
+					</p>
 					<p>
 						Age: {{ el.age }}
 					</p>

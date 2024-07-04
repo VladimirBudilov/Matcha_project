@@ -136,12 +136,15 @@ onMounted(async () => {
 
 <style>
 #User {
-	position: relative;
+	position: fixed;
+	width: 40vw;
+	height: 80vh;
 	margin-top: 8vh;
 	margin-left: 1vw;
 	margin-right: 60vw;
 	margin-bottom: 15vh;
 	background-color: var(--color-background-mute);
+	overflow: auto;
 	padding-top: 1vh;
 	padding-bottom: 1vh;
 }

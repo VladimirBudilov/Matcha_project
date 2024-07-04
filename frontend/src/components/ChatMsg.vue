@@ -59,7 +59,7 @@ watch (
 	() => chatId.value[1],
 	async () => {
 		await GetMessages()
-    await StartChat()
+    	await StartChat()
 		await ReceiveMessage()
 	}
 )
@@ -93,26 +93,32 @@ watch (
 				</a-list>
 			</a-card>
 		</div>
-		<div id="chat-msg-input" v-if="chatId[1]">
-			<a-textarea v-model:value="msg" placeholder="Write msg" :rows="2" />
-			<a-button type="primary" html-type="signup" @click="SendMsg">Send</a-button>
-		</div>
+	</div>
+	<div id="chat-msg-input" v-if="chatId[1]">
+		<a-textarea v-model:value="msg" placeholder="Write msg" :rows="2" />
+		<a-button type="primary" html-type="signup" @click="SendMsg">Send</a-button>
 	</div>
 </template>
 
 <style>
 #chat-msg {
-	position:absolute;
+	position:fixed;
 	top: 9vh;
 	bottom: 20vh;
 	left: 30vw;
 	right: 1vw;
 	width: 50vw;
-	height: 80vh;
+	height: 70vh;
 	overflow-y: auto;
 	scroll-margin-top: 0;
 	scroll-padding-top: 0;
+}
 
+#chat-msg-input {
+	position:fixed;
+	bottom: 5vh;
+	width: 50vw;
+	left: 30vw;
 }
 
 </style>

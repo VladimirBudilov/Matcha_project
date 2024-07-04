@@ -5,6 +5,8 @@ import Profile from '@/views/Profile.vue'
 import Settings from '@/views/Settings.vue'
 import Chat from '@/views/Chat.vue'
 import User from '@/views/User.vue'
+import Block from '@/views/Block.vue'
+import Views from '@/views/Views.vue'
 
 
 const router = createRouter({
@@ -39,7 +41,17 @@ const router = createRouter({
       path: "/chat",
       name: "chat",
       component: Chat
-    }
+    },
+    {
+      path: "/blacklist",
+      name: "blacklist",
+      component: Block
+    },
+    {
+      path: "/views",
+      name: "views",
+      component: Views
+    },
   ]
 })
 

@@ -45,6 +45,8 @@ onMounted (async () => {
           <RouterLink to="/profiles"> {{ firstName }} {{ lastName }}</RouterLink>
           <RouterLink to="/settings">Settings</RouterLink>
           <RouterLink to="/chat">Chat</RouterLink>
+          <RouterLink to="/blacklist">Blacklist</RouterLink>
+          <RouterLink to="/views">Views</RouterLink>
           <Logout />
         </nav>
       </header>

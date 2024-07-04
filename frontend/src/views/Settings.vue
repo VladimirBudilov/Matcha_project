@@ -89,7 +89,8 @@ const onFinish = async (values: FormState) => {
 
 <style>
 #Settings{
-	position: relative;
+	position: fixed;
+	width: 50vw;
 	margin-top: 10vh;
 	margin-left: 20vw;
 	margin-right: 20vw;

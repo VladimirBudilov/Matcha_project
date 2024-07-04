@@ -28,6 +28,9 @@ const columns = [
 	dataIndex: 'age',
 	key: 'age',
 	},
+	{
+	key: 'block',
+	},
 ]
 
 const GetFilters = async () => {
@@ -85,9 +88,28 @@ const setChatId = async (userId : number) => {
 	chatId.value[1] = userId
 }
 
+const block = async (profileId: number) => {
+	await axios.post('api/actions/block', {producerId: Number(localStorage.getItem('UserId')), consumerId: profileId}).catch((res) => {
+		message.error(`Error: ${res.response.data.error} ${localStorage.getItem('UserId')}`);
+	}).then((res) => {
+		if (res?.data) {
+			if (res?.data) {
+				message.success(`You blocked!`);
+				profiles.value.forEach(function(item, index, object) {
+					if (item.profileId == profileId) {
+						object.splice(index, 1);
+					}
+				})
+			}
+		}
+	})
+}
+
 onMounted(async () => {
+	profiles.value.length = 0
 	await GetFilters();
 	await GetProfile();
+	getProfileParams.value.pagination.pageNumber = 1
 	connection.value = createConnection();
 	connection.value.start().catch(err => message.error(err.toString()));
 	connection.value.on("ReceiveMessage", (user, message) => {
@@ -106,11 +128,11 @@ watch(
 </script>
 
 <template>
-	<div id="chat">
+	<div id="chat" v-if="profiles.length">
 		<a-table :dataSource="profiles" :columns="columns" :pagination="false">
 			<template #bodyCell="{ column, record }">
 				<template v-if="column.key === 'avatar'">
-					<a-image
+					<a-image v-if="typeof(record.profilePicture) === 'string'"
 					:width="50"
 					:src="'data:image/*' + ';base64,' + record.profilePicture"
 					/>
@@ -119,6 +141,11 @@ watch(
 					<a @click="setChatId(record.profileId)">
 						{{ record.firstName + ' ' + record.lastName }}
 					</a>
+				</template>
+				<template v-if="column.key === 'block'">
+					<a-button @click="block(record.profileId)">
+						block
+					</a-button>
 				</template>
 			</template>
 		</a-table>
@@ -135,23 +162,22 @@ watch(
 
 <style>
 #chat {
+	position: fixed;
+	width: 30vw;
+	height: 85vh;
 	padding-top: 7vh;
-	padding-bottom: 10vh;
 	padding-left: 1vw;
 	padding-right: 1vw;
-	width: 30vw;
-	display: flex;
-	flex-wrap: wrap;
+	overflow: auto;
 }
 
 #pagination-users-chat {
-	position: relative;
-	margin-top: 10vh;
-	width: 50%;
+	position: fixed;
 	bottom: 3vh;
-	padding-top: 2vh;
+	width: 25vw;
+	padding-top: 1vh;
 	padding-bottom: 2vh;
-	padding-left: 3vh;
+	padding-left: 1vh;
 	background-color: var(--color-background-soft);
 	color:var(--color-text);
 	display: flex;

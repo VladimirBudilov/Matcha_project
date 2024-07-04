@@ -70,7 +70,7 @@ export interface Profile {
   interests: Array<string>,
   hasLike?: boolean,
   hasBlock?: boolean,
-  hasOnline?: boolean
+  isOnlineUser?: boolean
 }
 
 interface sort {
