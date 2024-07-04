@@ -22,7 +22,7 @@ const block = async (profileId: number) => {
 	}).then((res) => {
 		if (res?.data) {
 			if (res?.data) {
-				message.success(`You unblocked!`);
+				message.success(`You blocked!`);
 				profiles.value.forEach(function(item, index, object) {
 					if (item.profileId == profileId) {
 						object.splice(index, 1);
