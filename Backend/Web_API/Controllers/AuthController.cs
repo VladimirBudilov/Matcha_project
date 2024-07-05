@@ -125,6 +125,7 @@ public class AuthController(
     public async Task<IActionResult> GetId()
     {
         var id = User.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
+        if (id == null) return Unauthorized();
         return Ok(id);
     }
 }

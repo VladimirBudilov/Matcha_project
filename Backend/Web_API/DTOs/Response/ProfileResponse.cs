@@ -17,6 +17,6 @@ public record ProfileResponse()
     public bool HasLike { get; init; } = false;
     public double Distance { get; set; }
     
-    public string LastSeen { get; set; } = "";
+    public string lastLogin { get; set; } = "";
     public bool IsOnlineUser { get; set; } = false;
 };

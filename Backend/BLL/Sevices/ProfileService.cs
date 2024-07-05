@@ -41,7 +41,7 @@ public class ProfileService(
         if(!currentUser.IsActive) throw new ForbiddenActionException("update user profile first");
         
         var tagsIds = await interestsRepository.GetUserInterestsByNamesAsync(search.CommonTags);
-        search.SexualPreferences ??= currentUser.SexualPreferences;
+        //search.SexualPreferences ??= currentUser.SexualPreferences;
         
         var (counter, users) = await profilesRepository.GetFullProfilesAsync(search, sort, pagination, id, tagsIds, blackList);
         if (users == null) return (0, new List<User>());
