@@ -229,8 +229,8 @@ watch(
 	padding-bottom: 2vh;
 	padding-left: 3vh;
 	padding-right: 3vh;
-	background-color: grey;
-	color:black
+	background-color: var(--color-background-soft);
+	color:var(--color-text);
 }
 
 </style>
