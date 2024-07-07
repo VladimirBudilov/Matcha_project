@@ -10,25 +10,14 @@ const IsActiveSignUp = storeToRefs(SignUpStore()).IsActiveSignUp
 
 
 <template>
-	<div class="Login" v-if="!IsActiveSignUp">
+	<div v-if="!IsActiveSignUp">
 		<NamePasswordInput />
 	</div>
-	<div class="SignUpForm" v-if="IsActiveSignUp">
+	<div v-if="IsActiveSignUp">
 		<SignUpForm />
 	</div>
 </template>
 
 <style>
-.Login {
-	position: relative;
-	top: 15vh;
-	right: 4vw;
-}
-
-.SignUpForm {
-	position: relative;
-	top: 10vh;
-	right: 4vw;
-}
 
 </style>

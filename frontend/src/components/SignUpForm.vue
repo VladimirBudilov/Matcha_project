@@ -49,6 +49,8 @@ const onFinish = (values: any) => {
 
 
 <template>
+	<a-card id="SignUpForm">
+
 	<a-form
 		:model="formState"
 		:label-col="{ span: 9 }"
@@ -57,6 +59,8 @@ const onFinish = (values: any) => {
 		:validate-messages="validateMessages"
 		@finish="onFinish"
 	>
+
+
 		<a-form-item :name="['email']" label="Email" :rules="[{ type: 'email', required: true }]">
 			<a-input v-model:value="formState.email" />
 		</a-form-item>
@@ -72,19 +76,45 @@ const onFinish = (values: any) => {
 		<a-form-item :name="['password']" label="Password" :rules="[{ type: 'string', required: true }]">
 		<a-input-password v-model:value="formState.password" />
 		</a-form-item>
-		<a-form-item :wrapper-col="{ offset: 9, span: 7 }">
+		<a-form-item id="button-signup-submit-cancel">
 			<a-button type="primary" html-type="submit">Submit</a-button>
-			<a-button id="button-sing-up-cancel" danger type="primary"  html-type="cancel" @click="SignUpButtonTurnOn">Cancel</a-button>
+			<a-button id="button-singup-cancel" danger type="primary"  html-type="cancel" @click="SignUpButtonTurnOn">Cancel</a-button>
 		</a-form-item>
 
 
-
 	</a-form>
+	</a-card>
 
 </template>
 
 <style>
-#button-sing-up-cancel {
-	margin-left: 1vw;
+#SignUpForm {
+	position: fixed;
+	width: 50vw;
+
+	margin-top: 10vh;
+	margin-left: 20vw;
+	margin-right: 20vw;
+	margin-bottom: 10vh;
+	background-color: var(--color-background-soft);
+	padding-top: 10vh;
+	padding-bottom: 4vh;
+	overflow: auto;
+}
+
+#button-signup-submit-cancel {
+	position: relative;
+	margin-left: 18vw;
+}
+
+#button-singup-cancel {
+	margin-top: 3px
+}
+
+@media screen and (max-width: 1100px) {
+	#SignUpForm {
+		height: 88vh;
+	}
+
 }
 </style>

@@ -61,56 +61,5 @@ onMounted (async () => {
 </template>
 
 <style>
-body{
-  font-family: 'Arial', sans-serif;
-  background-color: var(--color-background);
-  color: var(--color-text);
-}
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: var(--color-background-mute);
-  z-index: 999;
-}
-
-nav {
-  position: relative;
-  width: 100vw;
-  top:0;
-  font-size: 25px;
-  text-align: left;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 1rex 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-footer {
-  background-color: var(--color-background-mute);
-   position: fixed;
-   right: 0;
-   bottom: 0;
-   text-align: center;
-   width: 100vw;
-   font-size: 19px;
-font-weight: bold;
-  color: var(--color-text);
-  z-index: 999;
- }
 
 </style>

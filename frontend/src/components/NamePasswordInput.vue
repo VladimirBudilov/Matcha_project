@@ -63,7 +63,8 @@ const onFinish = async (values: any) => {
 
 
 <template>
-	<a-form
+	<a-card id="Login">
+		<a-form
 		:model="formState"
 		name="basic"
 		:label-col="{ span: 9 }"
@@ -71,6 +72,7 @@ const onFinish = async (values: any) => {
 		autocomplete="on"
 		@finish="onFinish"
 		>
+
 		<a-form-item
 			label="Username"
 			name="username"
@@ -87,16 +89,33 @@ const onFinish = async (values: any) => {
 			<a-input-password v-model:value="formState.password" />
 		</a-form-item>
 
-		<a-form-item :wrapper-col="{ offset: 9, span: 2 }">
+		<a-form-item id="button-submit-signup">
 			<a-button type="primary" html-type="submit">Submit</a-button>
-			<a-button id='sign-up' type="primary" html-type="signup" @click="SignUpButtonTurnOn">Sign up</a-button>
+			<a-button id='button-signup' type="primary" html-type="signup" @click="SignUpButtonTurnOn">Sign up</a-button>
 		</a-form-item>
 	</a-form>
-
+	</a-card>
 </template>
 
 <style>
-#sign-up {
+#Login {
+	position: fixed;
+	width: 50vw;
+	margin-top: 10vh;
+	margin-left: 20vw;
+	margin-right: 20vw;
+	margin-bottom: 10vh;
+	background-color: var(--color-background-soft);
+	padding-top: 10vh;
+	padding-bottom: 4vh;
+}
+
+#button-submit-signup {
+	position: relative;
+	margin-left: 18vw;
+}
+
+#button-signup {
 	margin-top: 3px
 }
 

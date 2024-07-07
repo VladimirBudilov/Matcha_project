@@ -122,7 +122,7 @@ watch (
 	position:fixed;
 	top: 9vh;
 	bottom: 20vh;
-	left: 30vw;
+	left: 50vw;
 	right: 1vw;
 	width: 50vw;
 	height: 70vh;
@@ -135,7 +135,7 @@ watch (
 	position:fixed;
 	bottom: 5vh;
 	width: 50vw;
-	left: 30vw;
+	left: 50vw;
 }
 
 </style>

@@ -162,7 +162,7 @@ watch(
 <style>
 #chat {
 	position: fixed;
-	width: 30vw;
+	width: 50vw;
 	height: 85vh;
 	padding-top: 7vh;
 	padding-left: 1vw;
@@ -173,7 +173,7 @@ watch(
 #pagination-users-chat {
 	position: fixed;
 	bottom: 3vh;
-	width: 25vw;
+	width: 45vw;
 	padding-top: 1vh;
 	padding-bottom: 2vh;
 	padding-left: 1vh;
