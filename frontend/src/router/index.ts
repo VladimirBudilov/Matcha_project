@@ -58,12 +58,14 @@ const router = createRouter({
 
 router.beforeEach(async (to, from) => {
   let status = 0;
+  await axios.get('api/auth/get-id').catch(() => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('UserId')
+  })
+
+
   if (localStorage.getItem('token')) {
     status = 1
-
-    await axios.get('api/auth/get-id').catch(() => {
-      status = 0
-    })
   }
 
   if (status == 0 && to.name !== 'login') {

@@ -19,17 +19,20 @@ async function GetProfileInfo(){
 }
 
 onMounted (async () => {
-
   setTimeout(async () => {
-    if (localStorage.getItem('UserId')) {
-      await GetProfileInfo()
-    }
-    else {
-      await axios.get('api/auth/get-id').then(async (res) => {
-        localStorage.setItem('UserId', String(res?.data))
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('UserId')) {
         await GetProfileInfo()
+      }
+      else {
+        await axios.get('api/auth/get-id')
+        .then(async (res) => {
+          localStorage.setItem('UserId', String(res?.data))
+          await GetProfileInfo()
       })
     }
+    }
+
   }, 100)
 
 })
