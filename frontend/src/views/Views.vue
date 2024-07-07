@@ -90,4 +90,10 @@ onMounted(async () => {
 	overflow: auto;
 }
 
+@media screen and (max-width: 1100px) {
+	#views {
+		width: 100vw;
+	}
+}
+
 </style>

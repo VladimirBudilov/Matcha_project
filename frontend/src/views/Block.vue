@@ -88,4 +88,11 @@ const columns = [
 	padding-right: 1vw;
 	overflow: auto;
 }
+
+@media screen and (max-width: 1100px) {
+	#block {
+		width: 100vw;
+	}
+}
+
 </style>
