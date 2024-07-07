@@ -86,6 +86,8 @@ watch (
 			<a-collapse-panel key="1" header="Filter and sort">
 
 					<div id="input-form-get-profile">
+						<a-button id="button-get-profile" type="primary" html-type="signup" @click="GetProfile">Search</a-button>
+
 						<a-form
 						:label-col="{ span: 10 }"
 						:wrapper-col="{ span: 30 }"
@@ -118,7 +120,6 @@ watch (
 							></a-select>
 						</a-form-item>
 
-						<a-button id="button-get-profile" type="primary" html-type="signup" @click="GetProfile">Search</a-button>
 
 						</a-form>
 						<a-form
@@ -251,8 +252,27 @@ watch (
 
 #button-get-profile {
 	position: relative;
-	margin-left: 7vw;
+	margin-left: 1vw;
 	z-index: 1;
+}
+
+@media screen and (max-width: 1100px) {
+	#input-form-get-profile-check-box {
+		width: 100%;
+	}
+
+	#input-form-get-profile-middle {
+		width: 100%;
+	}
+
+	#input-form-get-profile-sort {
+		width: 100%;
+	}
+
+	.css-dev-only-do-not-override-16pw25h.ant-form-item .ant-form-item-label >label {
+		font-size: 0.7em;;
+	}
+
 }
 
 </style>

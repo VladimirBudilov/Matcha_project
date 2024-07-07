@@ -207,6 +207,13 @@ watch(
 	width: 30vw;
 }
 
+@media screen and (max-width: 1100px) {
+	#profile-card {
+		position:inherit;
+		width: 100%;
+	}
+}
+
 #card-button-like-block {
 	position: relative;
 	padding-top: 3%;

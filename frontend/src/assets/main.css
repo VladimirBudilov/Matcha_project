@@ -184,12 +184,6 @@ font-weight: bold;
  }
 
 
-#app {
-  margin: 1vw 1vh;
-  grid-template-columns: 1fr 1fr;
-
-}
-
 a,
 .green {
   text-decoration: none;
