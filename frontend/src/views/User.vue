@@ -133,21 +133,21 @@ onMounted(async () => {
 	</a-card>
 
 	<a-card id="Avatar">
-		<a-form-item label="Avatar" >
-		<a-image v-if="profile.profilePicture.picture"
-		:width="200"
-		:src="'data:image/*' + ';base64,' + profile.profilePicture.picture"
-		/>
-	</a-form-item>
+			<a-form-item label="Avatar" >
+				<a-image v-if="profile.profilePicture.picture"
+				:src="'data:image/*' + ';base64,' + profile.profilePicture.picture"
+				/>
+		</a-form-item>
+	</a-card>
 
-	<a-form-item label="Photos">
-		<a-image-preview-group v-for="item in profile.pictures">
-			<a-image
-				:width="200"
-				:src="'data:image/*' + ';base64,' + item.picture"
-			/>
-		</a-image-preview-group>
-	</a-form-item>
+	<a-card id="Photos">
+		<a-form-item label="Photos">
+			<a-image-preview-group v-for="item in profile.pictures">
+				<a-image
+					:src="'data:image/*' + ';base64,' + item.picture"
+				/>
+			</a-image-preview-group>
+		</a-form-item>
 	</a-card>
 
 </template>
@@ -155,10 +155,9 @@ onMounted(async () => {
 <style>
 #User {
 	position: fixed;
-	width: 40vw;
-	height: 80vh;
+	width: 50%;
+	height: 85vh;
 	margin-top: 8vh;
-	margin-left: 1vw;
 	margin-right: 60vw;
 	margin-bottom: 15vh;
 	background-color: var(--color-background-mute);

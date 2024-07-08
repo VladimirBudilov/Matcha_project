@@ -100,7 +100,7 @@ body {
 }
 
 .css-dev-only-do-not-override-16pw25h.ant-input-number .ant-input-number-input {
-  color: var(--color-text);
+  color: inherit
 }
 
 .css-dev-only-do-not-override-16pw25h.ant-pagination .ant-pagination-item-active {

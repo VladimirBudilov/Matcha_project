@@ -295,69 +295,67 @@ const DeletePicture = async (picureId: number) => {
 
 	<a-card id="Avatar">
 		<a-form-item label="Avatar">
-		<a-image v-if="profile.profilePicture.picture"
-		width="8vw"
-		hight="8vh"
-		:src="'data:image/*' + ';base64,' + profile.profilePicture.picture"
-		/>
-		<div id="avatar-upload">
-			<a-upload
-			v-model:file-list="fileList"
-			:showUploadList="false"
-			name="file"
-			:action="uploadUrl + '?isMain=true'"
-			:headers="headers"
-			:maxCount="1"
-			@change="handleChange"
-			accept=".jpg, .jpeg, .png"
-		>
-			<a-button>
-			<upload-outlined></upload-outlined>
-			Click to Upload
-			</a-button>
-		</a-upload>
-		</div>
-
-	</a-form-item>
-
-	<a-form-item label="Photos">
-		<div id="photos-profile">
-			<a-image-preview-group v-for="item in profile.pictures">
-			<div id="photo-profile">
-				<a-image
-				width="8vw"
-				hight="8vh"
-				:src="'data:image/*' + ';base64,' + item.picture"
-
+			<a-image v-if="profile.profilePicture.picture"
+			:src="'data:image/*' + ';base64,' + profile.profilePicture.picture"
 			/>
-				<div>
-					<a-button id="delete-picture" @click="DeletePicture(item.pictureId)">
-					Delete
+			<div id="avatar-upload">
+				<a-upload
+				v-model:file-list="fileList"
+				:showUploadList="false"
+				name="file"
+				:action="uploadUrl + '?isMain=true'"
+				:headers="headers"
+				:maxCount="1"
+				@change="handleChange"
+				accept=".jpg, .jpeg, .png"
+				>
+					<a-button>
+					<upload-outlined></upload-outlined>
+					Click to Upload
 					</a-button>
-				</div>
+				</a-upload>
 			</div>
-		</a-image-preview-group>
-		</div>
 
-		<div id="upload-photo-profile">
-			<a-upload
-			v-model:file-list="fileList"
-			:showUploadList="false"
-			name="file"
-			:action="uploadUrl + '?isMain=false'"
-			:headers="headers"
-			:maxCount="1"
-			@change="handleChange"
-			accept=".jpg, .jpeg, .png"
-		>
-			<a-button>
-			<upload-outlined></upload-outlined>
-			Click to Upload
-			</a-button>
-		</a-upload>
-		</div>
+		</a-form-item>
+	</a-card>
 
-	</a-form-item>
+	<a-card id="Photos">
+		<a-form-item label="Photos">
+			<div id="photos-profile">
+				<a-image-preview-group v-for="item in profile.pictures">
+					<div id="photo-profile">
+						<a-image
+						:src="'data:image/*' + ';base64,' + item.picture"
+
+						/>
+							<div>
+								<a-button id="delete-picture" @click="DeletePicture(item.pictureId)">
+								Delete
+								</a-button>
+							</div>
+					</div>
+				</a-image-preview-group>
+			</div>
+
+			<div id="upload-photo-profile">
+				<a-upload
+				v-model:file-list="fileList"
+				:showUploadList="false"
+				name="file"
+				:action="uploadUrl + '?isMain=false'"
+				:headers="headers"
+				:maxCount="1"
+				@change="handleChange"
+				accept=".jpg, .jpeg, .png"
+			>
+				<a-button>
+				<upload-outlined></upload-outlined>
+				Click to Upload
+				</a-button>
+			</a-upload>
+			</div>
+
+		</a-form-item>
 
 	</a-card>
 </template>
@@ -365,35 +363,52 @@ const DeletePicture = async (picureId: number) => {
 <style>
 #Profile {
 	position: fixed;
-	width: 40vw;
-	height: 80vh;
+	width: 50%;
+	height: 85vh;
 	margin-top: 8vh;
-	margin-left: 1vw;
 	margin-right: 60vw;
 	margin-bottom: 15vh;
 	background-color: var(--color-background-mute);
 	overflow: auto;
 	padding-top: 1vh;
 	padding-bottom: 1vh;
+
 }
 
 #submit-changes {
 	position: absolute;
-	padding-left: 1vw;
 	z-index: 1;
 }
 
 #Avatar {
-	position: fixed ;
+	position: fixed;
 	top: 8vh;
-	right: 1vw;
 	margin-left: 50vw;
 	width: 50vw;
 	background-color: var(--color-background-mute);
+
+	.css-dev-only-do-not-override-16pw25h.ant-image {
+		width: 8vw;
+		height: 15vh;
+	}
 }
 
 #avatar-upload{
 	margin-top: 3vh;
+}
+
+#Photos {
+	position: fixed;
+	top: 40vh;
+	margin-left: 50vw;
+	width: 50vw;
+	height: 53vh;
+	overflow: auto;
+	background-color: var(--color-background-mute);
+	.css-dev-only-do-not-override-16pw25h.ant-image {
+		width: 8vw;
+		height: 15vh;
+	}
 }
 
 #photos-profile {
@@ -415,5 +430,28 @@ const DeletePicture = async (picureId: number) => {
 	margin-top: 3vh;
 }
 
+.anticon {
+	color: inherit;
+}
+
+@media screen and (max-width: 1100px) {
+	#Avatar {
+		.css-dev-only-do-not-override-16pw25h.ant-image {
+			width: 30vw;
+			height: 15vh;
+		}
+	}
+
+	#Photos {
+		.css-dev-only-do-not-override-16pw25h.ant-image {
+			width: 30vw;
+			height: 15vh;
+		}
+	}
+
+	#photos-profile {
+		display: inherit;
+	}
+}
 
 </style>
