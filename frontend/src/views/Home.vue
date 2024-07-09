@@ -35,10 +35,6 @@ const GetFilters = async () => {
 	getProfileParams.value.search.isMatched = null
 	getProfileParams.value.search.isLikedUser = null
 	getProfileParams.value.search.sexualPreferences = null
-	await GetProfile()
-}
-
-const GetProfile = async () => {
 	await axios.get('api/profiles/' + localStorage.getItem('UserId')).catch((res) => {
 		if (res.response.data){
 			message.error(res.response.data)
@@ -50,6 +46,10 @@ const GetProfile = async () => {
 		getProfileParams.value.search.commonTags = res?.data.interests
 		getProfileParams.value.search.sexualPreferences = res?.data.sexualPreferences
 	})
+	await GetProfile()
+}
+
+const GetProfile = async () => {
 
 	await axios.post('api/profiles', getProfileParams.value).catch((res) => {
 		if (res.response) {

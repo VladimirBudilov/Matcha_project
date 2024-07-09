@@ -6,7 +6,7 @@
 import { onMounted, onUnmounted } from 'vue';
 import createConnection from '@/services/NotificationService';
 import {Notification, useNotificationStore} from '@/stores/NotoficationStore'
-import { message } from 'ant-design-vue';
+import { notification } from 'ant-design-vue';
 
 const store = useNotificationStore();
 
@@ -16,12 +16,15 @@ onMounted(async () => {
     const connection = createConnection();
     if (connection) {
         await connection.start();
-        connection.on('ReceiveNotifications', function (notifications: []) {
-          notifications.forEach((notification : Notification) => {
-            if(notification.type != null)
+        connection.on('ReceiveNotifications', function (GetNotifications: []) {
+          GetNotifications.forEach((GetNotification : Notification) => {
+            if(GetNotification.type != null)
             {
-              let content = notification.type + ' by ' + notification.actor;
-              message.success(content);
+              notification.info({
+                message: GetNotification.actor,
+                description: GetNotification.type.toString(),
+                duration: 0,
+              })
             }
           });
         });
