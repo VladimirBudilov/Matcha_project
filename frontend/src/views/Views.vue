@@ -41,10 +41,7 @@ const columns = [
 	{
 	title: 'Name',
 	key: 'name',
-	},
-	{
-	key: 'block',
-	},
+	}
 ]
 
 onMounted(async () => {
@@ -66,11 +63,6 @@ onMounted(async () => {
 			</template>
 			<template v-if="column.key === 'name'">
 				<RouterLink :to="'/user/' + record.profileId"> {{ record.firstName + ' ' + record.lastName }} </RouterLink>
-			</template>
-			<template v-if="column.key === 'block'">
-				<a-button @click="block(record.profileId)">
-					block
-				</a-button>
 			</template>
 		</template>
 	</a-table>

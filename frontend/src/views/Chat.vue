@@ -53,6 +53,8 @@ const GetProfile = async () => {
 	getProfileParams.value.search.minFameRating = getFilters.value.minFameRating
 	getProfileParams.value.search.maxFameRating = getFilters.value.maxFameRating
 	getProfileParams.value.search.isMatched = true
+	getProfileParams.value.search.sexualPreferences = null
+	getProfileParams.value.search.commonTags = []
 
 	await axios.post('api/profiles', getProfileParams.value).catch((res) => {
 		if (res.response.data) {
