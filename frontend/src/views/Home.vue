@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { onMounted, ref, watch } from 'vue';
 import { message } from 'ant-design-vue';
-import { SignUpStore } from '@/stores/SignUpStore';
+import { SignUpStore, type Profile } from '@/stores/SignUpStore';
 import ParamsGetProfile from '@/components/ParamsGetProfile.vue'
 import { storeToRefs } from 'pinia';
 dayjs.extend(relativeTime);
@@ -39,6 +39,18 @@ const GetFilters = async () => {
 }
 
 const GetProfile = async () => {
+	await axios.get('api/profiles/' + localStorage.getItem('UserId')).catch((res) => {
+		if (res.response.data){
+			message.error(res.response.data)
+		}
+		else {
+			message.error("Error")
+		}
+	}).then( async (res) => {
+		getProfileParams.value.search.commonTags = res?.data.interests
+		getProfileParams.value.search.sexualPreferences = res?.data.sexualPreferences
+	})
+
 	await axios.post('api/profiles', getProfileParams.value).catch((res) => {
 		if (res.response) {
 			message.error(`Fill out the profile!`);
