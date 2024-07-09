@@ -188,7 +188,8 @@ const getLocation = async () => {
 }
 
 
-const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Female'} , {value: null, label: 'Whatever can move'}]
+const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Female'}]
+const sexualPreferences = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Female'} , {value: null, label: 'Whatever can move'}]
 
 const fileList = ref([]);
 const headers = {
@@ -264,7 +265,7 @@ const DeletePicture = async (picureId: number) => {
 			<a-form-item label="Sexual preferences">
 				<a-select
 				v-model:value="profile.sexualPreferences"
-				:options="genders"
+				:options="sexualPreferences"
 				size="middle"
 				placeholder="Please select"
 				></a-select>
