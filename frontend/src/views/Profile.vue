@@ -4,7 +4,8 @@ import { message } from 'ant-design-vue';
 import { UploadOutlined } from '@ant-design/icons-vue';
 import type { UploadChangeParam } from 'ant-design-vue';
 import axios from 'axios';
-import {type Profile, type Interests} from '@/stores/SignUpStore'
+import {type Profile, type Interests, SignUpStore} from '@/stores/SignUpStore'
+import { storeToRefs } from 'pinia';
 
 const componentDisabled = ref(false);
 const uploadUrl = ref('')
@@ -13,6 +14,8 @@ const userName = ref('')
 const firstName = ref('')
 const lastName = ref('')
 const email = ref('')
+
+const getProfileParams = storeToRefs(SignUpStore()).getProfileParams
 
 const checkAtr = async (str1 : string, str2 : string) => {
 	if (str1 != str2)
@@ -66,6 +69,8 @@ const GetProfile = async () => {
 		userName.value = profile.value.userName
 		firstName.value = profile.value.firstName
 		lastName.value = profile.value.lastName
+
+		getProfileParams.value.search.sexualPreferences = profile.value.sexualPreferences
 
 
 		if (profile.value.latitude && profile.value.longitude) {
