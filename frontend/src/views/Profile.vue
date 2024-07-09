@@ -188,7 +188,7 @@ const getLocation = async () => {
 }
 
 
-const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Female'}]
+const genders = [{value: 'male', label: 'Male'} , {value: 'female', label: 'Female'} , {value: null, label: 'Whatever can move'}]
 
 const fileList = ref([]);
 const headers = {
