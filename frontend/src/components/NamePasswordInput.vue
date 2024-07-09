@@ -1,17 +1,19 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
-import {type StoreDefinition, storeToRefs} from 'pinia';
+import { storeToRefs} from 'pinia';
 import { SignUpStore } from '@/stores/SignUpStore';
-import createConnection from '@/services/NotificationService'
 import axios from 'axios';
-import {useNotificationStore} from '@/stores/NotoficationStore'
-import {} from './SignUpForm.vue'
 import { message } from 'ant-design-vue';
 
 const IsActiveSignUp = storeToRefs(SignUpStore()).IsActiveSignUp
+const IsForgotPassword = storeToRefs(SignUpStore()).IsForgotPassword
 
 const SignUpButtonTurnOn = () => {
   IsActiveSignUp.value = !IsActiveSignUp.value
+}
+
+const ForgotPasswordButtonTurnOn = () => {
+	IsForgotPassword.value = !IsForgotPassword.value
 }
 
 const IsLogin = storeToRefs(SignUpStore()).IsLogin
@@ -92,6 +94,7 @@ const onFinish = async (values: any) => {
 		<a-form-item id="button-submit-signup">
 			<a-button type="primary" html-type="submit">Submit</a-button>
 			<a-button id='button-signup' type="primary" html-type="signup" @click="SignUpButtonTurnOn">Sign up</a-button>
+			<a-button id='button-forgot-password' type="primary" html-type="submit" @click="ForgotPasswordButtonTurnOn">Forgot password?</a-button>
 		</a-form-item>
 	</a-form>
 	</a-card>
@@ -117,6 +120,17 @@ const onFinish = async (values: any) => {
 
 #button-signup {
 	margin-top: 3px
+}
+
+#button-forgot-password{
+	margin-top: 3px
+}
+
+@media screen and (max-width: 1100px) {
+	#button-submit-signup {
+		position: relative;
+		margin-left: inherit;
+	}
 }
 
 </style>

@@ -33,6 +33,7 @@ declare module 'vue' {
     ATextarea: typeof import('ant-design-vue/es')['Textarea']
     AUpload: typeof import('ant-design-vue/es')['Upload']
     ChatMsg: typeof import('./src/components/ChatMsg.vue')['default']
+    ForgotPasswordForm: typeof import('./src/components/ForgotPasswordForm.vue')['default']
     Logout: typeof import('./src/components/Logout.vue')['default']
     NamePasswordInput: typeof import('./src/components/NamePasswordInput.vue')['default']
     ParamsGetProfile: typeof import('./src/components/ParamsGetProfile.vue')['default']

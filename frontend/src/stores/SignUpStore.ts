@@ -4,6 +4,7 @@ import type { HubConnection } from '@microsoft/signalr'
 
 export const SignUpStore = defineStore('SignUp', () => {
   const IsActiveSignUp = ref(false)
+  const IsForgotPassword = ref(false)
   const IsLogin = ref(localStorage.getItem('token') ? true : false)
   const profiles = ref<Profile[]>([])
   const getFilters = ref<GetFiltersType>({
@@ -37,7 +38,7 @@ export const SignUpStore = defineStore('SignUp', () => {
   const chatId = ref<number[]>([])
   const messages = ref<Message[]>([])
 
-  return { IsActiveSignUp, IsLogin, profiles, getProfileParams, getFilters, connection, messages, chatId}
+  return { IsActiveSignUp, IsForgotPassword, IsLogin, profiles, getProfileParams, getFilters, connection, messages, chatId}
 })
 
 export interface ProfilePicture {
