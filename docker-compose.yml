@@ -24,7 +24,7 @@ services:
     build:
       dockerfile: ./frontend/Dockerfile
     ports:
-    - 8080:8080
+      - 8080:8080
     volumes:
       - ./frontend:/usr/src/app
     networks:
