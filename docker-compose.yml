@@ -4,36 +4,49 @@ services:
   db:
     container_name: ${DB_CONNECTION}
     image: postgres:alpine
-    environment:
-      POSTGRES_DB: ${DB_DATABASE}
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      TZ: GMT-4
-      PGTZ: GMT-4
+    env_file:
+      - ./.env
     volumes:
       - ./PostgeSQL/data:/var/lib/postgresql/data
-      - ./Matcha_Data/matcha_init.sql:/docker-entrypoint-initdb.d/matcha_init.sql
+      - ./data/matcha_init.sql:/docker-entrypoint-initdb.d/matcha_init.sql
     ports:
-      - ${DB_PORT}:${DB_PORT}
+      - "5432:5432"
     restart: unless-stopped
     networks:
       - ft_matcha
 
-  frontend:
-    container_name: frontend
+  vueapp:
+    container_name: vueapp
     build:
-      dockerfile: ./frontend/Dockerfile
+      dockerfile: ./vueapp/Dockerfile
+    env_file:
+    - ./.env
     ports:
-      - 8080:8080
+      - "8080:8080"
     volumes:
-      - ./frontend:/usr/src/app
+      - ./vueapp:/usr/src/app
     networks:
       - ft_matcha
-    env_file:
-      - ./.env
+    
     restart: unless-stopped
     depends_on:
-      - backend
+      - aspnetapp
+  
+  aspnetapp:
+    container_name: aspnetapp
+    build:
+      dockerfile: ./aspnetapp/Web_API/Dockerfile
+    env_file:
+      - ./.env
+    environment:
+      - ASPNETCORE_URLS=http://+:5001
+    ports:
+      - "5001:5001"
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - ft_matcha
 
 networks:
   ft_matcha:
