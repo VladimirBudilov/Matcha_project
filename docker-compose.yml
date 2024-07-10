@@ -19,17 +19,21 @@ services:
     networks:
       - ft_matcha
 
-  pgadmin:
-    container_name: pgadmin
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${DB_USERNAME}@mail.com
-      PGADMIN_DEFAULT_PASSWORD: ${DB_PASSWORD}
+  frontend:
+    container_name: frontend
+    build:
+      dockerfile: ./frontend/Dockerfile
     ports:
-      - "5050:80"
-    restart: unless-stopped
+    - 8080:8080
+    volumes:
+      - ./frontend:/usr/src/app
     networks:
       - ft_matcha
+    env_file:
+      - ./.env
+    restart: unless-stopped
+    depends_on:
+      - backend
 
 networks:
   ft_matcha:
