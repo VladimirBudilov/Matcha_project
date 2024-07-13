@@ -27,15 +27,15 @@ services:
       - ./vueapp:/usr/src/app
     networks:
       - ft_matcha
-    
     restart: unless-stopped
     depends_on:
       - aspnetapp
-  
+
   aspnetapp:
     container_name: aspnetapp
     build:
-      dockerfile: ./aspnetapp/Web_API/Dockerfile
+      context: aspnetapp
+      dockerfile: Dockerfile
     env_file:
       - ./.env
     environment:

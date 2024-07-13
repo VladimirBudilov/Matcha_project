@@ -1,6 +1,6 @@
-./frontend/node_modules
-./frontend/dist
-./frontend/Dockerfile
-./frontend/package-lock.json
+./vueapp/node_modules
+./vueapp/dist
+./vueapp/Dockerfile
+./vueapp/package-lock.json
 .dockerignore
 **.md
