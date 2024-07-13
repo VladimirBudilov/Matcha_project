@@ -2,10 +2,14 @@ version: "3.8"
 
 services:
   db:
-    container_name: ${DB_CONNECTION}
+    container_name: postgres
     image: postgres:alpine
     env_file:
       - ./.env
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ./PostgeSQL/data:/var/lib/postgresql/data
       - ./data/matcha_init.sql:/docker-entrypoint-initdb.d/matcha_init.sql

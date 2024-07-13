@@ -40,7 +40,9 @@
 ehthumbs.db
 Thumbs.db
 PostgeSQL/
-frontend/certs/*
+frontend/
+vueapp/dist
+vueapp/package-lock.json
 
 # Visual Studio Code #
 ######################
@@ -58,7 +60,6 @@ frontend/certs/*
 # Node #
 ########
 node_modules/
-*/certs/
 
 # Build results #
 #################
