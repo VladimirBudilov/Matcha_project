@@ -63,6 +63,9 @@ const GetProfile = async () => {
 		else if (res.response) {
 			message.error(res.response);
 		}
+		else {
+			message.error(`Fill out the profile!`);
+		}
 	}).then((res) => {
 		if (res?.data){
 			profiles.value = res.data.profiles
