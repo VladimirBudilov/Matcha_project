@@ -17,8 +17,9 @@ export default defineConfig({
       cert: fs.readFileSync('./certs/dev.local+4.pem'),
     },
     hmr: {
-      host: process.env.FRONT,
+      host: process.env.FRONT_SOKETS,
       protocol: "wss",
+      port: 8080,
     },
   },
   plugins: [

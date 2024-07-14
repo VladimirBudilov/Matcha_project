@@ -1,4 +1,4 @@
-import { HubConnection, HubConnectionBuilder, LogLevel, HttpTransportType } from "@microsoft/signalr";
+import { HubConnection, HubConnectionBuilder, HttpTransportType } from "@microsoft/signalr";
 import type { IHttpConnectionOptions } from "@microsoft/signalr";
 
 function createConnection(): HubConnection {
@@ -8,9 +8,8 @@ function createConnection(): HubConnection {
     };
 
     return new HubConnectionBuilder()
-        .withUrl("https://localhost:5101/notification", options)
+        .withUrl(process.env.VUE_APP_BACKEND_URL+"/notification", options)
         .withAutomaticReconnect()
-        .configureLogging(LogLevel.Information)
         .build();
 }
 

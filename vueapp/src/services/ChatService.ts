@@ -8,9 +8,8 @@ function createConnection(): HubConnection {
     };
 
     return new HubConnectionBuilder()
-        .withUrl("https://localhost:5101/chat", options)
+        .withUrl(process.env.VUE_APP_BACKEND_URL+"/chat", options)
         .withAutomaticReconnect()
-        .configureLogging(LogLevel.Information)
         .build();
 }
 
