@@ -42,13 +42,18 @@ const formState = reactive<FormState>({
 const onFinish = async (values: any) => {
 	errorMsg.value = ''
 	await axios.post('api/auth/login', values).catch((msg) => {
-		if (msg.response.data.error) {
+		if (msg?.response?.data?.error) {
 			errorMsg.value = msg.response.data.error
 		}
-		else {
+		else if (msg?.response?.data) {
 			errorMsg.value = msg.response.data
 		}
-		message.error(errorMsg.value);
+		if (errorMsg.value !== '') {
+			message.error(errorMsg.value);
+		}
+		else {
+			message.error('Error');
+		}
 	}).then(async (res) => {
 		const loginRes : loginRes = res?.data
 		if (errorMsg.value == '' && loginRes.token) {
