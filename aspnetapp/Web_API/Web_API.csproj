@@ -23,4 +23,8 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\https\aspnetapp.pfx" />
+  </ItemGroup>
+
 </Project>

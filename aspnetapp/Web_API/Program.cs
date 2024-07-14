@@ -56,7 +56,7 @@ builder.Services.AddCors(options =>
         corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
     options.AddPolicy("SignalRCorsPolicy",
         corsPolicyBuilder => corsPolicyBuilder
-            .WithOrigins(Environment.GetEnvironmentVariable("CorsOrigin1"), Environment.GetEnvironmentVariable("CorsOrigin2"))
+            .WithOrigins(Environment.GetEnvironmentVariable("FRONT_URL"), Environment.GetEnvironmentVariable("FRONT_URL"))
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());

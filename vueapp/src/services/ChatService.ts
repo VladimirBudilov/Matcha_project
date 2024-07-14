@@ -8,7 +8,7 @@ function createConnection(): HubConnection {
     };
 
     return new HubConnectionBuilder()
-        .withUrl(process.env.VUE_APP_BACKEND_URL+"/chat", options)
+        .withUrl(process.env.BASE_URL+"chat", options)
         .withAutomaticReconnect()
         .build();
 }

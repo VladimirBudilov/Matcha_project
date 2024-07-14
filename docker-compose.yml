@@ -28,38 +28,6 @@ services:
     networks:
       - ft_matcha
 
-  vueapp:
-    container_name: vueapp
-    build:
-      dockerfile: ./vueapp/Dockerfile
-    env_file:
-    - ./.env
-    ports:
-      - "8080:8080"
-      - "24678:24678"
-    volumes:
-      - ./vueapp:/usr/src/app
-    networks:
-      - ft_matcha
-    restart: unless-stopped
-    depends_on:
-      - aspnetapp
-
-  aspnetapp:
-    container_name: aspnetapp
-    build:
-      context: aspnetapp
-      dockerfile: Dockerfile
-    env_file:
-      - ./.env
-    ports:
-      - "5001:5001"
-    depends_on:
-      - db
-    restart: unless-stopped
-    networks:
-      - ft_matcha
-
 networks:
   ft_matcha:
     driver: bridge
