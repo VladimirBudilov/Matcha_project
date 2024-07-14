@@ -9,31 +9,11 @@ const profiles = storeToRefs(SignUpStore()).profiles
 
 
 const getViewList = async () => {
-	await axios.get('api/actions/viewed').then(res => {
+	await axios.get('api/actions/viewed').catch(() => {
+		message.error(`Fill out the profile!`);
+	}).then(res => {
 		if (res.data){
 			profiles.value = res.data.data
-		}
-	})
-}
-
-const block = async (profileId: number) => {
-	await axios.post('api/actions/block', {producerId: Number(localStorage.getItem('UserId')), consumerId: profileId}).catch((res) => {
-		if (res.response.data.error) {
-			message.error(`Error: ${res.response.data.error} ${localStorage.getItem('UserId')}`);
-		}
-		else {
-			message.error(`Fill out the profile!`);
-		}
-	}).then((res) => {
-		if (res?.data) {
-			if (res?.data) {
-				message.success(`You blocked!`);
-				profiles.value.forEach(function(item, index, object) {
-					if (item.profileId == profileId) {
-						object.splice(index, 1);
-					}
-				})
-			}
 		}
 	})
 }

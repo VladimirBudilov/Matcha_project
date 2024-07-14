@@ -57,15 +57,9 @@ const GetProfile = async () => {
 	getProfileParams.value.search.commonTags = []
 
 	await axios.post('api/profiles', getProfileParams.value).catch((res) => {
-		if (res.response.data) {
-			message.error(res.response.data)
-		}
-		else if (res.response) {
-			message.error(res.response);
-		}
-		else {
-			message.error(`Fill out the profile!`);
-		}
+
+		message.error(`Fill out the profile!`);
+
 	}).then((res) => {
 		if (res?.data){
 			profiles.value = res.data.profiles
