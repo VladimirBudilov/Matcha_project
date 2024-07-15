@@ -16,21 +16,22 @@ public class ExceptionHadlerFilter : ExceptionFilterAttribute
         {
             context.Result = new BadRequestObjectResult(new { error = context.Exception.Message });
         }
-        else if(context.Exception is ForbiddenActionException)
+        else if (context.Exception is ForbiddenActionException)
         {
             context.Result = new ForbidResult();
         }
-        else if(context.Exception is NotAuthorizedRequestException)
+        else if (context.Exception is NotAuthorizedRequestException)
         {
             context.Result = new UnauthorizedResult();
         }
-        else if(context.Exception is ObjectNotFoundException)
+        else if (context.Exception is ObjectNotFoundException)
         {
             context.Result = new NotFoundObjectResult(new { error = context.Exception.Message });
         }
-        // else
-        // {
-        //     context.Result = new BadRequestObjectResult(new { error = "An error occurred while processing your request" });
-        // }
+        else
+        {
+            context.Result =
+                new BadRequestObjectResult(new { error = "Ooooops. error)" });
+        }
     }
 }

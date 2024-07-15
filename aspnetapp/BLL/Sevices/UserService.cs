@@ -72,14 +72,14 @@ public class UserService(
         return output;
     }
 
-    public async Task UpdatePasswordAsync(int id, string valueOldPassword, string valueNewPassword)
+    public async Task UpdatePasswordAsync(int id, string oldPassword, string newPassword)
     {
         var user = await usersRepository.GetUserByIdAsync(id);
         if (user == null)
             throw new ObjectNotFoundException("Actor not found. You can't update password for user that doesn't exist");
-        if (!passwordManager.VerifyPassword(valueOldPassword, user.Password))
+        if (!passwordManager.VerifyHashedPassword(oldPassword, user.Password))
             throw new DataAccessErrorException("Old password is incorrect");
-        user.Password = passwordManager.HashPassword(valueNewPassword);
+        user.Password = passwordManager.HashPassword(newPassword);
         var res = await usersRepository.UpdateUserAsync(id, user);
         if (res == null)
             throw new DataAccessErrorException("Actor not found. You can't update password for user that doesn't exist");

@@ -24,12 +24,12 @@ public class AuthController(
     UserService userService,
     AuthService authService,
     IOptions<JwtConfig> jwtConfig,
-    IMapper mapper, 
+    IMapper mapper,
     ILogger<AuthController> logger,
     EmailService emailService,
     DtoValidator validator,
     NotificationService notificationService
-    )
+)
     : ControllerBase
 {
     private readonly JwtConfig _jwtConfig = jwtConfig.Value;
@@ -60,10 +60,12 @@ public class AuthController(
                 Error = "Invalid Authentication",
             });
         }
+
         var token = GenerateJwtToken(await userService.GetUserByUserNameAsync(loginDto.UserName));
-        
+
         var user = await userService.GetUserByUserNameAsync(loginDto.UserName);
-        notificationService.AddNotification(user.Id, new Notification(){Actor = user.UserName, Message = "You have logged in"});
+        notificationService.AddNotification(user.Id,
+            new Notification() { Actor = user.UserName, Message = "You have logged in" });
 
         return Ok(new AuthResponseDto()
         {
@@ -76,37 +78,32 @@ public class AuthController(
     public async Task<IActionResult> Logout()
     {
         return Ok();
-        //TODO implement logout
     }
 
     [HttpPost("registration")]
     public async Task<IActionResult> Register([FromBody] UserRegistrationDto value)
     {
         validator.UserRegistrationDto(value);
-        try
-        {
-            var userModel = mapper.Map<User>(value);
-            var token = await authService.RegisterUserAsync(userModel);
-            if (token == null) return BadRequest("Actor already exists");
-            var emailUrl = Request.Scheme + "://" + Request.Host + "/api/auth/verify-email?email=" + userModel.Email + "&token=" + token;
-            var emailBody = "Please click on the link to verify your email: <a href=\"" + System.Text.Encodings.Web.HtmlEncoder.Default.Encode(emailUrl) + "\">link</a>";
-            
-            emailService.SendEmail(userModel.Email, emailBody);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+
+        var userModel = mapper.Map<User>(value);
+        var token = await authService.RegisterUserAsync(userModel);
+        if (token == null) return BadRequest("Actor already exists");
+        var emailUrl = Request.Scheme + "://" + Request.Host + "/api/auth/verify-email?email=" + userModel.Email +
+                       "&token=" + token;
+        var emailBody = "Please click on the link to verify your email: <a href=\"" +
+                        System.Text.Encodings.Web.HtmlEncoder.Default.Encode(emailUrl) + "\">link</a>";
+
+        emailService.SendEmail(userModel.Email, emailBody);
+
         return Ok();
     }
-    
+
     [HttpPost("restore-password")]
-    public async Task<IActionResult> RestorePassword([FromBody] string email)
+    public async Task<IActionResult> RestorePassword([FromBody] EmailDto email)
     {
-        var user = await userService.GetUserByEmailAsync(email);
+        var user = await userService.GetUserByEmailAsync(email.email);
         if (user == null) return BadRequest("User not found");
         var newPassword = PasswordManager.GeneratePassword();
-        user.Password = newPassword;
         await userService.UpdatePasswordAsync(user.Id, user.Password, newPassword);
         var emailBody = "Your new password is: " + newPassword;
         emailService.SendEmail(user.Email, emailBody);
@@ -123,19 +120,20 @@ public class AuthController(
             Subject = new ClaimsIdentity(new[]
             {
                 new Claim("Id", user.Id.ToString()),
-                new Claim( ClaimTypes.NameIdentifier, user.UserName),
+                new Claim(ClaimTypes.NameIdentifier, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Hash, Guid.NewGuid().ToString())
             }),
             Expires = DateTime.UtcNow.AddHours(6),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials =
+                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
 
         var token = jwtTokenHandler.CreateToken(tokenDescriptor);
 
         return jwtTokenHandler.WriteToken(token);
     }
-    
+
     [HttpGet("get-id")]
     public async Task<IActionResult> GetId()
     {
@@ -144,3 +142,5 @@ public class AuthController(
         return Ok(id);
     }
 }
+
+public record EmailDto(string email);

@@ -78,13 +78,6 @@ public class ActionsController(
             
         var wasAdded = await actionService.TryUpdateBlackListAsync(userAction.producerId, userAction.consumerId);
         var actor = await userService.GetUserByIdAsync(userAction.producerId);
-        notificationService.AddNotification(userAction.consumerId, new Notification()
-        {
-            Type = NotificationType.BlackListed,
-            Message = wasAdded ? "You have been blacklisted" : "You have been unblocked",
-            Actor = actor!.UserName + " " + actor!.LastName
-        });
-        await notificationService.SendNotificationToUser(actor.Id);
         return Ok(new Like()
         {
             LikerId = actor.Id,

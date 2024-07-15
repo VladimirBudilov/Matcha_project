@@ -13,6 +13,11 @@ public class PasswordManager
     {
         return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
     }
+    
+    public bool VerifyHashedPassword(string newHashedPassword, string oldHashedPassword)
+    {
+        return newHashedPassword == oldHashedPassword;
+    }
 
 
     public static string GeneratePassword()
