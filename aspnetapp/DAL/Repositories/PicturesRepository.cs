@@ -27,11 +27,11 @@ public class PicturesRepository(
         return (from DataRow row in table.Rows select entityCreator.CreatePicture(row)).ToList();
     }
     
-    public async Task<int> GetAmountOfPicturesAsync(int userId)
+    public async Task<long> GetAmountOfPicturesAsync(int userId)
     {
         var query = "SELECT COUNT(*) FROM pictures WHERE user_id = @userId AND is_profile_picture = 0";
         var table = await fetcher.GetTableByParameterAsync(query, "@userId", userId);
-        return (int)table.Rows[0]["count"];
+        return (long)table.Rows[0]["count"];
     }
 
     public async Task<int> UploadPhoto(int userId, byte[] filePicture, int isMain)
