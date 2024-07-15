@@ -38,7 +38,12 @@ const onFinish = (values: any) => {
 		else {
 			errorMsg.value = msg.response.data
 		}
-		message.error(errorMsg.value);
+		if (errorMsg.value) {
+			message.error(errorMsg.value);
+		}
+		else {
+			message.error('Error');
+		}
 	}).then(() => {
 		if (errorMsg.value == '') {
 			IsActiveSignUp.value = !IsActiveSignUp.value

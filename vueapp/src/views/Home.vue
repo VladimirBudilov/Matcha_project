@@ -43,7 +43,6 @@ const GetFilters = async () => {
 			message.error("Error")
 		}
 	}).then( async (res) => {
-		getProfileParams.value.search.commonTags = res?.data.interests
 		getProfileParams.value.search.sexualPreferences = res?.data.sexualPreferences
 	})
 	await GetProfile()

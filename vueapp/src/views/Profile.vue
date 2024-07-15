@@ -162,6 +162,7 @@ const getLocation = async () => {
 	}
 	else {
 		navigator.geolocation.getCurrentPosition(( async (pos) => {
+			console.log(process.env.MAP_API_KEY)
 			profile.value.latitude = pos.coords.latitude
 			profile.value.longitude = pos.coords.longitude
 
@@ -231,9 +232,6 @@ const DeletePicture = async (picureId: number) => {
   	>
 		<div class="Main-info">
 			<a-button id="submit-changes" type="primary" html-type="signup" @click="SubmitChanges">Submite</a-button>
-			<a-form-item label="ID">
-				<a-input-number v-model:value="profile.profileId" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
-			</a-form-item>
 			<a-form-item label="Fame rating">
 				<a-input-number v-model:value="profile.fameRating" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
@@ -388,9 +386,9 @@ const DeletePicture = async (picureId: number) => {
 	width: 50vw;
 	background-color: var(--color-background-mute);
 
-	.css-dev-only-do-not-override-16pw25h.ant-image {
-		width: 8vw;
-		height: 15vh;
+	.css-dev-only-do-not-override-19iuou.ant-image .ant-image-img {
+		width: 15vw;
+		height: 20vh;
 	}
 }
 
@@ -406,9 +404,9 @@ const DeletePicture = async (picureId: number) => {
 	height: 53vh;
 	overflow: auto;
 	background-color: var(--color-background-mute);
-	.css-dev-only-do-not-override-16pw25h.ant-image {
-		width: 8vw;
-		height: 15vh;
+	.css-dev-only-do-not-override-19iuou.ant-image .ant-image-img {
+		width: 15vw;
+		height: 20vh;
 	}
 }
 
@@ -437,14 +435,14 @@ const DeletePicture = async (picureId: number) => {
 
 @media screen and (max-width: 1100px) {
 	#Avatar {
-		.css-dev-only-do-not-override-16pw25h.ant-image {
+		.css-dev-only-do-not-override-19iuou.ant-image .ant-image-img {
 			width: 30vw;
 			height: 15vh;
 		}
 	}
 
 	#Photos {
-		.css-dev-only-do-not-override-16pw25h.ant-image {
+		.css-dev-only-do-not-override-19iuou.ant-image .ant-image-img {
 			width: 30vw;
 			height: 15vh;
 		}

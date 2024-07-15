@@ -93,9 +93,6 @@ onMounted(async () => {
 
 			<a-button v-if="!profile.hasLike" id="user-like-button" html-type="signup" @click="sendLike(profile.profileId)">Like</a-button>
 			<a-button v-else id="user-like-button" type="primary" html-type="signup" @click="sendLike(profile.profileId)">Like</a-button>
-			<a-form-item label="ID">
-				<a-input-number v-model:value="profile.profileId" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
-			</a-form-item>
 			<a-form-item label="Fame rating">
 				<a-input-number v-model:value="profile.fameRating" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>

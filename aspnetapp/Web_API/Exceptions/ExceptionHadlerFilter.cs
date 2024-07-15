@@ -28,10 +28,10 @@ public class ExceptionHadlerFilter : ExceptionFilterAttribute
         {
             context.Result = new NotFoundObjectResult(new { error = context.Exception.Message });
         }
-        else
-        {
-            context.Result =
-                new BadRequestObjectResult(new { error = "Ooooops. error)" });
-        }
+        //else
+        //{
+        //    context.Result =
+        //        new BadRequestObjectResult(new { error = "Ooooops. error)" });
+        //}
     }
 }

@@ -24,7 +24,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-// Add a JWT Bearer Authorization header to Swagger UI
+    // Add a JWT Bearer Authorization header to Swagger UI
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description =
@@ -104,7 +104,7 @@ builder.Services.AddAuthentication(options =>
     })
     .AddJwtBearer(jwt =>
     {
-        var key = Encoding.ASCII.GetBytes( Environment.GetEnvironmentVariable("JwtConfig__Secret") ??
+        var key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JwtConfig__Secret") ??
                                            throw new InvalidOperationException());
         jwt.SaveToken = true;
         jwt.TokenValidationParameters = new TokenValidationParameters
@@ -140,7 +140,7 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-app.UseCors("SignalRCorsPolicy");
+app.UseCors();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();

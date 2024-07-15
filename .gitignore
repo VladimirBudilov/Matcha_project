@@ -42,7 +42,6 @@ Thumbs.db
 PostgeSQL/
 frontend/
 vueapp/dist
-vueapp/package-lock.json
 
 # Visual Studio Code #
 ######################
