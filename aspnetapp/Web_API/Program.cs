@@ -140,7 +140,7 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-app.UseCors();
+app.UseCors("SignalRCorsPolicy");
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();

@@ -79,6 +79,7 @@ public class DtoValidator
         ValidateBio(profileCreationResponseDto.Biography);
         ValidateLocation(profileCreationResponseDto.Latitude, profileCreationResponseDto.Longitude);
         ValidateAge(profileCreationResponseDto.Age);
+        CheckTags(profileCreationResponseDto.Interests);
     }
 
     public void CheckId(int id)

@@ -42,9 +42,9 @@ public class UserService(
         user.FirstName = userModel.FirstName;
         user.LastName = userModel.LastName;
         user.Email = userModel.Email;
-        user.IsVerified = userModel is { IsVerified: true } ? userModel.IsVerified : user.IsVerified;
+        user.IsVerified = true;
 
-        var output = await usersRepository.UpdateUserAsync(id, userModel);
+        var output = await usersRepository.UpdateUserAsync(id, user);
         if (output == null)
             throw new DataAccessErrorException("Actor not found. You can't update user that doesn't exist");
 

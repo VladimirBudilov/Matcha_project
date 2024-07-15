@@ -15,8 +15,8 @@ namespace DAL.Entities
         public string Password { get; set; }
         public string? EmailResetToken { get; set; }
         public string? JwtResetToken { get; set; }
-        public bool IsVerified { get; set; } = false;
-        public bool HasLike { get; set; } = false;
+        public bool IsVerified { get; set; }
+        public bool HasLike { get; set; }
         public double Distance { get; set; }
         
         public string? LastLogin { get; set; }
