@@ -225,7 +225,7 @@ const DeletePicture = async (picureId: number) => {
 <template>
 	<a-card id="Profile">
 	<a-form
-	:label-col="{ span: 6 }"
+	:label-col="{ span: 7 }"
 	:wrapper-col="{ span: 12 }"
     layout="horizontal"
     :disabled="componentDisabled"
@@ -405,8 +405,8 @@ const DeletePicture = async (picureId: number) => {
 	overflow: auto;
 	background-color: var(--color-background-mute);
 	.css-dev-only-do-not-override-19iuou.ant-image .ant-image-img {
-		width: 15vw;
-		height: 20vh;
+		width: 9vw;
+		height: 15vh;
 	}
 }
 

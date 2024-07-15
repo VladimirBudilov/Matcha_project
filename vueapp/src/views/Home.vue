@@ -216,6 +216,7 @@ watch(
 #profile-card {
 	position:inherit;
 	width: 30vw;
+	background-color: var(--color-background-mute);
 }
 
 @media screen and (max-width: 1100px) {

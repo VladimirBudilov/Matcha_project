@@ -84,7 +84,7 @@ onMounted(async () => {
 <template>
 	<a-card id="User">
 		<a-form
-	:label-col="{ span: 5 }"
+	:label-col="{ span: 6 }"
 	:wrapper-col="{ span: 12 }"
     layout="horizontal"
     :disabled="false"

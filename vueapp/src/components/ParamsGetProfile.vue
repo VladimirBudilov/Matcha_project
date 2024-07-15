@@ -216,11 +216,11 @@ watch (
 	color: var(--color-text)
 }
 
-.css-dev-only-do-not-override-16pw25h.ant-collapse>.ant-collapse-item >.ant-collapse-header {
+.css-dev-only-do-not-override-19iuou.ant-collapse>.ant-collapse-item >.ant-collapse-header {
 	color: var(--color-text)
 }
 
-.css-dev-only-do-not-override-16pw25h.ant-collapse .ant-collapse-content {
+.css-dev-only-do-not-override-19iuou.ant-collapse .ant-collapse-content {
 	background-color: var(--color-background-soft);
 }
 
@@ -269,7 +269,7 @@ watch (
 		width: 100%;
 	}
 
-	.css-dev-only-do-not-override-16pw25h.ant-form-item .ant-form-item-label >label {
+	.css-dev-only-do-not-override-19iuou.ant-form-item .ant-form-item-label >label {
 		font-size: 0.7em;;
 	}
 

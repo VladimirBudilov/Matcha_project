@@ -64,30 +64,30 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.css-dev-only-do-not-override-16pw25h.ant-form-item .ant-form-item-label >label {
+.css-dev-only-do-not-override-19iuou.ant-form-item .ant-form-item-label >label {
   color: var(--color-text);
 }
 
-.css-dev-only-do-not-override-16pw25h.ant-table-wrapper .ant-table-thead >tr>th, .css-dev-only-do-not-override-16pw25h.ant-table-wrapper .ant-table-thead >tr>td {
+.css-dev-only-do-not-override-19iuou.ant-table-wrapper .ant-table-thead >tr>th, .css-dev-only-do-not-override-19iuou.ant-table-wrapper .ant-table-thead >tr>td {
   color: var(--color-text);
 }
 
-.css-dev-only-do-not-override-16pw25h.ant-card .ant-card-meta-title {
+.css-dev-only-do-not-override-19iuou.ant-card .ant-card-meta-title {
   color: var(--color-heading);
 }
 
-.css-dev-only-do-not-override-16pw25h.ant-card {
+.css-dev-only-do-not-override-19iuou.ant-card {
   background: var(--color-background-mute);
 }
 
-.css-dev-only-do-not-override-16pw25h.ant-table-wrapper .ant-table {
+.css-dev-only-do-not-override-19iuou.ant-table-wrapper .ant-table {
   background: var(--color-background-mute);
 }
 
-.css-dev-only-do-not-override-16pw25h.ant-table-wrapper .ant-table-thead >tr>th, .css-dev-only-do-not-override-16pw25h.ant-table-wrapper .ant-table-thead >tr>td {
+.css-dev-only-do-not-override-19iuou.ant-table-wrapper .ant-table-thead >tr>th, .css-dev-only-do-not-override-19iuou.ant-table-wrapper .ant-table-thead >tr>td {
   background: var(--color-background-mute);
 }
-.css-dev-only-do-not-override-16pw25h.ant-table-wrapper .ant-table-thead >tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before, .css-dev-only-do-not-override-16pw25h.ant-table-wrapper .ant-table-thead >tr>td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+.css-dev-only-do-not-override-19iuou.ant-table-wrapper .ant-table-thead >tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before, .css-dev-only-do-not-override-19iuou.ant-table-wrapper .ant-table-thead >tr>td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
   background: var(--color-background-mute);
 }
 
@@ -95,34 +95,34 @@ body {
   color: var(--color-text);
 }
 
-.css-dev-only-do-not-override-16pw25h.ant-pagination .ant-pagination-item {
+.css-dev-only-do-not-override-19iuou.ant-pagination .ant-pagination-item {
   color: var(--color-text);
 }
 
-.css-dev-only-do-not-override-16pw25h.ant-input-number .ant-input-number-input {
+.css-dev-only-do-not-override-19iuou.ant-input-number .ant-input-number-input {
   color: inherit
 }
 
-.css-dev-only-do-not-override-16pw25h.ant-pagination .ant-pagination-item-active {
+.css-dev-only-do-not-override-19iuou.ant-pagination .ant-pagination-item-active {
   color: var(--vt-c-black);
 }
 
-.css-dev-only-do-not-override-16pw25h.ant-table-wrapper .ant-table {
+.css-dev-only-do-not-override-19iuou.ant-table-wrapper .ant-table {
   color: var(--grey)
 }
-.css-dev-only-do-not-override-16pw25h.ant-pagination .ant-pagination-item a {
+.css-dev-only-do-not-override-19iuou.ant-pagination .ant-pagination-item a {
   color: inherit
 }
 
-.css-dev-only-do-not-override-16pw25h.ant-comment .ant-comment-content-author-name {
+.css-dev-only-do-not-override-19iuou.ant-comment .ant-comment-content-author-name {
   color: var(--grey)
 }
 
-.css-dev-only-do-not-override-16pw25h.ant-comment .ant-comment-content-author-time {
+.css-dev-only-do-not-override-19iuou.ant-comment .ant-comment-content-author-time {
   color: var(--color-text);
 }
 
-.css-dev-only-do-not-override-16pw25h.ant-tag-geekblue {
+.css-dev-only-do-not-override-19iuou.ant-tag-geekblue {
   color: var(--grey);
   background: var(--color-background-mute);
   border-color: var(--color-border-hover)
