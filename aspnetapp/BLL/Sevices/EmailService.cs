@@ -46,7 +46,7 @@ public class EmailService(IOptions<SmtpConfig> smtpConfig)
         };
 
         using var smtp = new SmtpClient();
-        smtp.Connect(_smtpConfig.Host, _smtpConfig.Port);
+        smtp.Connect(_smtpConfig.Host, _smtpConfig.Port, SecureSocketOptions.StartTls);
         smtp.Authenticate(_smtpConfig.Username, _smtpConfig.Password);
 
         smtp.Send(email);

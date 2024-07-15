@@ -1,4 +1,4 @@
-﻿namespace BLL.Helpers;
+namespace BLL.Helpers;
 
 public class SmtpConfig
 {

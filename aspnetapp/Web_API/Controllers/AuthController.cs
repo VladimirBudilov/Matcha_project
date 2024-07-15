@@ -104,9 +104,17 @@ public class AuthController(
         var user = await userService.GetUserByEmailAsync(email.email);
         if (user == null) return BadRequest("User not found");
         var newPassword = PasswordManager.GeneratePassword();
-        await userService.UpdatePasswordAsync(user.Id, user.Password, newPassword);
         var emailBody = "Your new password is: " + newPassword;
-        emailService.SendEmail(user.Email, emailBody);
+        try
+        {
+            emailService.SendEmail(user.Email, emailBody);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Error while restoring password");
+        }
+
+        await userService.UpdatePasswordAsync(user.Id, user.Password, newPassword);
         return Ok();
     }
 
