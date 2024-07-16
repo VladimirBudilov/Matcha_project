@@ -22,6 +22,7 @@ const GetFilters = async () => {
 		if (res?.data) {
 			getFilters.value = res.data
 			getFilters.value.maxDistance = await Math.floor(getFilters.value.maxDistance)
+			getFilters.value.minDistance = await Math.floor(getFilters.value.minDistance)
 		}
 	})
 
