@@ -77,7 +77,7 @@ const GetProfile = async () => {
 				method: 'GET'
 			})
 			const data : any = await response.json()
-			if (data.error || !data.address){
+			if (data.error || !data.address || (!data.address.city && !data.address.country)){
 				profile.value.location = 'Milky Way'
 			}
 			else if (data.address.city) {
