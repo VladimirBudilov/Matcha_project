@@ -10,13 +10,13 @@ public class AuthService(UsersRepository usersRepository,
       ProfilesRepository profilesRepository,  IMapper mapper,
     PasswordManager passwordManager, EmailService emailService)
 {
-    public async Task<string?> RegisterUserAsync(User user)
+    public async Task<string?> RegisterUserAsync(User user, string token)
     {
         var userByEmail = await usersRepository.GetUserByEmailAsync(user.Email);
         var userByUserName = await usersRepository.GetUserByUserNameAsync(user.UserName);
         if (userByEmail != null || userByUserName != null) return null;
-        user.Password = passwordManager.HashPassword(user.Password);
-        user.EmailResetToken = emailService.GenerateEmailConfirmationToken();
+        user.Password = PasswordManager.HashPassword(user.Password);
+        user.EmailResetToken = token;
         user.IsVerified = false;
         user.LastLogin = DateTime.Now.ToString();
         var res = await usersRepository.CreateUserAsync(user);

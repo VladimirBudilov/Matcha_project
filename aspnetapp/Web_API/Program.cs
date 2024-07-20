@@ -12,6 +12,8 @@ using Web_API.Helpers;
 using Web_API.Hubs;
 using Web_API.Hubs.Services;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSignalR();
@@ -24,7 +26,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-    // Add a JWT Bearer Authorization header to Swagger UI
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description =
@@ -122,12 +123,10 @@ builder.Services.AddAuthentication(options =>
             {
                 var accessToken = context.Request.Query["access_token"];
 
-                // если запрос направлен хабу
                 var path = context.HttpContext.Request.Path;
                 if (!string.IsNullOrEmpty(accessToken) &&
                     (path.StartsWithSegments("/chat") || path.StartsWithSegments("/notification")))
                 {
-                    // получаем токен из строки запроса
                     context.Token = accessToken;
                 }
 
@@ -137,6 +136,7 @@ builder.Services.AddAuthentication(options =>
     });
 
 builder.Services.AddAuthorization();
+builder.WebHost.UseUrls(Environment.GetEnvironmentVariable("ASPNETCORE"));
 
 var app = builder.Build();
 

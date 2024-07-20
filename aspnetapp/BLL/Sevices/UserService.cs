@@ -28,16 +28,16 @@ public class UserService(
 
         return output;
     }
-    
+
     public async Task<User?> UpdateUserAsync(int id, User userModel)
     {
-        //validate new mail that such mail doesn't exist
         var userByEmail = await usersRepository.GetUserByEmailAsync(userModel.Email);
         if (userByEmail != null && userByEmail.Id != id)
             throw new DataValidationException("User with such email already exists");
-        
+
         var user = await usersRepository.GetUserByIdAsync(id);
-        if (user == null) throw new ObjectNotFoundException("Actor not found. You can't update user that doesn't exist");
+        if (user == null)
+            throw new ObjectNotFoundException("Actor not found. You can't update user that doesn't exist");
         user.UserName = userModel.UserName;
         user.FirstName = userModel.FirstName;
         user.LastName = userModel.LastName;
@@ -54,7 +54,8 @@ public class UserService(
     public async Task<User?> DeleteUserAsync(int id)
     {
         var user = await usersRepository.GetUserByIdAsync(id);
-        if (user == null) throw new ObjectNotFoundException("Actor not found. You can't delete user that doesn't exist");
+        if (user == null)
+            throw new ObjectNotFoundException("Actor not found. You can't delete user that doesn't exist");
         var output = await usersRepository.DeleteUserAsync(id);
         if (output == null)
             throw new ObjectNotFoundException("Actor not found. You can't delete user that doesn't exist");
@@ -77,12 +78,25 @@ public class UserService(
         var user = await usersRepository.GetUserByIdAsync(id);
         if (user == null)
             throw new ObjectNotFoundException("Actor not found. You can't update password for user that doesn't exist");
-        if (!passwordManager.VerifyHashedPassword(oldPassword, user.Password))
+        if (!passwordManager.VerifyPassword(oldPassword, user.Password))
             throw new DataAccessErrorException("Old password is incorrect");
-        user.Password = passwordManager.HashPassword(newPassword);
+        user.Password = PasswordManager.HashPassword(newPassword);
         var res = await usersRepository.UpdateUserAsync(id, user);
         if (res == null)
-            throw new DataAccessErrorException("Actor not found. You can't update password for user that doesn't exist");
+            throw new DataAccessErrorException(
+                "Actor not found. You can't update password for user that doesn't exist");
+    }
+
+    public async Task ResetPasswordAsync(int id, string newPassword)
+    {
+        var user = await usersRepository.GetUserByIdAsync(id);
+        if (user == null)
+            throw new ObjectNotFoundException("Actor not found. You can't update password for user that doesn't exist");
+        user.Password = PasswordManager.HashPassword(newPassword);
+        var res = await usersRepository.UpdateUserAsync(id, user);
+        if (res == null)
+            throw new DataAccessErrorException(
+                "Actor not found. You can't update password for user that doesn't exist");
     }
 
     public async Task<IEnumerable<User>> GetAllUserAsync()
