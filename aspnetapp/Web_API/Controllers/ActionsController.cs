@@ -34,7 +34,9 @@ public class ActionsController(
         validator.CheckId(userAction.producerId);
         validator.CheckId(userAction.consumerId);
         validator.CheckUserAuth(userAction.producerId, User.Claims);
-
+        
+        var isBlocked = await actionService.CheckIfUserIsBlocked(userAction.producerId, userAction.consumerId);
+        if(isBlocked) return BadRequest();
         var (notificationType, output) = await actionService.LikeUser(userAction.producerId, userAction.consumerId);
         var actor = await userService.GetUserByIdAsync(userAction.producerId);
         
