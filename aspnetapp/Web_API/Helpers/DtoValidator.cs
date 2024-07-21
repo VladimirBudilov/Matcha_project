@@ -162,6 +162,8 @@ public class DtoValidator
 
     private void ValidateTag(string tag)
     {
+        if(tag[0] != '#') throw new DataValidationException("Invalid tag format.");
+        tag = tag.Substring(1);
         if (!(tag.Length >= 3 && tag.Length <= 50 && tag.All(x => char.IsLetterOrDigit(x) || x == '_')))
         {
             throw new DataValidationException("Invalid tag format.");
@@ -197,14 +199,12 @@ public class DtoValidator
         {
             errorMessage = string.Empty;
 
-            // Check file size
             if (file.Length > _maxFileSize)
             {
                 errorMessage = $"File size exceeds {_maxFileSize / 1024 / 1024} MB.";
                 return false;
             }
 
-            // Check file extension
             var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
             if (string.IsNullOrEmpty(ext) || !_permittedExtensions.Contains(ext))
             {
@@ -212,7 +212,6 @@ public class DtoValidator
                 return false;
             }
 
-            // Check file content
             if (!IsImage(file))
             {
                 errorMessage = "Invalid image file.";

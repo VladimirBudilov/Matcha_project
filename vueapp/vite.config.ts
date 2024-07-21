@@ -12,8 +12,8 @@ export default defineConfig({
     host: process.env.FRONT,
     port:8080,
     https: {
-      key: fs.readFileSync('./certs/dev.local+4-key.pem'),
-      cert: fs.readFileSync('./certs/dev.local+4.pem'),
+      key: fs.readFileSync(process.env.CERT!.toString()),
+      cert: fs.readFileSync(process.env.CERT_KEY!.toString()),
     },
     hmr: {
       host: process.env.FRONT,
