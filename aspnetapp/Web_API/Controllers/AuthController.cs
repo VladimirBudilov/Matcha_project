@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Encodings.Web;
 using AutoMapper;
 using BLL.Helpers;
 using BLL.Sevices;
@@ -85,17 +86,23 @@ public class AuthController(
     {
         validator.UserRegistrationDto(value);
 
-        var userModel = mapper.Map<User>(value);
-        var token = await authService.RegisterUserAsync(userModel);
-        if (token == null) return BadRequest("Actor already exists");
-        var emailUrl = Request.Scheme + "://" + Request.Host + "/api/auth/verify-email?email=" + userModel.Email +
-                       "&token=" + token;
-        var emailBody = "Please click on the link to verify your email: <a href=\"" +
-                        System.Text.Encodings.Web.HtmlEncoder.Default.Encode(emailUrl) + "\">link</a>";
-
-        emailService.SendEmail(userModel.Email, emailBody);
-
-        return Ok();
+        try
+        {
+            var userModel = mapper.Map<User>(value);
+            var token = emailService.GenerateEmailConfirmationToken();
+            var emailUrl = Request.Scheme + "://" + Request.Host + "/api/auth/verify-email?email=" + userModel.Email +
+                           "&token=" + token;
+            var emailBody = "Please click on the link to verify your email: <a href=\"" +
+                            HtmlEncoder.Default.Encode(emailUrl) + "\">link</a>";
+            emailService.SendEmail(userModel.Email, emailBody);
+            token = await authService.RegisterUserAsync(userModel,token);
+            if (token == null) return BadRequest("Actor already exists");
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return Conflict("Error With Smtp Server. Please try again later.");
+        }
     }
 
     [HttpPost("restore-password")]
@@ -114,7 +121,7 @@ public class AuthController(
             return BadRequest("Error while restoring password");
         }
 
-        await userService.UpdatePasswordAsync(user.Id, user.Password, newPassword);
+        await userService.ResetPasswordAsync(user.Id, newPassword);
         return Ok();
     }
 

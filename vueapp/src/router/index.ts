@@ -29,8 +29,8 @@ const router = createRouter({
       component: Profile
     },
     {
-      path: '/user/:id',
-      name: 'user',
+      path: '/users/:id',
+      name: 'users',
       component: User
     },
     {

@@ -69,7 +69,7 @@ const columns = [
 				/>
 			</template>
 			<template v-if="column.key === 'name'">
-				<RouterLink :to="'/user/' + record.profileId">{{ record.firstName + ' ' + record.lastName }}</RouterLink>
+				<RouterLink :to="'/users/' + record.profileId">{{ record.firstName + ' ' + record.lastName }}</RouterLink>
 			</template>
 			<template v-if="column.key === 'unblock'">
 				<a-button @click="block(record.profileId)">

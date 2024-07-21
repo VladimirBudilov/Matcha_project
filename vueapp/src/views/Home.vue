@@ -168,7 +168,7 @@ watch(
 						Sexual preferences: {{ el.sexualPreferences }}
 					</p>
 					<p>
-						<RouterLink :to="'/user/' + el.profileId">Get more info</RouterLink>
+						<RouterLink :to="'/users/' + el.profileId">Get more info</RouterLink>
 					</p>
 				</template>
 			</a-card-meta>

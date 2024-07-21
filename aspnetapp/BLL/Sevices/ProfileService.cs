@@ -84,7 +84,7 @@ public class ProfileService(
         if (!isMain)
         {
             var count = await picturesRepository.GetAmountOfPicturesAsync(userId);
-            if (count > 4) throw new DataValidationException("You can't upload more than 4 photos");
+            if (count >= 4) throw new DataValidationException("You can't upload more than 4 photos");
         }
         if (isMain)
         {
