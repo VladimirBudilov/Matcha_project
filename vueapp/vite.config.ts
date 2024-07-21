@@ -14,7 +14,7 @@ export default defineConfig({
     https: {
       key: fs.readFileSync(process.env.CERT!.toString()),
       cert: fs.readFileSync(process.env.CERT_KEY!.toString()),
-    },
+    } ,
     hmr: {
       host: process.env.FRONT,
       protocol: "wss"

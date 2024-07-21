@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections;
+using System.Data;
 using System.Text;
 using DAL.Entities;
 using DAL.Helpers;
@@ -27,7 +28,6 @@ public class ProfileViewsRepository(
 
     public async Task<IEnumerable<ProfileView>> GetProfileViewsByUserIdAsync(int likedId)
     {
-
         var query = "SELECT * FROM profile_views WHERE profile_user_id = @id";
         var table = await fetcher.GetTableByParameterAsync(query, "@id", likedId);
 
@@ -46,5 +46,18 @@ public class ProfileViewsRepository(
         });
         
         return table.Rows.Count == 0 ? null : entityCreator.CreateProfileViews(table.Rows[0]);
+    }
+
+    public async Task<IEnumerable<Like>> GetProfileLikersByUserIdAsync(int id)
+    {
+        var query = new StringBuilder()
+            .Append("SELECT * FROM likes ")
+            .Append(" WHERE liked_user_id = @liked_user_id");
+        var table = await fetcher.GetTableByParameterAsync(query.ToString(), new Dictionary<string, object>
+        {
+            {"@liked_user_id", id}
+        });
+
+        return (from DataRow row in table.Rows select entityCreator.CreateLikes(row)).ToList();
     }
 }

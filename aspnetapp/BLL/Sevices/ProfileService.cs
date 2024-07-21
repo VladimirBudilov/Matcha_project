@@ -173,4 +173,17 @@ public class ProfileService(
         
         return users;
     }
+
+    public async Task<IEnumerable<User>> GetLikersProfilesAsync(int id)
+    {
+        var views=  await profileViewsRepository.GetProfileLikersByUserIdAsync(id);
+        var users = new List<User>();
+        foreach (var view in views)
+        {
+            var user = await GetFullProfileByIdAsync(view.LikerId);
+            users.Add(user);
+        }
+        
+        return users;
+    }
 }
