@@ -123,7 +123,13 @@ onMounted(async () => {
 				<a-input v-model:value="profile.location" style="background-color: var(--color-background-soft); color: var(--color-text)"/>
 			</a-form-item>
 			<a-form-item label="Interests" direction="vertical">
-				<a-input mode="tags" v-model:value="profile.interests" disabled style="background-color: var(--color-background-soft); color: var(--color-text)" />
+				<a-select
+				v-model:value="profile.interests"
+				disabled
+				mode="tags"
+				size="middle"
+				placeholder="Please select"
+				></a-select>
 			</a-form-item>
 			<a-form-item label="Biography">
 				<a-textarea v-model:value="profile.biography" placeholder="Biography" :rows="4" disabled style="background-color: var(--color-background-soft); color: var(--color-text)"/>
