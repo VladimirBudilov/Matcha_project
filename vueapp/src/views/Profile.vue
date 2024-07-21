@@ -145,7 +145,6 @@ const SubmitChanges = async () => {
 
 
 const getLocation = async () => {
-
 	if (profile.value.location) {
 		const response : any = await fetch('https://geocode.maps.co/search?' + new URLSearchParams({
 			q: profile.value.location,
@@ -164,30 +163,27 @@ const getLocation = async () => {
 		}
 	}
 	else {
-		navigator.geolocation.getCurrentPosition(( async (pos) => {
-			console.log(process.env.MAP_API_KEY)
-			profile.value.latitude = pos.coords.latitude
-			profile.value.longitude = pos.coords.longitude
+		var ip: string
+		const ipResponse = (await fetch('https://api.ipify.org/')).text()
+		await ipResponse.then(ipResponse => ip = ipResponse)
 
-			const response = await fetch('https://geocode.maps.co/reverse?' + new URLSearchParams({
-				lat: profile.value.latitude.toString(),
-				lon: profile.value.longitude.toString(),
-				api_key: process.env.MAP_API_KEY
-			}).toString(), {
-				method: 'GET'
-			})
-			const data : any = await response.json()
-			if (data.address.city) {
-				profile.value.location = data.address.city
+		const LocatByIp : any = await (await fetch('https://ipwho.is/' + ip)).json()
+		if (!LocatByIp || !LocatByIp.latitude || !LocatByIp.longitude) {
+			message.error('The city or country was not found')
+		}
+		else {
+			profile.value.latitude = LocatByIp.latitude
+			profile.value.longitude = LocatByIp.longitude
+			if (LocatByIp.city) {
+				profile.value.location = LocatByIp.city
 			}
-			else if (data.address.country) {
-				profile.value.location = data.address.country
+			else if (LocatByIp.country) {
+				profile.value.location = LocatByIp.country
 			}
-		}), (err => {
-			profile.value.latitude = 0
-			profile.value.longitude = 0
-			message.error(err.message)
-		}))
+			else {
+				profile.value.location = 'Milky Way'
+			}
+		}
 	}
 }
 
