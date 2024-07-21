@@ -10,6 +10,7 @@ namespace Web_API.Hubs;
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class ChatHub(
     ChatManager chatManager,
+    ActionService actionService,
     ILogger<ChatHub> logger,
     ClaimsService claimsService,
     UserService userService,
@@ -33,6 +34,8 @@ public class ChatHub(
     public async Task SendMessage(int inviteeId, string message)
     {
         var inviterId = claimsService.GetId(Context.User?.Claims);
+        var blocked = await actionService.CheckIfUserIsBlocked(inviterId, inviteeId);
+        if(blocked) return;
         var roomName = await chatManager.GetRoomName(inviterId, inviteeId);
         var user = await userService.GetUserByIdAsync(inviterId);
         await chatService.AddMessage(inviterId, roomName, message);
