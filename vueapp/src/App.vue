@@ -50,6 +50,7 @@ onMounted (async () => {
           <RouterLink to="/chat">Chat</RouterLink>
           <RouterLink to="/blacklist">Blacklist</RouterLink>
           <RouterLink to="/views">Views</RouterLink>
+          <RouterLink to="/likers">Likers</RouterLink>
           <Logout />
         </nav>
       </header>

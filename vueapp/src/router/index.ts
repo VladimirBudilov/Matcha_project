@@ -7,6 +7,7 @@ import Chat from '@/views/Chat.vue'
 import User from '@/views/User.vue'
 import Block from '@/views/Block.vue'
 import Views from '@/views/Views.vue'
+import Likers from '@/views/Likers.vue'
 import axios from 'axios'
 
 
@@ -53,6 +54,11 @@ const router = createRouter({
       name: "views",
       component: Views
     },
+    {
+      path: "/likers",
+      name: "likers",
+      component: Likers
+    }
   ]
 })
 
