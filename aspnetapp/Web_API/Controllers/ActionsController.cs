@@ -135,5 +135,29 @@ public class ActionsController(
         
         return Ok(response);
     }
+    
+    [HttpGet("likers")]
+    public async Task<IActionResult> GetLikedProfiles()
+    {
+        var id = claimsService.GetId(User.Claims);
+        var viewedProfiles = await profileService.GetLikersProfilesAsync(id);
+        var output = new List<FullProfileResponseDto>();
+        foreach (var profile in viewedProfiles)
+        {
+            var model = await profileService.CheckUserLike(profile, id);
+            var profileDto = mapper.Map<FullProfileResponseDto>(model);
+            if(notificationService.IsUserOnline(profile.Id)) profileDto.isOnlineUser = true;
+            output.Add(profileDto);
+        }
+        
+        var response = new ResponseDto<List<FullProfileResponseDto>>()
+        {
+            Data = output,
+            Success = true,
+            Error = null,
+        };
+        
+        return Ok(response);
+    }
         
 }

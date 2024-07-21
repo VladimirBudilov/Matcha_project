@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Web_API.Configurations;
-using Web_API.DTOs;
 using Web_API.DTOs.Request;
 using Web_API.DTOs.Response;
 using Web_API.Helpers;
@@ -29,9 +28,7 @@ public class AuthController(
     ILogger<AuthController> logger,
     EmailService emailService,
     DtoValidator validator,
-    NotificationService notificationService
-)
-    : ControllerBase
+    NotificationService notificationService) : ControllerBase
 {
     private readonly JwtConfig _jwtConfig = jwtConfig.Value;
 
@@ -95,7 +92,7 @@ public class AuthController(
             var emailBody = "Please click on the link to verify your email: <a href=\"" +
                             HtmlEncoder.Default.Encode(emailUrl) + "\">link</a>";
             emailService.SendEmail(userModel.Email, emailBody);
-            token = await authService.RegisterUserAsync(userModel,token);
+            token = await authService.RegisterUserAsync(userModel, token);
             if (token == null) return BadRequest("Actor already exists");
             return Ok();
         }
