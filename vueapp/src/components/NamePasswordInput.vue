@@ -41,7 +41,7 @@ const formState = reactive<FormState>({
 
 const onFinish = async (values: any) => {
 	errorMsg.value = ''
-	await axios.post('api/auth/login', values).catch((msg) => {
+	await axios.post('/api/auth/login', values).catch((msg) => {
 		if (msg?.response?.data?.error) {
 			errorMsg.value = msg.response.data.error
 		}

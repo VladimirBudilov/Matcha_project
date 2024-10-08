@@ -35,7 +35,7 @@ const GetProfile = async () => {
 	getProfileParams.value.search.minFameRating = Math.min(rating.value[0], rating.value[1])
 	getProfileParams.value.search.maxFameRating = Math.max(rating.value[0], rating.value[1])
 
-	await axios.post('api/profiles', getProfileParams.value)
+	await axios.post('/api/profiles', getProfileParams.value)
 	.catch((res) => {
 		if (res.code == 403) {
 			message.error(`Fill out the profile!`);
@@ -55,7 +55,7 @@ const GetProfile = async () => {
 
 const interests = ref<Interests[]>([])
 const GetInterests = async () => {
-	await axios.get('api/profiles/interests').then((res) => {
+	await axios.get('/api/profiles/interests').then((res) => {
 		interests.value = res.data
 		interests.value.forEach((element) => {
 			element.value = element.name

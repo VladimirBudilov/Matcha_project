@@ -10,7 +10,7 @@ const IsLogin = storeToRefs(SignUpStore()).IsLogin
 const connection = useNotificationStore().connection;
 
 const LogoutButtonTurnOn = () => {
-	axios.get('api/auth/logout').then(() => {
+	axios.get('/api/auth/logout').then(() => {
     if(connection?.state === HubConnectionState.Connected)
     {
       connection.stop()

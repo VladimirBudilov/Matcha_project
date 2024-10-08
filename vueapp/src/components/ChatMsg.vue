@@ -16,7 +16,7 @@ const chatId = storeToRefs(SignUpStore()).chatId
 const msg = ref<string>('')
 
 const GetMessages = async () => {
-	await axios.post('api/actions/chat',  {producerId: chatId.value[0], consumerId: chatId.value[1]})
+	await axios.post('/api/actions/chat',  {producerId: chatId.value[0], consumerId: chatId.value[1]})
 	.then((res) => {
 		messages.value = res.data.data;
 		messages.value.forEach(el => el.datetime = dayjs(el.date).format('YYYY-MM-DD HH:mm:ss'))

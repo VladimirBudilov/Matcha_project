@@ -10,7 +10,7 @@ const profiles = storeToRefs(SignUpStore()).profiles
 
 const getLikeList = async () => {
   try {
-    const res = await axios.get('api/actions/likers');
+    const res = await axios.get('/api/actions/likers');
     if (res && res.data) {
       profiles.value = res.data.data;
     }

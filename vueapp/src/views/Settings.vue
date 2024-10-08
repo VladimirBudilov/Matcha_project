@@ -23,7 +23,7 @@ const onFinish = async (values: FormState) => {
 		message.error('Your new password are not the same')
 	}
 	else {
-		await axios.put('api/users/' + localStorage.getItem('UserId') + '/update-password', values).catch((msg) => {
+		await axios.put('/api/users/' + localStorage.getItem('UserId') + '/update-password', values).catch((msg) => {
 			errorMsg.value = 'Error'
 			if (msg.response.data.error) {
 				message.error(msg.response.data.error)

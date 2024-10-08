@@ -31,7 +31,7 @@ const formState = reactive({
 });
 const onFinish = (values: any) => {
 	errorMsg.value = ''
-	axios.post('api/auth/registration', values).catch((msg) => {
+	axios.post('/api/auth/registration', values).catch((msg) => {
 		if (msg.response.data.error) {
 			errorMsg.value = msg.response.data.error
 		}

@@ -14,7 +14,7 @@ const getFilters = storeToRefs(SignUpStore()).getFilters
 const getProfileParams = storeToRefs(SignUpStore()).getProfileParams
 
 const GetFilters = async () => {
-	await axios.get('api/profiles/filters').catch((res) => {
+	await axios.get('/api/profiles/filters').catch((res) => {
 		if (res.response.data) {
 			message.error(res.response.data)
 		}
@@ -36,7 +36,7 @@ const GetFilters = async () => {
 	getProfileParams.value.search.isMatched = null
 	getProfileParams.value.search.isLikedUser = null
 	getProfileParams.value.search.sexualPreferences = null
-	await axios.get('api/profiles/' + localStorage.getItem('UserId')).catch((res) => {
+	await axios.get('/api/profiles/' + localStorage.getItem('UserId')).catch((res) => {
 		if (res.response.data){
 			message.error(res.response.data)
 		}
@@ -51,7 +51,7 @@ const GetFilters = async () => {
 
 const GetProfile = async () => {
 
-	await axios.post('api/profiles', getProfileParams.value).catch((res) => {
+	await axios.post('/api/profiles', getProfileParams.value).catch((res) => {
 		if (res.response) {
 			message.error(`Fill out the profile!`);
 		}
@@ -68,14 +68,14 @@ const GetProfile = async () => {
 
 
 onMounted(async () => {
-	await axios.get('api/auth/get-id').then((res) => {
+	await axios.get('/api/auth/get-id').then((res) => {
 		localStorage.setItem('UserId', String(res?.data))
 	})
 	await GetFilters()
 })
 
 const sendLike = async (profileId: number) => {
-	await axios.post('api/actions/like', {producerId: Number(localStorage.getItem('UserId')), consumerId: profileId}).catch((res) => {
+	await axios.post('/api/actions/like', {producerId: Number(localStorage.getItem('UserId')), consumerId: profileId}).catch((res) => {
 		message.error(`Error: ${res.response.data.error} ${localStorage.getItem('UserId')}`);
 	}).then((res) => {
 		if (res?.data) {
@@ -95,7 +95,7 @@ const sendLike = async (profileId: number) => {
 }
 
 const block = async (profileId: number) => {
-	await axios.post('api/actions/block', {producerId: Number(localStorage.getItem('UserId')), consumerId: profileId}).catch((res) => {
+	await axios.post('/api/actions/block', {producerId: Number(localStorage.getItem('UserId')), consumerId: profileId}).catch((res) => {
 		message.error(`Error: ${res.response.data.error} ${localStorage.getItem('UserId')}`);
 	}).then((res) => {
 		if (res?.data) {

@@ -12,7 +12,7 @@ const firstName = ref('')
 const lastName = ref('')
 
 async function GetProfileInfo(){
-  await axios.get('api/profiles/' + localStorage.getItem('UserId')).then((res) => {
+  await axios.get('/api/profiles/' + localStorage.getItem('UserId')).then((res) => {
       firstName.value = res.data.firstName
       lastName.value = res.data.lastName
     })
@@ -25,7 +25,7 @@ onMounted (async () => {
         await GetProfileInfo()
       }
       else {
-        await axios.get('api/auth/get-id')
+        await axios.get('/api/auth/get-id')
         .then(async (res) => {
           localStorage.setItem('UserId', String(res?.data))
           await GetProfileInfo()

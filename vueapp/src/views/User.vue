@@ -32,18 +32,18 @@ const profile = ref<Profile>({
 })
 
 const GetProfile = async () => {
-	await axios.get('api/profiles/' + route.params.id).catch( async () => {
+	await axios.get('/api/profiles/' + route.params.id).catch( async () => {
 		message.error(`User was not found!!!`);
 	}).then(async (res) => {
 		if (res?.data) {
 			profile.value = res?.data
-			uploadUrl.value = axios.defaults.baseURL + 'api/FileManager/uploadPhoto/' + profile.value.profileId
+			uploadUrl.value = '/api/FileManager/uploadPhoto/' + profile.value.profileId
 		}
 		if (profile.value.latitude && profile.value.longitude) {
 			const response = await fetch('https://geocode.maps.co/reverse?' + new URLSearchParams({
 				lat: profile.value.latitude.toString(),
 				lon: profile.value.longitude.toString(),
-				api_key: import.meta.env.MAP_API_KEY
+				api_key: import.meta.env.VITE_MAP_API_KEY
 			}).toString(), {
 				method: 'GET'
 			})
@@ -62,7 +62,7 @@ const GetProfile = async () => {
 }
 
 const sendLike = async (profileId: number) => {
-	await axios.post('api/actions/like', {producerId: Number(localStorage.getItem('UserId')), consumerId: profileId}).catch((res) => {
+	await axios.post('/api/actions/like', {producerId: Number(localStorage.getItem('UserId')), consumerId: profileId}).catch((res) => {
 		message.error(`Error: ${res.response.data.error} ${localStorage.getItem('UserId')}`);
 	}).then((res) => {
 		if (res?.data) {

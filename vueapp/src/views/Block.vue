@@ -8,7 +8,7 @@ import { onMounted, watch } from 'vue';
 const profiles = storeToRefs(SignUpStore()).profiles
 
 const getBlockList = async () => {
-	await axios.get('api/actions/blacklist').catch(() => {
+	await axios.get('/api/actions/blacklist').catch(() => {
 		message.error(`Fill out the profile!`);
 	}).then(res => {
 		if (res?.data){
@@ -18,7 +18,7 @@ const getBlockList = async () => {
 }
 
 const block = async (profileId: number) => {
-	await axios.post('api/actions/block', {producerId: Number(localStorage.getItem('UserId')), consumerId: profileId}).catch((res) => {
+	await axios.post('/api/actions/block', {producerId: Number(localStorage.getItem('UserId')), consumerId: profileId}).catch((res) => {
 		if (res.response.data.error) {
 			message.error(`Error: ${res.response.data.error} ${localStorage.getItem('UserId')}`);
 		}

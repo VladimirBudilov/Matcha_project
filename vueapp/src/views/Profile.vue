@@ -43,7 +43,7 @@ const profile = ref<Profile>({
 
 const interests = ref<Interests[]>([])
 const GetInterests = async () => {
-	await axios.get('api/profiles/interests').then((res) => {
+	await axios.get('/api/profiles/interests').then((res) => {
 		interests.value = res.data
 		interests.value.forEach((element) => {
 			element.value = element.name
@@ -52,7 +52,7 @@ const GetInterests = async () => {
 }
 
 const GetProfile = async () => {
-	await axios.get('api/profiles/' + localStorage.getItem('UserId')).catch((res) => {
+	await axios.get('/api/profiles/' + localStorage.getItem('UserId')).catch((res) => {
 		if (res.response.data){
 			message.error(res.response.data)
 		}
@@ -61,7 +61,7 @@ const GetProfile = async () => {
 		}
 	}).then( async (res) => {
 		profile.value = res?.data
-		uploadUrl.value = axios.defaults.baseURL + 'api/FileManager/uploadPhoto/' + profile.value.profileId
+		uploadUrl.value = '/api/FileManager/uploadPhoto/' + profile.value.profileId
 
 		userName.value = profile.value.userName
 		firstName.value = profile.value.firstName
@@ -72,7 +72,7 @@ const GetProfile = async () => {
 			const response = await fetch('https://geocode.maps.co/reverse?' + new URLSearchParams({
 				lat: profile.value.latitude.toString(),
 				lon: profile.value.longitude.toString(),
-				api_key: import.meta.env.MAP_API_KEY
+				api_key: import.meta.env.VITE_MAP_API_KEY
 			}).toString(), {
 				method: 'GET'
 			})
@@ -103,7 +103,7 @@ const SubmitChanges = async () => {
 		await checkAtr(lastName.value, profile.value.lastName) ||
 		await checkAtr(email.value, profile.value.email ? profile.value.email : '')
 	) {
-		await axios.put('api/Users/' + profile.value.profileId, profile.value).catch((res) => {
+		await axios.put('/api/users/' + profile.value.profileId, profile.value).catch((res) => {
 			errorMsg.value = 'Error'
 			message.error(res.response.data.error)
 		}).then((res) => {
@@ -113,7 +113,7 @@ const SubmitChanges = async () => {
 	}
 
 	if (errorMsg.value === '') {
-		await axios.put('api/profiles/' + profile.value.profileId, profile.value).catch((res) => {
+		await axios.put('/api/profiles/' + profile.value.profileId, profile.value).catch((res) => {
 			errorMsg.value = 'Error'
 			if (res.response.data.errors) {
 				if (res.response.data.errors.Biography) {
@@ -148,7 +148,7 @@ const getLocation = async () => {
 	if (profile.value.location) {
 		const response : any = await fetch('https://geocode.maps.co/search?' + new URLSearchParams({
 			q: profile.value.location,
-			api_key: import.meta.env.MAP_API_KEY
+			api_key: import.meta.env.VITE_MAP_API_KEY
 		}).toString(), {
 			method: 'GET'
 		})
@@ -212,7 +212,7 @@ const handleChange = async (info: UploadChangeParam) => {
 };
 
 const DeletePicture = async (picureId: number) => {
-	axios.delete('api/FileManager/deletePhoto/' + profile.value.profileId + '?photoId=' + picureId).then(async () => {
+	axios.delete('/api/FileManager/deletePhoto/' + profile.value.profileId + '?photoId=' + picureId).then(async () => {
 		await GetProfile()
 	})
 }

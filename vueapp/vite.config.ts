@@ -6,7 +6,7 @@ import {AntDesignVueResolver} from 'unplugin-vue-components/resolvers';
 import dotenv from 'dotenv'
 import path from 'path'
 
-dotenv.config({path: path.resolve(__dirname, '../.env')})
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 export default defineConfig({
     plugins: [
@@ -38,7 +38,8 @@ export default defineConfig({
         proxy: {
             '/api': {
                 target: 'http://localhost:5000',
-                changeOrigin: true
+                changeOrigin: true,
+                ws: true
             }
         }
     }

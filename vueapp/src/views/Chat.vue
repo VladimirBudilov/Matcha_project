@@ -34,7 +34,7 @@ const columns = [
 ]
 
 const GetFilters = async () => {
-	await axios.get('api/profiles/filters').catch((res) => {
+	await axios.get('/api/profiles/filters').catch((res) => {
 		if (res.response.data) {
 			message.error(res.response.data)
 		}
@@ -56,7 +56,7 @@ const GetProfile = async () => {
 	getProfileParams.value.search.sexualPreferences = null
 	getProfileParams.value.search.commonTags = []
 
-	await axios.post('api/profiles', getProfileParams.value).catch((res) => {
+	await axios.post('/api/profiles', getProfileParams.value).catch((res) => {
 
 		message.error(`Fill out the profile!`);
 
@@ -88,7 +88,7 @@ const setChatId = async (userId : number) => {
 }
 
 const block = async (profileId: number) => {
-	await axios.post('api/actions/block', {producerId: Number(localStorage.getItem('UserId')), consumerId: profileId}).catch((res) => {
+	await axios.post('/api/actions/block', {producerId: Number(localStorage.getItem('UserId')), consumerId: profileId}).catch((res) => {
 		message.error(`Error: ${res.response.data.error} ${localStorage.getItem('UserId')}`);
 	}).then((res) => {
 		if (res?.data) {

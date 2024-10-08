@@ -10,7 +10,7 @@ const profiles = storeToRefs(SignUpStore()).profiles
 
 const getViewList = async () => {
   try {
-    const res = await axios.get('api/actions/viewed');
+    const res = await axios.get('/api/actions/viewed');
     if (res && res.data) {
       profiles.value = res.data.data;
     }
