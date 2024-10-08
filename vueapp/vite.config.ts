@@ -1,46 +1,45 @@
-import { fileURLToPath, URL } from 'node:url'
-import { defineConfig } from 'vite'
+import {fileURLToPath, URL} from 'node:url'
+import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import Components from 'unplugin-vue-components/vite';
-import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
-import fs from 'fs'
+import {AntDesignVueResolver} from 'unplugin-vue-components/resolvers';
+import dotenv from 'dotenv'
+import path from 'path'
 
+dotenv.config({path: path.resolve(__dirname, '../.env')})
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  server: {
-    host: process.env.FRONT,
-    port:8080,
-    https: {
-      key: fs.readFileSync(process.env.CERT!.toString()),
-      cert: fs.readFileSync(process.env.CERT_KEY!.toString()),
-    } ,
-    hmr: {
-      host: process.env.FRONT,
-      protocol: "wss"
-    },
-  },
-  plugins: [
-    vue({
-        template: {
-  compilerOptions: {
-    isCustomElement: tagName => {
-      return tagName === 'vue-advanced-chat' || tagName === 'emoji-picker'
-    }}}}),
-    Components({
-      resolvers: [
-        AntDesignVueResolver({
-          importStyle: false, // css in js
+    plugins: [
+        vue({
+            template: {
+                compilerOptions: {
+                    isCustomElement: tagName => {
+                        return tagName === 'vue-advanced-chat' || tagName === 'emoji-picker'
+                    }
+                }
+            }
         }),
-      ],
-    }),
-  ],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+        Components({
+            resolvers: [
+                AntDesignVueResolver({
+                    importStyle: false, // css in js
+                }),
+            ],
+        }),
+    ],
+    resolve: {
+        alias: {
+            '@': fileURLToPath(new URL('./src', import.meta.url))
+        }
+    },
+    define: {
+        'process.env': process.env
+    }, server: {
+        proxy: {
+            '/api': {
+                target: 'http://localhost:5000',
+                changeOrigin: true
+            }
+        }
     }
-  },
-  define: {
-    'process.env': process.env
-  },
 })

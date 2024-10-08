@@ -164,7 +164,7 @@ public class DtoValidator
     {
         if(tag[0] != '#') throw new DataValidationException("Invalid tag format.");
         tag = tag.Substring(1);
-        if (!(tag.Length >= 3 && tag.Length <= 50 && tag.All(x => char.IsLetterOrDigit(x) || x == '_')))
+        if (!(tag.Length is >= 3 and <= 50 && tag.All(x => char.IsLetterOrDigit(x) || x == '_' ||  x == '-')))
         {
             throw new DataValidationException("Invalid tag format.");
         }

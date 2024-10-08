@@ -11,8 +11,8 @@ const getBlockList = async () => {
 	await axios.get('api/actions/blacklist').catch(() => {
 		message.error(`Fill out the profile!`);
 	}).then(res => {
-		if (res.data){
-			profiles.value = res.data.data
+		if (res?.data){
+			profiles.value = res?.data.data
 		}
 	})
 }

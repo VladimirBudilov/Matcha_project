@@ -9,13 +9,14 @@ const profiles = storeToRefs(SignUpStore()).profiles
 
 
 const getViewList = async () => {
-	await axios.get('api/actions/viewed').catch(() => {
-		message.error(`Fill out the profile!`);
-	}).then(res => {
-		if (res.data){
-			profiles.value = res.data.data
-		}
-	})
+  try {
+    const res = await axios.get('api/actions/viewed');
+    if (res && res.data) {
+      profiles.value = res.data.data;
+    }
+  } catch (error) {
+    message.error(`Fill out the profile!`);
+  }
 }
 
 const columns = [

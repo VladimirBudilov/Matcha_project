@@ -8,7 +8,7 @@ function createConnection(): HubConnection {
     };
 
     return new HubConnectionBuilder()
-        .withUrl(process.env.BASE_URL+"chat", options)
+        .withUrl("/api/chat", options)
         .withAutomaticReconnect()
         .build();
 }

@@ -1,7 +1,11 @@
 {
+  "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
-    // ... other options ...
-    "types": ["node", "other-types"]
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["node", "vite/client"]
   },
   "include": [
     "src/**/*"
@@ -14,6 +18,5 @@
     {
       "path": "./tsconfig.app.json"
     }
-  ],
+  ]
 }
-

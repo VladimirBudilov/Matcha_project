@@ -72,7 +72,7 @@ const GetProfile = async () => {
 			const response = await fetch('https://geocode.maps.co/reverse?' + new URLSearchParams({
 				lat: profile.value.latitude.toString(),
 				lon: profile.value.longitude.toString(),
-				api_key: process.env.MAP_API_KEY
+				api_key: import.meta.env.MAP_API_KEY
 			}).toString(), {
 				method: 'GET'
 			})
@@ -148,7 +148,7 @@ const getLocation = async () => {
 	if (profile.value.location) {
 		const response : any = await fetch('https://geocode.maps.co/search?' + new URLSearchParams({
 			q: profile.value.location,
-			api_key: process.env.MAP_API_KEY
+			api_key: import.meta.env.MAP_API_KEY
 		}).toString(), {
 			method: 'GET'
 		})
@@ -163,9 +163,9 @@ const getLocation = async () => {
 		}
 	}
 	else {
-		var ip: string
-		const ipResponse = (await fetch('https://api.ipify.org/')).text()
-		await ipResponse.then(ipResponse => ip = ipResponse)
+    let ip: string = ''
+    const ipResponse = (await fetch('https://api.ipify.org/')).text()
+		await ipResponse.then(ipResponse => ip = ipResponse).catch(() => message.error('Error'))
 
 		const LocatByIp : any = await (await fetch('https://ipwho.is/' + ip)).json()
 		if (!LocatByIp || !LocatByIp.latitude || !LocatByIp.longitude) {

@@ -3,18 +3,19 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "proxy": "http://localhost:5000",
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "build": "vite build",
     "preview": "vite preview",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --build --force"
+    "start": "cp -r dist/* /usr/share/nginx/html/"
   },
   "dependencies": {
     "@microsoft/signalr": "8.0.0",
     "@vueuse/core": "^10.9.0",
     "ant-design-vue": "^4.1.2",
     "axios": "^1.6.7",
+    "dotenv": "^16.4.5",
     "pinia": "^2.1.7",
     "vue": "^3.4.15",
     "vue-advanced-chat": "^2.1.0",

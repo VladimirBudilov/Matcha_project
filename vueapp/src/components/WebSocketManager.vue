@@ -34,7 +34,7 @@ onMounted(async () => {
       }
     }
     else {
-      message.error('Connection is not created');
+      console.error('Connection is not created');
     }
 });
 </script>

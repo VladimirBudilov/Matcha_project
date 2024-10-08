@@ -9,13 +9,14 @@ const profiles = storeToRefs(SignUpStore()).profiles
 
 
 const getLikeList = async () => {
-	await axios.get('api/actions/likers').catch(() => {
-		message.error(`Fill out the profile!`);
-	}).then(res => {
-		if (res.data){
-			profiles.value = res.data.data
-		}
-	})
+  try {
+    const res = await axios.get('api/actions/likers');
+    if (res && res.data) {
+      profiles.value = res.data.data;
+    }
+  } catch (error) {
+    message.error(`Fill out the profile!`);
+  }
 }
 
 const columns = [

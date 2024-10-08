@@ -61,7 +61,7 @@ const onFinish = async (values: any) => {
 			localStorage.setItem("token", loginRes.token)
 
       axios.defaults.headers.common.Authorization = 'Bearer ' + loginRes.token;
-      window.location.assign('https://' + window.location.host)
+      window.location.assign(window.location.origin)
 		}
 	})
 };

@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.4" />
@@ -18,8 +19,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\..\.env">
+      <Link>.env</Link>
+    </Content>
+    <Content Include="..\..\docker-compose.yml">
+      <Link>docker-compose.yml</Link>
+    </Content>
     <Content Include="..\.dockerignore">
       <Link>.dockerignore</Link>
+    </Content>
+    <Content Include="..\Dockerfile">
+      <Link>Dockerfile</Link>
     </Content>
   </ItemGroup>
 

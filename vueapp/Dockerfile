@@ -1,7 +1,12 @@
-FROM node:20
+# Шаг 1: Билд Vue приложения
+FROM node:20-alpine AS build-stage
+WORKDIR /app
+COPY . .
+COPY .env .env
+RUN npm install
+RUN npm run build
 
-WORKDIR /usr/src/app
-
-EXPOSE 8080
-
-ENTRYPOINT ["/bin/sh", "-c", "npm install && npm run build-only && npm run dev"]
+# Шаг 2: Сервер Nginx
+FROM nginx:alpine
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+COPY ./nginx.conf /etc/nginx/nginx.conf

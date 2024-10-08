@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿namespace DAL.Helpers;
 
-namespace DAL.Helpers;
-
-public class DatabaseSettings(IConfiguration configuration)
+public class DatabaseSettings(string? connectionString)
 {
-    public readonly string ConnectionString = Environment.GetEnvironmentVariable("DatabaseSettings__ConnectionString");
+    public readonly string? ConnectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
 }

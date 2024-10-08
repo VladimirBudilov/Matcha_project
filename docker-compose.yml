@@ -1,9 +1,33 @@
-version: "3.8"
-
 services:
+  
+  backend:
+    build:
+      context: ./aspnetapp
+      dockerfile: Dockerfile
+    container_name: backend
+    networks:
+      - ft_matcha
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+
+  nginx:
+    build:
+      context: ./vueapp
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - ft_matcha
+    depends_on:
+      - backend
+      
   db:
     container_name: postgres
-    image: postgres:alpine
+    image: postgres:16
     env_file:
       - ./.env
     volumes:

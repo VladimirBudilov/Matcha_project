@@ -8,7 +8,7 @@ function createConnection(): HubConnection {
     };
 
     return new HubConnectionBuilder()
-        .withUrl(process.env.BASE_URL+"notification", options)
+        .withUrl("/api/notification", options)
         .withAutomaticReconnect()
         .build();
 }

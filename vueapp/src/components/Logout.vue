@@ -18,7 +18,7 @@ const LogoutButtonTurnOn = () => {
 		localStorage.removeItem('token')
 		localStorage.removeItem('UserId')
 		IsLogin.value = false
-		window.location.assign('https://' + window.location.host + '/login')
+		window.location.assign(window.location.origin + '/login')
 	})
 }
 </script>

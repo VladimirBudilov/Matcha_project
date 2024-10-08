@@ -43,7 +43,7 @@ const GetProfile = async () => {
 			const response = await fetch('https://geocode.maps.co/reverse?' + new URLSearchParams({
 				lat: profile.value.latitude.toString(),
 				lon: profile.value.longitude.toString(),
-				api_key: process.env.MAP_API_KEY
+				api_key: import.meta.env.MAP_API_KEY
 			}).toString(), {
 				method: 'GET'
 			})
