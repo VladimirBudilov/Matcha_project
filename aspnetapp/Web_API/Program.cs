@@ -58,7 +58,7 @@ builder.Services.AddCors(options =>
 		corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 	options.AddPolicy("SignalRCorsPolicy",
 		corsPolicyBuilder => corsPolicyBuilder
-			.WithOrigins(Environment.GetEnvironmentVariable("FRONT_URL"),
+			.WithOrigins(Environment.GetEnvironmentVariable("FRONT_URL_HTTP"),Environment.GetEnvironmentVariable("FRONT_URL_HTTPS"),
 				Environment.GetEnvironmentVariable("FRONT_URL_LOCAL"))
 			.AllowAnyMethod()
 			.AllowAnyHeader()

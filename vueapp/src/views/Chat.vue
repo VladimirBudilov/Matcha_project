@@ -121,8 +121,6 @@ watch(
 	}
 );
 
-
-
 </script>
 
 <template>
@@ -160,26 +158,33 @@ watch(
 
 <style>
 #chat {
-	position: fixed;
-	width: 50vw;
-	height: 85vh;
-	padding-top: 7vh;
-	padding-left: 1vw;
-	padding-right: 1vw;
-	overflow: auto;
+  position: fixed;
+  width: 50vw;
+  height: 85vh;
+  padding-top: 7vh;
+  padding-left: 1vw;
+  padding-right: 1vw;
+  overflow: auto;
+  color: black; /* Set text color to black */
 }
 
 #pagination-users-chat {
-	position: fixed;
-	bottom: 3vh;
-	width: 45vw;
-	padding-top: 1vh;
-	padding-bottom: 2vh;
-	padding-left: 1vh;
-	background-color: var(--color-background-soft);
-	color:var(--color-text);
-	display: flex;
-	flex-wrap: wrap;
+  position: fixed;
+  bottom: 3vh;
+  width: 45vw;
+  padding-top: 1vh;
+  padding-bottom: 2vh;
+  padding-left: 1vh;
+  background-color: var(--color-background-soft);
+  color: black; /* Set text color to black */
+  display: flex;
+  flex-wrap: wrap;
 }
 
+/* Ensure text color is black for all relevant elements */
+#chat a,
+#chat .ant-table-cell,
+#chat .ant-pagination-item {
+  color: black !important;
+}
 </style>

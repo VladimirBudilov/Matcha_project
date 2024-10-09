@@ -103,6 +103,9 @@ const SubmitChanges = async () => {
 		await checkAtr(lastName.value, profile.value.lastName) ||
 		await checkAtr(email.value, profile.value.email ? profile.value.email : '')
 	) {
+    if(profile.value.longitude == 0 || profile.value.latitude == 0) {
+      await getLocation()
+    }
 		await axios.put('/api/users/' + profile.value.profileId, profile.value).catch((res) => {
 			errorMsg.value = 'Error'
 			message.error(res.response.data.error)
@@ -385,10 +388,10 @@ const DeletePicture = async (picureId: number) => {
 	width: 50vw;
 	background-color: var(--color-background-mute);
 
-	.css-dev-only-do-not-override-19iuou.ant-image .ant-image-img {
-		width: 15vw;
-		height: 20vh;
-	}
+  .ant-image .ant-image-img {
+    width: 15vw;
+    height: 20vh;
+  }
 }
 
 #avatar-upload{
@@ -403,10 +406,10 @@ const DeletePicture = async (picureId: number) => {
 	height: 53vh;
 	overflow: auto;
 	background-color: var(--color-background-mute);
-	.css-dev-only-do-not-override-19iuou.ant-image .ant-image-img {
-		width: 9vw;
-		height: 15vh;
-	}
+  .ant-image .ant-image-img {
+    width: 9vw;
+    height: 15vh;
+  }
 }
 
 #photos-profile {
@@ -434,14 +437,14 @@ const DeletePicture = async (picureId: number) => {
 
 @media screen and (max-width: 1100px) {
 	#Avatar {
-		.css-dev-only-do-not-override-19iuou.ant-image .ant-image-img {
+    .ant-image .ant-image-img {
 			width: 30vw;
 			height: 15vh;
 		}
 	}
 
 	#Photos {
-		.css-dev-only-do-not-override-19iuou.ant-image .ant-image-img {
+    .ant-image .ant-image-img {
 			width: 30vw;
 			height: 15vh;
 		}
@@ -450,6 +453,33 @@ const DeletePicture = async (picureId: number) => {
 	#photos-profile {
 		display: inherit;
 	}
+}
+
+/* Ensure text color is black for all .ant-form-item elements */
+#Profile .ant-form-item {
+  color: black !important;
+}
+
+/* Ensure input fields always have the same style */
+#Profile a-input,
+#Profile a-input-number,
+#Profile a-select,
+#Profile a-textarea {
+  background-color: white !important; /* Set background color to white */
+  color: black !important; /* Set text color to black */
+}
+
+/* Ensure text color is black for all relevant elements */
+#Profile a,
+#Profile .ant-form-item-label > label,
+#Profile .ant-form-item-control-input-content {
+  color: black !important;
+}
+
+/* Ensure text color is black for interests section */
+#Profile .ant-select-selection-item,
+#Profile .ant-select-selection-placeholder {
+  color: black !important;
 }
 
 </style>

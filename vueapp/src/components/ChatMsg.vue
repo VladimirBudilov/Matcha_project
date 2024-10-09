@@ -119,23 +119,32 @@ watch (
 
 <style>
 #chat-msg {
-	position:fixed;
-	top: 9vh;
-	bottom: 20vh;
-	left: 50vw;
-	right: 1vw;
-	width: 50vw;
-	height: 70vh;
-	overflow-y: auto;
-	scroll-margin-top: 0;
-	scroll-padding-top: 0;
+  position: fixed;
+  top: 9vh;
+  bottom: 20vh;
+  left: 50vw;
+  right: 1vw;
+  width: 50vw;
+  height: 70vh;
+  overflow-y: auto;
+  scroll-margin-top: 0;
+  scroll-padding-top: 0;
+  color: black; /* Ensure text color is black */
+}
+
+#chat-msg .ant-list-item-custom {
+  color: black; /* Ensure text color is black */
 }
 
 #chat-msg-input {
-	position:fixed;
-	bottom: 5vh;
-	width: 50vw;
-	left: 50vw;
+  position: fixed;
+  bottom: 5vh;
+  width: 50vw;
+  left: 50vw;
+}
+
+#chat-msg p {
+  color: black !important; /* Ensure text color is black */
 }
 
 </style>

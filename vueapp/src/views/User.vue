@@ -178,4 +178,10 @@ onMounted(async () => {
 	z-index: 1;
 }
 
+/* Ensure text color is black for interests section */
+#User .ant-select-selection-item,
+#User .ant-select-selection-placeholder {
+  color: gray !important;
+}
+
 </style>
