@@ -89,5 +89,11 @@ public class ActionService(
         var blackList = await blackListRepository.GetFromBlackListByIdAsync(userId);
         return blackList.Select(x => x.BlacklistedUserId).ToList();
     }
+    
+    public async Task<List<int>> GetForbiddenUsersIdASync(int userId)
+    {
+        var blackList = await blackListRepository.GetFromBlackListByBlockedIdAsync(userId);
+        return blackList.Select(x => x.UserId).ToList();
+    }   
 
 }

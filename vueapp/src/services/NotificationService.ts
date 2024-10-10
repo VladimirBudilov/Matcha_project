@@ -1,4 +1,4 @@
-import { HubConnection, HubConnectionBuilder, HttpTransportType } from "@microsoft/signalr";
+import { HubConnection, HubConnectionBuilder, LogLevel, HttpTransportType } from "@microsoft/signalr";
 import type { IHttpConnectionOptions } from "@microsoft/signalr";
 
 function createConnection(): HubConnection {
@@ -9,6 +9,7 @@ function createConnection(): HubConnection {
 
     return new HubConnectionBuilder()
         .withUrl("/api/notification", options)
+        .configureLogging(LogLevel.Warning)
         .withAutomaticReconnect()
         .build();
 }

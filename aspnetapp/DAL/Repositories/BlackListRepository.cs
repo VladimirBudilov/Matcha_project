@@ -52,4 +52,18 @@ public class BlackListRepository(
         var table = await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
         return (from DataRow row in table.Rows select entityCreator.CreateBlackList(row)).ToList();
     }
+
+    public async Task<IEnumerable<BlackList>> GetFromBlackListByBlockedIdAsync(int id)
+    {
+        var query = new StringBuilder()
+            .Append("SELECT * FROM black_list")
+            .Append(" WHERE blocked_user_id = @blocked_user_id");
+        var parameters = new Dictionary<string, object>
+        {
+            { "@blocked_user_id", id }
+        };
+        var table = await fetcher.GetTableByParameterAsync(query.ToString(), parameters);
+        return (from DataRow row in table.Rows select entityCreator.CreateBlackList(row)).ToList();
+    }
+
 }

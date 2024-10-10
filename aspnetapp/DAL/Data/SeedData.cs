@@ -1,4 +1,5 @@
-﻿using DAL.Entities;
+﻿using System.Globalization;
+using DAL.Entities;
 using DAL.Helpers;
 using DAL.Repositories;
 using Npgsql;
@@ -181,12 +182,12 @@ public class SeedData(
 		var femaleImages = new List<byte[]>();
 		foreach (var name in maleImageNames)
 		{
-			maleImages.Add(File.ReadAllBytes(name));
+			maleImages.Add(await File.ReadAllBytesAsync(name));
 		}
 
 		foreach (var name in femaleImageNames)
 		{
-			femaleImages.Add(File.ReadAllBytes(name));
+			femaleImages.Add(await File.ReadAllBytesAsync(name));
 		}
 
 		int maleImagesCount = maleImages.Count;
@@ -266,10 +267,10 @@ public class SeedData(
 				UserName = "CloneTrooper" + i,
 				FirstName = "Clone",
 				LastName = "Trooper",
-				Email = "Clone trooper" + i + "@gmail.com",
+				Email = "CloneTrooper" + i + "@gmail.com",
 				Password = HashPassword("Clone123!"),
 				IsVerified = true,
-				LastLogin = DateTime.Now.ToString()
+				LastLogin = DateTime.Now.ToString(CultureInfo.InvariantCulture)
 			};
 			users.Add(user);
 		}
@@ -292,7 +293,7 @@ public class SeedData(
 
 	private async Task UpdateSequenceValue(string sequenceName, string idName, string tableName)
 	{
-		string sqlQuery = $"SELECT setval('{sequenceName}', (SELECT MAX({idName}) FROM {tableName}))";
+		var sqlQuery = $"SELECT setval('{sequenceName}', (SELECT MAX({idName}) FROM {tableName}))";
 		await using var connection = new NpgsqlConnection(databaseSettings.ConnectionString);
 		await connection.OpenAsync();
 		var command = connection.CreateCommand();

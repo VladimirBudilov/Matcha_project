@@ -10,6 +10,7 @@ function createConnection(): HubConnection {
     return new HubConnectionBuilder()
         .withUrl("/api/chat", options)
         .withAutomaticReconnect()
+        .configureLogging(LogLevel.Warning)
         .build();
 }
 

@@ -13,16 +13,19 @@ namespace Web_API.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController(UserService userService, IMapper mapper, DtoValidator validator) : ControllerBase
+    public class UsersController(UserService userService, IMapper mapper, DtoValidator validator, ClaimsService claimsService, ActionService actionService) : ControllerBase
     {
         [HttpGet("{id:int}")]
-        public async Task<UserDto> GetUserById([FromRoute]int id)
+        public async Task<IActionResult> GetUserById([FromRoute]int id)
         {
             validator.CheckId(id);
             validator.CheckUserAuth(id,User.Claims);
+            var userId = claimsService.GetId(User.Claims);
+            var isBlocked = await actionService.CheckIfUserIsBlocked(userId, id);
+            if (isBlocked) return Forbid();
             var user = await userService.GetUserByIdAsync(id);
             var output = mapper.Map<UserDto>(user);
-            return output;
+            return Ok(output);
         }
         
         [HttpPut("{id:int}")]

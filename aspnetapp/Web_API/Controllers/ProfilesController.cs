@@ -37,6 +37,8 @@ public class ProfilesController(
         validator.CheckPaginationParameters(parameters.Pagination);
 
         var blackList = await actionService.GetBlockedUsersIdASync(id);
+        var forbiddenProfiles = await actionService.GetForbiddenUsersIdASync(id);
+        blackList.AddRange(forbiddenProfiles);
         var (amountOfPages, output) =
             await profileService.GetProfilesAsync(parameters.Search, parameters.Sort, parameters.Pagination, id, blackList);
         output = await profileService.CheckUsersLikes(output, id);
@@ -62,7 +64,7 @@ public class ProfilesController(
 
         var actorId = claimsService.GetId(User.Claims);
         var userIsBlocked = await actionService.CheckIfUserIsBlocked(actorId, id);
-        if(userIsBlocked) return Forbid("You are blocked by this user");
+        if(userIsBlocked) return Forbid();
         
         if (await actionService.TryViewUser(actorId, id))
         {

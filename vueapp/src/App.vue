@@ -15,7 +15,7 @@ async function GetProfileInfo(){
   await axios.get('/api/profiles/' + localStorage.getItem('UserId')).then((res) => {
       firstName.value = res.data.firstName
       lastName.value = res.data.lastName
-    })
+    }).catch()
 }
 
 onMounted (async () => {

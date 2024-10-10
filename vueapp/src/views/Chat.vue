@@ -76,7 +76,7 @@ const LeaveChat = async () => {
         .then(() => {
 
         })
-        .catch(err => console.error(err.toString()));
+        .catch(err => _ );
 }
 
 const setChatId = async (userId : number) => {
