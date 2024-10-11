@@ -14,7 +14,7 @@ const getBlockList = async () => {
 		if (res?.data){
 			profiles.value = res?.data.data
 		}
-	})
+	}).catch();
 }
 
 const block = async (profileId: number) => {
@@ -34,7 +34,7 @@ const block = async (profileId: number) => {
 				})
 			}
 		}
-	})
+	}).catch();
 }
 
 onMounted(async () => {

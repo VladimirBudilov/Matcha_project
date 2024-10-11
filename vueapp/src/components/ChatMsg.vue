@@ -25,7 +25,6 @@ const GetMessages = async () => {
 	const document_chat = document.getElementById('chat-msg')
 	if (document_chat) {
 		document_chat.scrollTop = document_chat.scrollHeight + 20
-
 	}
 
 }

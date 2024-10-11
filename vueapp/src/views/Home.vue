@@ -24,7 +24,7 @@ const GetFilters = async () => {
 			getFilters.value.maxDistance = Math.floor(getFilters.value.maxDistance)
 			getFilters.value.minDistance = Math.floor(getFilters.value.minDistance)
 		}
-	})
+	}).catch();
 
 	getProfileParams.value.search.maxDistance = getFilters.value.maxDistance
 	getProfileParams.value.search.minAge = getFilters.value.minAge
@@ -45,7 +45,7 @@ const GetFilters = async () => {
 		}
 	}).then( async (res) => {
 		getProfileParams.value.search.sexualPreferences = res?.data.sexualPreferences
-	})
+	}).catch();
 	await GetProfile()
 }
 
@@ -62,7 +62,7 @@ const GetProfile = async () => {
 				getProfileParams.value.pagination.total = getProfileParams.value.pagination.pageSize * res.data.amountOfPages
 			}
 		}
-	})
+	}).catch();
 }
 
 
@@ -70,7 +70,7 @@ const GetProfile = async () => {
 onMounted(async () => {
 	await axios.get('/api/auth/get-id').then((res) => {
 		localStorage.setItem('UserId', String(res?.data))
-	})
+	}).catch(() => { return });
 	await GetFilters()
 })
 
@@ -91,7 +91,7 @@ const sendLike = async (profileId: number) => {
 				}
 			})
 		}
-	})
+	}).catch();
 }
 
 const block = async (profileId: number) => {
@@ -108,7 +108,7 @@ const block = async (profileId: number) => {
 				})
 			}
 		}
-	})
+	}).catch();
 
 }
 

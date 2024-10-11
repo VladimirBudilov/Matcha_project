@@ -43,7 +43,7 @@ const GetFilters = async () => {
 			getFilters.value = res.data
 			getFilters.value.maxDistance = Math.floor(getFilters.value.maxDistance)
 		}
-	})
+	}).catch();
 }
 
 const GetProfile = async () => {
@@ -68,7 +68,7 @@ const GetProfile = async () => {
 			}
 
 		}
-	})
+	}).catch();
 }
 
 const LeaveChat = async () => {
@@ -101,7 +101,7 @@ const block = async (profileId: number) => {
 				})
 			}
 		}
-	})
+	}).catch();
 }
 
 onMounted(async () => {

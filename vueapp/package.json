@@ -6,7 +6,7 @@
   "proxy": "http://localhost:5000",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --mode production",
     "preview": "vite preview",
     "start": "cp -r dist/* /usr/share/nginx/html/"
   },

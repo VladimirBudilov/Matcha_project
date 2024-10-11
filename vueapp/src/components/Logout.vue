@@ -19,7 +19,7 @@ const LogoutButtonTurnOn = () => {
 		localStorage.removeItem('UserId')
 		IsLogin.value = false
 		window.location.assign(window.location.origin + '/login')
-	})
+	}).catch(() => {  });
 }
 </script>
 

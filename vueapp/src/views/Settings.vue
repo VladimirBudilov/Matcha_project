@@ -34,7 +34,7 @@ const onFinish = async (values: FormState) => {
 		}).then(async (res) => {
 			if (errorMsg.value === '')
 				message.success('Success')
-		})
+		}).catch();
 	}
 
 };

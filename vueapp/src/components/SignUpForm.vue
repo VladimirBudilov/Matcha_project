@@ -48,7 +48,7 @@ const onFinish = (values: any) => {
 		if (errorMsg.value == '') {
 			IsActiveSignUp.value = !IsActiveSignUp.value
 		}
-	})
+	}).catch();
 };
 </script>
 

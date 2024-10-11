@@ -80,7 +80,7 @@ const sendLike = async (profileId: number) => {
       }
       profile.value.hasLike = !profile.value.hasLike;
     }
-  });
+  }).catch();
 }
 
 onMounted(async () => {

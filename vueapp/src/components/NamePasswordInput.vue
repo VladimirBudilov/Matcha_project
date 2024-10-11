@@ -63,7 +63,7 @@ const onFinish = async (values: any) => {
       axios.defaults.headers.common.Authorization = 'Bearer ' + loginRes.token;
       window.location.assign(window.location.origin)
 		}
-	})
+	}).catch();
 };
 
 </script>

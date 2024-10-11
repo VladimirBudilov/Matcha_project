@@ -39,7 +39,7 @@ const onFinish = (values: any) => {
 		if (errorMsg.value == '') {
 			ForgotPasswordButtonTurnOn()
 		}
-	})
+	}).catch();
 };
 </script>
 

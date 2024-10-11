@@ -50,7 +50,7 @@ const GetProfile = async () => {
 				getProfileParams.value.pagination.total = getProfileParams.value.pagination.pageSize * res.data.amountOfPages
 			}
 		}
-	})
+	}).catch();
 }
 
 const interests = ref<Interests[]>([])
@@ -60,7 +60,7 @@ const GetInterests = async () => {
 		interests.value.forEach((element) => {
 			element.value = element.name
 		})
-	})
+	}).catch();
 }
 onMounted(async () => {
 	await GetInterests()

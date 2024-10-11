@@ -48,7 +48,7 @@ const GetInterests = async () => {
 		interests.value.forEach((element) => {
 			element.value = element.name
 		})
-	})
+	}).catch();
 }
 
 const GetProfile = async () => {
@@ -87,7 +87,7 @@ const GetProfile = async () => {
 				profile.value.location = data.address.country
 			}
 		}
-	})
+	}).catch();
 }
 
 onMounted(async () => {
@@ -112,7 +112,7 @@ const SubmitChanges = async () => {
 		}).then((res) => {
 			if (errorMsg.value == '') {
 
-			}})
+			}}).catch();
 	}
 
 	if (errorMsg.value === '') {
@@ -141,7 +141,7 @@ const SubmitChanges = async () => {
 				message.success("Success")
 			}
 
-		})
+		}).catch();
 	}
 
 }
@@ -217,7 +217,7 @@ const handleChange = async (info: UploadChangeParam) => {
 const DeletePicture = async (picureId: number) => {
 	axios.delete('/api/FileManager/deletePhoto/' + profile.value.profileId + '?photoId=' + picureId).then(async () => {
 		await GetProfile()
-	})
+	}).catch();
 }
 
 

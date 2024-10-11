@@ -69,7 +69,6 @@ router.beforeEach(async (to, from) => {
     localStorage.removeItem('UserId')
   })
 
-
   if (localStorage.getItem('token')) {
     status = 1
   }
@@ -80,6 +79,6 @@ router.beforeEach(async (to, from) => {
   else if (status == 1 && to.name === 'login') {
     return '/'
   }
-})
+});
 
 export default router
